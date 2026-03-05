@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PumpChain - The Fastest SVM-Powered Chain</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #f59e0b, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: #f59e0b;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #ec4899);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: #f59e0b;
+            margin-bottom: 24px;
+        }
+        
+        .badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, #f59e0b 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding: 60px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f59e0b, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        
+        /* Features */
+        .features {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .section-title p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* Architecture */
+        .architecture {
+            padding: 100px 0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .arch-diagram {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+            overflow-x: auto;
+        }
+        
+        .arch-diagram .highlight {
+            color: #f59e0b;
+        }
+        
+        .arch-diagram .comment {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .cta-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 24px;
+            padding: 60px;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .cta p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+        
+        .social-links a:hover {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .arch-diagram {
+                padding: 20px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🚀 PumpChain</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="https://docs.pumpchain.org">Docs</a></li>
+                <li><a href="https://github.com/pump-chain">GitHub</a></li>
+            </ul>
+            <a href="#launch" class="btn btn-primary">Launch App</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="badge">Testnet Live</div>
+            <h1>The Fastest SVM-Powered Chain</h1>
+            <p>Launch tokens instantly with automatic AMM liquidity. Built on Solana Virtual Machine with state anchoring to L1.</p>
+            <div class="hero-buttons">
+                <a href="#launch" class="btn btn-primary">🚀 Launch Token</a>
+                <a href="https://docs.pumpchain.org" class="btn btn-secondary">📖 Read Docs</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">50K+</div>
+                <div class="stat-label">TPS Capacity</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">&lt;400ms</div>
+                <div class="stat-label">Block Time</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">$0.001</div>
+                <div class="stat-label">Avg Fee</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">21</div>
+                <div class="stat-label">Validators</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Built for DeFi & Gaming</h2>
+                <p>Everything you need to launch and scale your web3 project</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Sub-second finality with 50,000+ TPS. Powered by parallel SVM execution engine.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Gaming Ready</h3>
+                    <p>Native C# Unity SDK for seamless game integration. Build economies that scale.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Instant Launchpad</h3>
+                    <p>Deploy tokens with automatic AMM liquidity. Bonding curve ensures fair price discovery.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure Anchoring</h3>
+                    <p>State proofs anchored to Solana L1. Inherits security while maintaining speed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Low Fees</h3>
+                    <p>Optimized for high-frequency trading. Micro-fees that don't break the bank.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>SVM Compatible</h3>
+                    <p>Deploy existing Solana programs without changes. Full bytecode compatibility.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="architecture" id="architecture">
+        <div class="container">
+            <div class="section-title">
+                <h2>Layer 2 Architecture</h2>
+                <p>Optimistic rollup with SVM compatibility and Solana L1 anchoring</p>
+            </div>
+            <div class="arch-diagram">
+<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="comment">│</span>              <span class="highlight">PUMPCHAIN L2</span>                                <span class="comment">│</span>
+<span class="comment">│</span>  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      <span class="comment">│</span>
+<span class="comment">│</span>  │   <span class="highlight">Launchpad</span>  │  │   <span class="highlight">PumpProof</span>  │  │     <span class="highlight">DEX</span>      │      <span class="comment">│</span>
+<span class="comment">│</span>  │  (Tokens)    │  │  (Anchoring) │  │   (AMM)      │      <span class="comment">│</span>
+<span class="comment">│</span>  └──────────────┘  └──────────────┘  └──────────────┘      <span class="comment">│</span>
+<span class="comment">│</span>                                                             <span class="comment">│</span>
+<span class="comment">│</span>  ┌─────────────────────────────────────────────────────┐   <span class="comment">│</span>
+<span class="comment">│</span>  │         <span class="highlight">PumpChain Validator (SVM + Consensus)</span>       │   <span class="comment">│</span>
+<span class="comment">│</span>  │  - Parallel Execution  - PumpBFT Consensus          │   <span class="comment">│</span>
+<span class="comment">│</span>  │  - 400ms Block Time    - 50K+ TPS                   │   <span class="comment">│</span>
+<span class="comment">│</span>  └─────────────────────────────────────────────────────┘   <span class="comment">│</span>
+<span class="comment">└─────────────────────────────────────────────────────────────┘</span>
+                              <span class="highlight">│</span>
+                              <span class="highlight">▼</span> State Anchoring (Every 1 hour)
+<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="comment">│</span>                   <span class="highlight">Solana Mainnet (L1)</span>                       <span class="comment">│</span>
+<span class="comment">│</span>              - Data Availability                          <span class="comment">│</span>
+<span class="comment">│</span>              - Fraud Proofs (7-day window)                <span class="comment">│</span>
+<span class="comment">│</span>              - Final Settlement                         <span class="comment">│</span>
+<span class="comment">└─────────────────────────────────────────────────────────────┘</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="launch">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready to Launch?</h2>
+                <p>Deploy your token in seconds with instant liquidity. Join the fastest growing L2 ecosystem.</p>
+                <a href="https://app.pumpchain.org" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 32px;">
+                    🚀 Launch Your Token
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">🚀 PumpChain</div>
+                <div class="social-links">
+                    <a href="https://twitter.com/pumpchain" target="_blank">𝕏</a>
+                    <a href="https://discord.gg/pumpchain" target="_blank">💬</a>
+                    <a href="https://github.com/pump-chain" target="_blank">📦</a>
+                    <a href="https://docs.pumpchain.org" target="_blank">📄</a>
+                </div>
+                <div class="copyright">© 2025 PumpChain. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat, .feature-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
