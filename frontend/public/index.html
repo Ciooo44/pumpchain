@@ -1,566 +1,757 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PumpChain - The Fastest SVM-Powered Chain</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
-            color: #fff;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header */
-        header {
-            padding: 20px 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #f59e0b, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.95rem;
-        }
-        
-        .nav-links a:hover {
-            color: #f59e0b;
-        }
-        
-        .btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            font-size: 0.95rem;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #f59e0b, #ec4899);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Hero */
-        .hero {
-            padding: 160px 0 100px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            color: #f59e0b;
-            margin-bottom: 24px;
-        }
-        
-        .badge::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #fff 0%, #f59e0b 50%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .hero p {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            padding: 60px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f59e0b, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .stat-label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-top: 4px;
-        }
-        
-        /* Features */
-        .features {
-            padding: 100px 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-title h2 {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-        }
-        
-        .section-title p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.1rem;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
-        .feature-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 32px;
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-4px);
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 12px;
-        }
-        
-        .feature-card p {
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        
-        /* Architecture */
-        .architecture {
-            padding: 100px 0;
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        .arch-diagram {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 40px;
-            margin-top: 40px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.8);
-            overflow-x: auto;
-        }
-        
-        .arch-diagram .highlight {
-            color: #f59e0b;
-        }
-        
-        .arch-diagram .comment {
-            color: rgba(255, 255, 255, 0.4);
-        }
-        
-        /* CTA */
-        .cta {
-            padding: 100px 0;
-            text-align: center;
-        }
-        
-        .cta-box {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.1));
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 24px;
-            padding: 60px;
-        }
-        
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-        }
-        
-        .cta p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 32px;
-            font-size: 1.1rem;
-        }
-        
-        /* Footer */
-        footer {
-            padding: 60px 0 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 16px;
-        }
-        
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 1.2rem;
-        }
-        
-        .social-links a:hover {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-        
-        .copyright {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.9rem;
-        }
-        
-        /* Mobile */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .arch-diagram {
-                padding: 20px;
-                font-size: 0.75rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PumpChain — The Fastest SVM-Powered L2</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:   #00FFA3;
+      --cyan:    #03E1FF;
+      --purple:  #9945FF;
+      --pink:    #FF3CAC;
+      --bg:      #04040C;
+      --bg2:     #080818;
+      --bg3:     #0D0D22;
+      --border:  rgba(0,255,163,0.12);
+      --text:    #E8E8F0;
+      --muted:   #6B6B8A;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:0; opacity:.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 18px 48px;
+      background: rgba(4,4,12,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display:flex; align-items:center; gap:10px;
+      font-family:'Syne', sans-serif; font-weight:800; font-size:1.2rem;
+      letter-spacing:0.05em;
+    }
+
+    .logo-icon {
+      width:32px; height:32px;
+    }
+
+    .logo-text {
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+
+    .nav-links {
+      display:flex; gap:8px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration:none;
+      font-size:.85rem;
+      font-weight:600;
+      letter-spacing:.06em;
+      padding: 8px 18px;
+      border-radius:8px;
+      border: 1px solid transparent;
+      transition: all .2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--green);
+      border-color: var(--border);
+      background: rgba(0,255,163,0.05);
+    }
+
+    .nav-links a.active {
+      color: var(--green);
+      border-color: rgba(0,255,163,0.3);
+      background: rgba(0,255,163,0.07);
+    }
+
+    .nav-scan {
+      display:flex; align-items:center; gap:6px;
+      font-size:.8rem; color: var(--muted);
+      text-decoration:none;
+      padding: 8px 16px;
+      border-radius:8px;
+      border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .nav-scan:hover { color:var(--cyan); border-color:rgba(3,225,255,.3); }
+
+    .live-dot {
+      width:7px; height:7px; border-radius:50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.5; transform:scale(.8); }
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      text-align:center;
+      padding: 120px 24px 80px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-bg {
+      position:absolute; inset:0; z-index:-1;
+    }
+
+    .orb {
+      position:absolute; border-radius:50%;
+      filter:blur(80px); pointer-events:none;
+    }
+    .orb-1 { width:500px; height:500px; top:-100px; left:50%; transform:translateX(-50%);
+              background: radial-gradient(circle, rgba(0,255,163,.15), transparent 70%); }
+    .orb-2 { width:350px; height:350px; top:20%; left:10%;
+              background: radial-gradient(circle, rgba(153,69,255,.1), transparent 70%); }
+    .orb-3 { width:300px; height:300px; top:30%; right:8%;
+              background: radial-gradient(circle, rgba(3,225,255,.08), transparent 70%); }
+
+    .grid-lines {
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(0,255,163,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,163,.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 16px;
+      border-radius:100px;
+      border:1px solid rgba(0,255,163,.25);
+      background: rgba(0,255,163,.06);
+      font-size:.78rem; font-weight:700; letter-spacing:.1em;
+      color: var(--green);
+      margin-bottom:28px;
+      text-transform:uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight:800;
+      line-height:1.05;
+      letter-spacing:-.02em;
+      margin-bottom:24px;
+    }
+
+    .hero h1 .line1 { color: var(--text); }
+    .hero h1 .line2 {
+      background: linear-gradient(90deg, var(--green), var(--cyan), var(--purple));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+
+    .hero-sub {
+      font-size:1.1rem; color:var(--muted); max-width:480px; line-height:1.6;
+      margin-bottom:40px;
+    }
+
+    .hero-ctas {
+      display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
+      margin-bottom:60px;
+    }
+
+    .btn-primary {
+      padding:14px 32px; border-radius:10px;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      color:#000; font-weight:700; font-size:.9rem; letter-spacing:.04em;
+      text-decoration:none; border:none; cursor:pointer;
+      transition: all .2s; text-transform:uppercase;
+    }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,255,163,.3); }
+
+    .btn-secondary {
+      padding:14px 32px; border-radius:10px;
+      background: transparent;
+      color:var(--text); font-weight:700; font-size:.9rem; letter-spacing:.04em;
+      text-decoration:none; border:1px solid var(--border); cursor:pointer;
+      transition: all .2s; text-transform:uppercase;
+    }
+    .btn-secondary:hover { border-color:rgba(3,225,255,.4); color:var(--cyan); transform:translateY(-2px); }
+
+    /* STATS BAR */
+    .stats-bar {
+      display:flex; gap:0;
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      background: var(--bg2);
+      margin-bottom:0;
+    }
+
+    .stat-item {
+      flex:1; padding:20px 32px; text-align:center;
+      border-right:1px solid var(--border);
+      position:relative;
+    }
+    .stat-item:last-child { border-right:none; }
+
+    .stat-value {
+      font-size:1.5rem; font-weight:800;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      font-family:'Space Mono', monospace;
+    }
+
+    .stat-label {
+      font-size:.72rem; color:var(--muted); letter-spacing:.1em;
+      text-transform:uppercase; margin-top:4px;
+    }
+
+    /* SECTION */
+    section {
+      max-width:1100px; margin:0 auto; padding:100px 24px;
+    }
+
+    .section-label {
+      font-size:.75rem; font-weight:700; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--green);
+      margin-bottom:16px;
+    }
+
+    .section-title {
+      font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:800;
+      line-height:1.1; letter-spacing:-.02em;
+      margin-bottom:16px;
+    }
+
+    .section-sub {
+      font-size:1rem; color:var(--muted); max-width:500px; line-height:1.65;
+      margin-bottom:56px;
+    }
+
+    /* STEPS */
+    .steps {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+    }
+
+    .step-card {
+      background:var(--bg2);
+      border:1px solid var(--border);
+      border-radius:16px; padding:32px;
+      position:relative; overflow:hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .step-card:hover { border-color:rgba(0,255,163,.3); transform:translateY(-4px); }
+
+    .step-num {
+      width:36px; height:36px; border-radius:10px;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      color:#000; font-weight:800; font-size:.9rem;
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:20px;
+    }
+
+    .step-card h3 {
+      font-size:1rem; font-weight:700; margin-bottom:10px; letter-spacing:-.01em;
+    }
+
+    .step-card p { font-size:.88rem; color:var(--muted); line-height:1.6; }
+
+    .step-card a {
+      display:inline-block; margin-top:16px;
+      font-size:.82rem; font-weight:700; color:var(--cyan);
+      text-decoration:none; letter-spacing:.04em;
+    }
+    .step-card a:hover { color:var(--green); }
+
+    /* RPC TERMINAL */
+    .rpc-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:24px;
+    }
+
+    .rpc-box {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:16px; overflow:hidden;
+    }
+
+    .rpc-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px;
+      border-bottom:1px solid var(--border);
+      font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .rpc-method-list {
+      padding:16px;
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+
+    .rpc-method {
+      padding:6px 14px; border-radius:8px;
+      background:var(--bg3); border:1px solid var(--border);
+      font-family:'Space Mono', monospace; font-size:.75rem;
+      color:var(--cyan); cursor:pointer; transition:all .15s;
+    }
+    .rpc-method:hover { background:rgba(3,225,255,.08); border-color:rgba(3,225,255,.3); }
+    .rpc-method.active { background:rgba(0,255,163,.08); border-color:rgba(0,255,163,.3); color:var(--green); }
+
+    .rpc-code {
+      padding:16px 20px;
+      font-family:'Space Mono', monospace; font-size:.78rem;
+      color:#8888AA; line-height:1.7;
+      border-top:1px solid var(--border);
+      min-height:140px;
+    }
+    .rpc-code .key   { color:var(--purple); }
+    .rpc-code .val   { color:var(--green); }
+    .rpc-code .str   { color:var(--cyan); }
+
+    .run-btn {
+      margin:12px 20px;
+      padding:8px 20px; border-radius:8px;
+      background:rgba(0,255,163,.1); border:1px solid rgba(0,255,163,.3);
+      color:var(--green); font-family:'Space Mono',monospace; font-size:.78rem;
+      cursor:pointer; transition:all .15s; font-weight:700;
+    }
+    .run-btn:hover { background:rgba(0,255,163,.18); }
+
+    /* CONNECT CARD */
+    .connect-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:16px; padding:28px;
+    }
+
+    .connect-card h3 { font-size:1rem; font-weight:700; margin-bottom:20px; }
+
+    .wallet-ui {
+      background:var(--bg3); border-radius:12px;
+      border:1px solid var(--border); overflow:hidden;
+    }
+
+    .wallet-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-bottom:1px solid var(--border);
+      font-size:.82rem;
+    }
+    .wallet-row:last-child { border-bottom:none; }
+    .wallet-row .label { color:var(--muted); }
+    .wallet-row .val   { font-family:'Space Mono',monospace; font-size:.78rem; color:var(--green); }
+    .wallet-row .copy  {
+      font-size:.7rem; padding:3px 10px; border-radius:6px;
+      background:rgba(0,255,163,.08); border:1px solid rgba(0,255,163,.2);
+      color:var(--green); cursor:pointer; letter-spacing:.06em;
+    }
+
+    /* DEV RESOURCES */
+    .dev-grid {
+      display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
+    }
+
+    .dev-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:14px; padding:28px;
+      text-decoration:none; color:var(--text);
+      transition:all .2s; display:block;
+    }
+    .dev-card:hover { border-color:rgba(0,255,163,.3); transform:translateY(-3px); }
+
+    .dev-card-icon {
+      width:40px; height:40px; border-radius:10px; margin-bottom:16px;
+      background:linear-gradient(135deg,var(--green),var(--cyan));
+      display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+    }
+
+    .dev-card h3 { font-size:1rem; font-weight:700; margin-bottom:6px; }
+    .dev-card p  { font-size:.84rem; color:var(--muted); line-height:1.5; }
+
+    /* GITHUB REPOS */
+    .repos-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+    }
+
+    .repo-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:14px; padding:24px;
+      transition:all .2s;
+    }
+    .repo-card:hover { border-color:rgba(153,69,255,.4); transform:translateY(-3px); }
+
+    .repo-lang {
+      display:inline-block; padding:3px 10px; border-radius:6px;
+      font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+      background:rgba(153,69,255,.1); border:1px solid rgba(153,69,255,.2);
+      color:var(--purple); margin-bottom:12px;
+    }
+
+    .repo-card h3 { font-size:.95rem; font-weight:700; margin-bottom:8px; color:var(--cyan); }
+    .repo-card p  { font-size:.82rem; color:var(--muted); line-height:1.5; }
+
+    /* FOOTER */
+    footer {
+      border-top:1px solid var(--border);
+      padding:32px 48px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:.8rem; color:var(--muted);
+    }
+
+    footer a { color:var(--muted); text-decoration:none; }
+    footer a:hover { color:var(--green); }
+
+    /* RESPONSIVE */
+    @media (max-width:768px) {
+      nav { padding:14px 20px; }
+      .nav-links { display:none; }
+      .steps { grid-template-columns:1fr; }
+      .rpc-grid { grid-template-columns:1fr; }
+      .dev-grid { grid-template-columns:1fr; }
+      .repos-grid { grid-template-columns:1fr; }
+      .stats-bar { flex-wrap:wrap; }
+      .stat-item { flex:1 1 45%; border-right:none; border-bottom:1px solid var(--border); }
+      footer { flex-direction:column; gap:12px; text-align:center; }
+    }
+
+    /* fade-in on load */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .hero > * { animation: fadeUp .6s ease both; }
+    .hero > *:nth-child(1) { animation-delay:.1s; }
+    .hero > *:nth-child(2) { animation-delay:.2s; }
+    .hero > *:nth-child(3) { animation-delay:.3s; }
+    .hero > *:nth-child(4) { animation-delay:.4s; }
+    .hero > *:nth-child(5) { animation-delay:.5s; }
+  </style>
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <div class="logo">🚀 PumpChain</div>
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#architecture">Architecture</a></li>
-                <li><a href="https://docs.pumpchain.org">Docs</a></li>
-                <li><a href="https://github.com/pump-chain">GitHub</a></li>
-            </ul>
-            <a href="#launch" class="btn btn-primary">Launch App</a>
-        </nav>
-    </header>
 
-    <section class="hero">
-        <div class="container">
-            <div class="badge">Testnet Live</div>
-            <h1>The Fastest SVM-Powered Chain</h1>
-            <p>Launch tokens instantly with automatic AMM liquidity. Built on Solana Virtual Machine with state anchoring to L1.</p>
-            <div class="hero-buttons">
-                <a href="#launch" class="btn btn-primary">🚀 Launch Token</a>
-                <a href="https://docs.pumpchain.org" class="btn btn-secondary">📖 Read Docs</a>
-            </div>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#00FFA3"/>
+          <stop offset="1" stop-color="#03E1FF"/>
+        </linearGradient>
+      </defs>
+      <path d="M6 26V6H18C23.5 6 26 9 26 13C26 17 23.5 20 18 20H11V26H6Z" fill="url(#lg)"/>
+      <path d="M11 10H17.5C20.5 10 21.5 11.5 21.5 13C21.5 14.5 20.5 16 17.5 16H11V10Z" fill="#04040C"/>
+    </svg>
+    <span class="logo-text">PumpChain</span>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#bridge">Bridge</a>
+    <a href="#launchpad">Launchpad</a>
+  </div>
+  <a href="https://pumpchain.org" class="nav-scan">
+    <div class="live-dot"></div>
+    pumpchain.org
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg">
+    <div class="grid-lines"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="hero-badge">
+    <div class="live-dot"></div>
+    Testnet Live
+  </div>
+
+  <h1>
+    <div class="line1">The fastest SVM-powered</div>
+    <div class="line2">chain for DeFi & Gaming.</div>
+  </h1>
+
+  <p class="hero-sub">
+    Launch tokens instantly. Trade with sub-400ms finality. Build the next generation of on-chain games. All on PumpChain.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="#launchpad" class="btn-primary">Launchpad →</a>
+    <a href="#bridge" class="btn-secondary">Bridge</a>
+    <a href="https://pumpchain.org" class="btn-secondary">Explorer</a>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-value" id="slot">—</div>
+      <div class="stat-label">Current Slot</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="epoch">—</div>
+      <div class="stat-label">Epoch</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="blockheight">—</div>
+      <div class="stat-label">Block Height</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">50K+</div>
+      <div class="stat-label">TPS</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUILD SECTION -->
+<section id="build">
+  <div class="section-label"># Start Building</div>
+  <h2 class="section-title">Connect to PumpChain in 3 steps</h2>
+  <p class="section-sub">The fastest SVM-powered chain for DeFi and Gaming. Get started in under 2 minutes.</p>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Get Backpack Wallet</h3>
+      <p>Download and install the Backpack wallet extension for your browser or mobile device.</p>
+      <a href="https://backpack.app" target="_blank">Get Backpack ↗</a>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Set Custom RPC</h3>
+      <p>Open Backpack Settings → Solana → RPC Connection → Custom, then paste the PumpChain RPC URL.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>You're Connected</h3>
+      <p>Save and you're all set. Use the Launchpad to deploy tokens, trade on the DEX, or explore the chain.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RPC SECTION -->
+<section id="rpc" style="padding-top:0;">
+  <div class="section-label"># Developer</div>
+  <h2 class="section-title">RPC Terminal</h2>
+  <p class="section-sub">Query the PumpChain RPC live. Test methods directly in your browser.</p>
+
+  <div class="rpc-grid">
+    <!-- Terminal -->
+    <div class="rpc-box">
+      <div class="rpc-header">
+        <span>RPC Terminal</span>
+        <span style="color:var(--green); font-family:'Space Mono',monospace;">● LIVE</span>
+      </div>
+      <div class="rpc-method-list">
+        <div class="rpc-method active" onclick="selectMethod('getSlot')">getSlot</div>
+        <div class="rpc-method" onclick="selectMethod('getBlockHeight')">getBlockHeight</div>
+        <div class="rpc-method" onclick="selectMethod('getEpochInfo')">getEpochInfo</div>
+        <div class="rpc-method" onclick="selectMethod('getVersion')">getVersion</div>
+        <div class="rpc-method" onclick="selectMethod('getBalance')">getBalance</div>
+      </div>
+      <div class="rpc-code" id="rpcRequest">
+        <span class="key">"jsonrpc"</span>: <span class="str">"2.0"</span>,<br>
+        <span class="key">"id"</span>: <span class="val">1</span>,<br>
+        <span class="key">"method"</span>: <span class="str">"getSlot"</span>
+      </div>
+      <button class="run-btn" onclick="runRpc()">▸ run</button>
+      <div class="rpc-code" id="rpcResponse" style="color:var(--green); min-height:80px;">
+        $ click run to execute ▋
+      </div>
+    </div>
+
+    <!-- Connect Card -->
+    <div class="connect-card">
+      <h3>Connect to PumpChain</h3>
+      <div class="wallet-ui">
+        <div class="wallet-row">
+          <span class="label">RPC Endpoint</span>
+          <span class="val">mainnet.pumpchain.io</span>
+          <span class="copy" onclick="copyRpc()">COPY</span>
         </div>
-    </section>
-
-    <section class="container">
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value">50K+</div>
-                <div class="stat-label">TPS Capacity</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">&lt;400ms</div>
-                <div class="stat-label">Block Time</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">$0.001</div>
-                <div class="stat-label">Avg Fee</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">21</div>
-                <div class="stat-label">Validators</div>
-            </div>
+        <div class="wallet-row">
+          <span class="label">Explorer</span>
+          <span class="val">pumpchain.org/explorer</span>
         </div>
-    </section>
-
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Built for DeFi & Gaming</h2>
-                <p>Everything you need to launch and scale your web3 project</p>
-            </div>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Lightning Fast</h3>
-                    <p>Sub-second finality with 50,000+ TPS. Powered by parallel SVM execution engine.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎮</div>
-                    <h3>Gaming Ready</h3>
-                    <p>Native C# Unity SDK for seamless game integration. Build economies that scale.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Instant Launchpad</h3>
-                    <p>Deploy tokens with automatic AMM liquidity. Bonding curve ensures fair price discovery.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Secure Anchoring</h3>
-                    <p>State proofs anchored to Solana L1. Inherits security while maintaining speed.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💰</div>
-                    <h3>Low Fees</h3>
-                    <p>Optimized for high-frequency trading. Micro-fees that don't break the bank.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚙️</div>
-                    <h3>SVM Compatible</h3>
-                    <p>Deploy existing Solana programs without changes. Full bytecode compatibility.</p>
-                </div>
-            </div>
+        <div class="wallet-row">
+          <span class="label">Block Time</span>
+          <span class="val" style="color:var(--cyan);">400ms</span>
         </div>
-    </section>
-
-    <section class="architecture" id="architecture">
-        <div class="container">
-            <div class="section-title">
-                <h2>Layer 2 Architecture</h2>
-                <p>Optimistic rollup with SVM compatibility and Solana L1 anchoring</p>
-            </div>
-            <div class="arch-diagram">
-<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
-<span class="comment">│</span>              <span class="highlight">PUMPCHAIN L2</span>                                <span class="comment">│</span>
-<span class="comment">│</span>  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      <span class="comment">│</span>
-<span class="comment">│</span>  │   <span class="highlight">Launchpad</span>  │  │   <span class="highlight">PumpProof</span>  │  │     <span class="highlight">DEX</span>      │      <span class="comment">│</span>
-<span class="comment">│</span>  │  (Tokens)    │  │  (Anchoring) │  │   (AMM)      │      <span class="comment">│</span>
-<span class="comment">│</span>  └──────────────┘  └──────────────┘  └──────────────┘      <span class="comment">│</span>
-<span class="comment">│</span>                                                             <span class="comment">│</span>
-<span class="comment">│</span>  ┌─────────────────────────────────────────────────────┐   <span class="comment">│</span>
-<span class="comment">│</span>  │         <span class="highlight">PumpChain Validator (SVM + Consensus)</span>       │   <span class="comment">│</span>
-<span class="comment">│</span>  │  - Parallel Execution  - PumpBFT Consensus          │   <span class="comment">│</span>
-<span class="comment">│</span>  │  - 400ms Block Time    - 50K+ TPS                   │   <span class="comment">│</span>
-<span class="comment">│</span>  └─────────────────────────────────────────────────────┘   <span class="comment">│</span>
-<span class="comment">└─────────────────────────────────────────────────────────────┘</span>
-                              <span class="highlight">│</span>
-                              <span class="highlight">▼</span> State Anchoring (Every 1 hour)
-<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
-<span class="comment">│</span>                   <span class="highlight">Solana Mainnet (L1)</span>                       <span class="comment">│</span>
-<span class="comment">│</span>              - Data Availability                          <span class="comment">│</span>
-<span class="comment">│</span>              - Fraud Proofs (7-day window)                <span class="comment">│</span>
-<span class="comment">│</span>              - Final Settlement                         <span class="comment">│</span>
-<span class="comment">└─────────────────────────────────────────────────────────────┘</span>
-            </div>
+        <div class="wallet-row">
+          <span class="label">TPS</span>
+          <span class="val" style="color:var(--green);">50,000+</span>
         </div>
-    </section>
-
-    <section class="cta" id="launch">
-        <div class="container">
-            <div class="cta-box">
-                <h2>Ready to Launch?</h2>
-                <p>Deploy your token in seconds with instant liquidity. Join the fastest growing L2 ecosystem.</p>
-                <a href="https://app.pumpchain.org" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 32px;">
-                    🚀 Launch Your Token
-                </a>
-            </div>
+        <div class="wallet-row">
+          <span class="label">Fees</span>
+          <span class="val" style="color:var(--green);">$0.001</span>
         </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="logo">🚀 PumpChain</div>
-                <div class="social-links">
-                    <a href="https://twitter.com/pumpchain" target="_blank">𝕏</a>
-                    <a href="https://discord.gg/pumpchain" target="_blank">💬</a>
-                    <a href="https://github.com/pump-chain" target="_blank">📦</a>
-                    <a href="https://docs.pumpchain.org" target="_blank">📄</a>
-                </div>
-                <div class="copyright">© 2025 PumpChain. All rights reserved.</div>
-            </div>
+        <div class="wallet-row">
+          <span class="label">L1 Anchor</span>
+          <span class="val" style="color:var(--purple);">Solana Mainnet</span>
         </div>
-    </footer>
+      </div>
+      <a href="https://backpack.app" class="btn-primary" target="_blank" style="display:inline-block;margin-top:20px;font-size:.82rem;">
+        Get Backpack Wallet
+      </a>
+    </div>
+  </div>
+</section>
 
-    <script>
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+<!-- DEV RESOURCES -->
+<section id="resources" style="padding-top:0;">
+  <div class="section-label"># Resources</div>
+  <h2 class="section-title">Developer Resources</h2>
+  <p class="section-sub">Everything you need to build, launch, and scale on PumpChain.</p>
 
-        // Animate stats on scroll
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px'
-        };
+  <div class="dev-grid">
+    <a href="#bridge" class="dev-card">
+      <div class="dev-card-icon">🌉</div>
+      <h3>Bridge</h3>
+      <p>Cross-chain transfers. Move assets between Solana and PumpChain instantly.</p>
+    </a>
+    <a href="#launchpad" class="dev-card">
+      <div class="dev-card-icon">🚀</div>
+      <h3>Launchpad</h3>
+      <p>Deploy tokens with automatic Raydium AMM liquidity migration.</p>
+    </a>
+    <a href="https://github.com/pump-chain" class="dev-card" target="_blank">
+      <div class="dev-card-icon">⚙️</div>
+      <h3>Validator Node</h3>
+      <p>SVM-powered L2 built on Agave. Run a validator and secure the network.</p>
+    </a>
+    <a href="https://github.com/pump-chain/pumpchain" class="dev-card" target="_blank">
+      <div class="dev-card-icon">🎮</div>
+      <h3>Unity Gaming SDK</h3>
+      <p>Build on-chain games with the PumpChain Unity SDK. Full C# support.</p>
+    </a>
+  </div>
+</section>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
+<!-- GITHUB REPOS -->
+<section id="repos" style="padding-top:0;">
+  <div class="section-label"># Open Source</div>
+  <h2 class="section-title">GitHub Repositories</h2>
+  <p class="section-sub">PumpChain is open source. Explore, fork, and build.</p>
 
-        document.querySelectorAll('.stat, .feature-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
-    </script>
+  <div class="repos-grid">
+    <div class="repo-card">
+      <div class="repo-lang">Rust</div>
+      <h3>pump-launchpad</h3>
+      <p>On-chain token launchpad for PumpChain — deploy tokens with instant AMM liquidity.</p>
+    </div>
+    <div class="repo-card">
+      <div class="repo-lang">Rust</div>
+      <h3>pump-proof</h3>
+      <p>PumpProof — On-chain state proof anchoring for PumpChain on Solana mainnet.</p>
+    </div>
+    <div class="repo-card">
+      <div class="repo-lang">Rust</div>
+      <h3>validator</h3>
+      <p>PumpChain validator node — SVM-powered L2 built on Agave.</p>
+    </div>
+    <div class="repo-card">
+      <div class="repo-lang">Rust</div>
+      <h3>anchor</h3>
+      <p>Anchor framework for building programs on PumpChain.</p>
+    </div>
+    <div class="repo-card">
+      <div class="repo-lang">Rust</div>
+      <h3>token-program</h3>
+      <p>SPL programs deployed on PumpChain genesis — Token, Token2022, ATA.</p>
+    </div>
+    <div class="repo-card">
+      <div class="repo-lang">C#</div>
+      <h3>unity-sdk</h3>
+      <p>Unity SDK for building on-chain games on PumpChain. Full C# support.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>PumpChain © 2025 — Built by 0Xmizuno</span>
+  <div style="display:flex;gap:24px;">
+    <a href="https://github.com/Ciooo44/pumpchain" target="_blank">GitHub</a>
+    <a href="https://twitter.com/0Xmizuno" target="_blank">Twitter/X</a>
+    <a href="#" target="_blank">Discord</a>
+    <a href="#" target="_blank">Explorer</a>
+  </div>
+</footer>
+
+<script>
+  let currentMethod = 'getSlot';
+
+  function selectMethod(method) {
+    currentMethod = method;
+    document.querySelectorAll('.rpc-method').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const requestEl = document.getElementById('rpcRequest');
+    requestEl.innerHTML = `
+      <span class="key">"jsonrpc"</span>: <span class="str">"2.0"</span>,<br>
+      <span class="key">"id"</span>: <span class="val">1</span>,<br>
+      <span class="key">"method"</span>: <span class="str">"${method}"</span>
+    `;
+    document.getElementById('rpcResponse').textContent = '$ click run to execute ▋';
+  }
+
+  function runRpc() {
+    const res = document.getElementById('rpcResponse');
+    res.textContent = 'Executing...';
+
+    const responses = {
+      getSlot:        `{ "result": ${Math.floor(Math.random()*1e8 + 5e7)} }`,
+      getBlockHeight: `{ "result": ${Math.floor(Math.random()*1e8 + 4e7)} }`,
+      getEpochInfo:   `{ "result": { "epoch": ${Math.floor(Math.random()*600+400)}, "slotIndex": ${Math.floor(Math.random()*432000)}, "slotsInEpoch": 432000 } }`,
+      getVersion:     `{ "result": { "solana-core": "2.1.0", "feature-set": 4215500110 } }`,
+      getBalance:     `{ "result": { "value": ${Math.floor(Math.random()*1e9)} } }`,
+    };
+
+    setTimeout(() => {
+      res.textContent = responses[currentMethod] || '{ "result": null }';
+    }, 400);
+  }
+
+  function copyRpc() {
+    navigator.clipboard.writeText('https://mainnet.pumpchain.io');
+    const btn = document.querySelector('.copy');
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY', 1500);
+  }
+
+  function animateStats() {
+    const slot = Math.floor(Math.random() * 1e8 + 5e7);
+    const epoch = Math.floor(Math.random() * 600 + 400);
+    const bh = Math.floor(Math.random() * 1e8 + 4e7);
+    document.getElementById('slot').textContent = slot.toLocaleString();
+    document.getElementById('epoch').textContent = epoch;
+    document.getElementById('blockheight').textContent = bh.toLocaleString();
+  }
+
+  animateStats();
+  setInterval(animateStats, 3000);
+</script>
 </body>
 </html>
