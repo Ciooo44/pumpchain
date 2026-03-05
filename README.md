@@ -110,4 +110,4 @@ MIT License - see [LICENSE](./LICENSE)
 
 ---
 
-**Built with ❤️ by the PumpChain Team**
+**Built with ❤️ by 0Xmizuno & PumpChain Team**

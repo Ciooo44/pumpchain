@@ -255,7 +255,7 @@ Multi-sig emergency pause mechanism:
 
 ---
 
-**PumpChain Team**  
+**0Xmizuno - Founder**  
 Website: https://pumpchain.io  
-Twitter: @pumpchain  
+Twitter: @0Xmizuno  
 Discord: discord.gg/pumpchain
