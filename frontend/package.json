@@ -1,0 +1,39 @@
+{
+  "name": "pumpchain-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PumpChain Web Interface",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "@solana/web3.js": "^1.87",
+    "@solana/wallet-adapter-react": "^0.15",
+    "@solana/wallet-adapter-wallets": "^0.19",
+    "@solana/wallet-adapter-react-ui": "^0.9",
+    "@solana/wallet-adapter-base": "^0.9",
+    "@solana/spl-token": "^0.3",
+    "@coral-xyz/anchor": "^0.29",
+    "tailwindcss": "^3.4",
+    "autoprefixer": "^10.4",
+    "postcss": "^8.4",
+    "framer-motion": "^11",
+    "lucide-react": "^0.344",
+    "react-json-editor-ajrm": "^2.5",
+    "recharts": "^2.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.1",
+    "typescript": "^5"
+  }
+}

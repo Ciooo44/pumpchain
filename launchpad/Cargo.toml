@@ -1,0 +1,27 @@
+[package]
+name = "pumpchain-launchpad"
+version = "0.1.0"
+description = "PumpChain Token Launchpad with Instant AMM"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "pumpchain_launchpad"
+
+[features]
+default = ["cpi"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+
+[dependencies]
+anchor-lang = "0.29"
+anchor-spl = "0.29"
+solana-program = "1.17"
+
+[dev-dependencies]
+anchor-client = "0.29"
+solana-sdk = "1.17"
+solana-program-test = "1.17"
+tokio = { version = "1.35", features = ["full"] }

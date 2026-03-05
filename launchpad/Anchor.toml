@@ -1,0 +1,29 @@
+[features]
+seeds = true
+skip-lint = false
+
+[programs.localnet]
+pumpchain_launchpad = "PumpLchPad111111111111111111111111111111111"
+
+[programs.devnet]
+pumpchain_launchpad = "PumpLchPad111111111111111111111111111111111"
+
+[programs.mainnet]
+pumpchain_launchpad = "PumpLchPad111111111111111111111111111111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+deploy = "anchor deploy"
+
+[test]
+startup_wait = 5000
+shutdown_wait = 2000
+upgradeable = false
