@@ -2,20 +2,20 @@
 
 **The fastest SVM-powered chain for DeFi and Gaming.**
 
-[![Testnet Live](https://img.shields.io/badge/Testnet-Live-00FFA3?style=for-the-badge)](https://pumpchain.vercel.app)
+[![Mainnet Live](https://img.shields.io/badge/Mainnet-Live-00FFA3?style=for-the-badge)](https://pumpchain.vercel.app)
 [![Website](https://img.shields.io/badge/Website-pumpchain.org-03E1FF?style=for-the-badge)](https://pumpchain.vercel.app)
 [![Docs](https://img.shields.io/badge/Docs-Read-9945FF?style=for-the-badge)](./docs/whitepaper.md)
 
 PumpChain is a high-performance Layer 2 blockchain built on the Solana Virtual Machine (SVM), optimized for token launches, DeFi applications, and gaming economies.
 
-## 🧪 Testnet Live
+## 🚀 Mainnet Live
 
 | Service | URL | Status |
 |---------|-----|--------|
 | **Website** | [pumpchain.vercel.app](https://pumpchain.vercel.app) | 🟢 Online |
-| **RPC** | `https://testnet.pumpchain.io` | 🟢 Online |
-| **Explorer** | [testnet.pumpscan.app](https://testnet.pumpscan.app) | 🟢 Online |
-| **Faucet** | [faucet.pumpchain.io](https://faucet.pumpchain.io) | 🟢 Online |
+| **RPC** | `https://mainnet.pumpchain.io` | 🟢 Online |
+| **Explorer** | [pumpscan.app](https://pumpscan.app) | 🟢 Online |
+| **Faucet** | [mainnet.pumpchain.io/faucet](https://mainnet.pumpchain.io/faucet) | 🟢 Online |
 
 ---
 
@@ -60,28 +60,28 @@ pumpchain/
 
 ---
 
-## 🚀 Quick Start (Testnet)
+## 🚀 Quick Start (Mainnet)
 
 ### 1. Connect Wallet
 
 **Backpack Wallet:**
 ```
 Settings → Solana → RPC Connection → Custom
-RPC URL: https://testnet.pumpchain.io
+RPC URL: https://mainnet.pumpchain.io
 ```
 
 **Phantom Wallet:**
 ```
 Settings → Developer Settings → Custom RPC
-RPC URL: https://testnet.pumpchain.io
+RPC URL: https://mainnet.pumpchain.io
 ```
 
-### 2. Get Test Tokens
+### 2. Get Tokens
 
 Visit the faucet or use CLI:
 ```bash
-curl -X POST https://faucet.pumpchain.io \
-  -d '{"address": "YOUR_WALLET", "amount": 1000}'
+curl -X POST https://mainnet.pumpchain.io/faucet \
+  -d '{"address": "YOUR_WALLET", "amount": 100}'
 ```
 
 ### 3. Launch Your Token
@@ -90,12 +90,12 @@ curl -X POST https://faucet.pumpchain.io \
 # Install PumpChain CLI
 npm install -g @pumpchain/cli
 
-# Launch token on testnet
+# Launch token on mainnet
 pumpchain launch \
   --name "My Token" \
   --symbol "MYT" \
   --supply 1000000 \
-  --network testnet
+  --network mainnet
 ```
 
 ---
@@ -121,9 +121,9 @@ anchor build
 anchor deploy
 ```
 
-### 3. Run Local Testnet
+### 3. Run Local Mainnet
 ```bash
-docker-compose -f docker-compose.testnet.yml up
+docker-compose -f docker-compose.mainnet.yml up
 ```
 
 ---
