@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connect Wallet | PumpChain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:   #00FFA3;
+      --cyan:    #03E1FF;
+      --purple:  #9945FF;
+      --pink:    #FF3CAC;
+      --bg:      #04040C;
+      --bg2:     #080818;
+      --bg3:     #0D0D22;
+      --border:  rgba(0,255,163,0.12);
+      --text:    #E8E8F0;
+      --muted:   #6B6B8A;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .connect-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .logo { font-size: 3rem; margin-bottom: 16px; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    p { color: var(--muted); margin-bottom: 32px; font-size: 0.9rem; }
+    .wallet-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .wallet-btn:hover {
+      border-color: var(--green);
+      background: rgba(0,255,163,0.05);
+    }
+    .wallet-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .back-link:hover { color: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="connect-box">
+    <div class="logo">🚀</div>
+    <h1>Connect Wallet</h1>
+    <p>Select your preferred wallet to connect to PumpChain</p>
+
+    <button class="wallet-btn" onclick="connectBackpack()">
+      <div class="wallet-icon">🎒</div>
+      <span>Backpack</span>
+    </button>
+
+    <button class="wallet-btn" onclick="connectPhantom()">
+      <div class="wallet-icon">👻</div>
+      <span>Phantom</span>
+    </button>
+
+    <button class="wallet-btn" onclick="connectSolflare()">
+      <div class="wallet-icon">☀️</div>
+      <span>Solflare</span>
+    </button>
+
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+
+  <script>
+    function connectBackpack() {
+      const rpc = 'https://testnet.pumpchain.io';
+      alert(`🎒 Backpack Connection\n\n1. Open Backpack extension\n2. Go to Settings → Solana\n3. Set RPC to:\n${rpc}\n\nPumpChain will be added automatically!`);
+    }
+
+    function connectPhantom() {
+      const rpc = 'https://testnet.pumpchain.io';
+      alert(`👻 Phantom Connection\n\n1. Open Phantom extension\n2. Go to Settings → Developer\n3. Enable "Custom RPC"\n4. Add:\n${rpc}\n\nPumpChain will be added!`);
+    }
+
+    function connectSolflare() {
+      const rpc = 'https://testnet.pumpchain.io';
+      alert(`☀️ Solflare Connection\n\n1. Open Solflare\n2. Go to Settings → Network\n3. Add custom RPC:\n${rpc}\n\nPumpChain will be available!`);
+    }
+  </script>
+</body>
+</html>
