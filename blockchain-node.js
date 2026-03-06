@@ -29,6 +29,21 @@ class Blockchain {
     // Initialize genesis accounts
     this.initGenesisAccounts();
     
+    // Token program database
+    this.tokens = new Map();
+    this.tokenAccounts = new Map();
+    
+    // Initialize native PUMP token
+    this.tokens.set('PUMP', {
+      mint: 'Pump111111111111111111111111111111111111111',
+      name: 'PumpChain',
+      symbol: 'PUMP',
+      decimals: 9,
+      totalSupply: 1000000000000000000, // 1 billion
+      authority: 'PumpTreasury1111111111111111111111111111111',
+      createdAt: Date.now()
+    });
+    
     // Start block production
     this.startBlockProduction();
   }
@@ -189,7 +204,84 @@ class Blockchain {
       epoch: this.epoch,
       totalAccounts: this.accounts.size,
       totalTransactions: this.transactions.size,
-      pendingTransactions: this.pendingTxs.length
+      pendingTransactions: this.pendingTxs.length,
+      totalTokens: this.tokens.size
+    };
+  }
+  
+  // ========== TOKEN FUNCTIONS ==========
+  createToken(params) {
+    const { name, symbol, decimals = 9, totalSupply = 0, authority } = params;
+    
+    if (!name || !symbol) {
+      throw new Error('Token name and symbol are required');
+    }
+    
+    // Generate unique mint address
+    const mint = 'pump' + this.generateHash(name + symbol + Date.now()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 40);
+    
+    const token = {
+      mint,
+      name,
+      symbol: symbol.toUpperCase(),
+      decimals,
+      totalSupply: 0,
+      authority: authority || 'PumpTreasury1111111111111111111111111111111',
+      createdAt: Date.now(),
+      slot: this.slot
+    };
+    
+    this.tokens.set(mint, token);
+    
+    console.log(`🪙 Token created: ${name} (${symbol}) - Mint: ${mint}`);
+    
+    return {
+      success: true,
+      mint,
+      name,
+      symbol: token.symbol,
+      decimals,
+      authority: token.authority
+    };
+  }
+  
+  mintToken(params) {
+    const { mint, amount, destination } = params;
+    
+    const token = this.tokens.get(mint);
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    
+    // Update token supply
+    token.totalSupply += amount;
+    
+    // Create or update token account for destination
+    const tokenAccountKey = `${destination}_${mint}`;
+    let tokenAccount = this.tokenAccounts.get(tokenAccountKey);
+    
+    if (!tokenAccount) {
+      tokenAccount = {
+        mint,
+        owner: destination,
+        amount: 0,
+        decimals: token.decimals,
+        createdAt: Date.now()
+      };
+      this.tokenAccounts.set(tokenAccountKey, tokenAccount);
+    }
+    
+    tokenAccount.amount += amount;
+    
+    console.log(`🪙 Minted ${amount} ${token.symbol} to ${destination}`);
+    
+    return {
+      success: true,
+      mint,
+      amount,
+      destination,
+      tokenAccount: tokenAccountKey,
+      newSupply: token.totalSupply
     };
   }
 }
@@ -592,26 +684,80 @@ function handleRPC(method, params) {
     
     // ========== TOKENS ==========
     case 'getTokenSupply':
+      const tokenMint = params?.[0];
+      const token = chain.tokens.get(tokenMint) || chain.tokens.get('PUMP');
       return {
         context: { slot: chain.slot, apiVersion: '1.17.0' },
         value: {
-          amount: '1000000000000000000',
-          decimals: 9,
-          uiAmount: 1000000000,
-          uiAmountString: '1000000000'
+          amount: token ? token.totalSupply.toString() : '0',
+          decimals: token ? token.decimals : 9,
+          uiAmount: token ? token.totalSupply / Math.pow(10, token.decimals) : 0,
+          uiAmountString: token ? (token.totalSupply / Math.pow(10, token.decimals)).toString() : '0'
         }
       };
       
     case 'getTokenAccountBalance':
+      const tokenAccount = params?.[0];
+      const ta = chain.tokenAccounts.get(tokenAccount);
       return {
         context: { slot: chain.slot, apiVersion: '1.17.0' },
         value: {
-          amount: '0',
-          decimals: 9,
-          uiAmount: 0,
-          uiAmountString: '0'
+          amount: ta ? ta.amount.toString() : '0',
+          decimals: ta ? ta.decimals : 9,
+          uiAmount: ta ? ta.amount / Math.pow(10, ta.decimals) : 0,
+          uiAmountString: ta ? (ta.amount / Math.pow(10, ta.decimals)).toString() : '0'
         }
       };
+      
+    case 'getTokenLargestAccounts':
+      return {
+        context: { slot: chain.slot, apiVersion: '1.17.0' },
+        value: []
+      };
+      
+    case 'getTokenAccountsByOwner':
+      const owner = params?.[0];
+      const ownerAccounts = [];
+      for (const [key, acc] of chain.tokenAccounts.entries()) {
+        if (acc.owner === owner) {
+          ownerAccounts.push({
+            pubkey: key,
+            account: {
+              data: [Buffer.from(JSON.stringify(acc)).toString('base64'), 'base64'],
+              executable: false,
+              lamports: 2039280,
+              owner: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+              rentEpoch: 0
+            }
+          });
+        }
+      }
+      return {
+        context: { slot: chain.slot, apiVersion: '1.17.0' },
+        value: ownerAccounts
+      };
+      
+    // ========== PUMPCHAIN CUSTOM ==========
+    case 'createToken':
+      const tokenParams = params?.[0] || {};
+      const newToken = chain.createToken(tokenParams);
+      return newToken;
+      
+    case 'mintToken':
+      const mintParams = params?.[0] || {};
+      const mintResult = chain.mintToken(mintParams);
+      return mintResult;
+      
+    case 'getAllTokens':
+      return Array.from(chain.tokens.entries()).map(([mint, token]) => ({
+        mint,
+        ...token
+      }));
+      
+    case 'getToken':
+      const queryMint = params?.[0];
+      const foundToken = chain.tokens.get(queryMint);
+      return foundToken || null;
     
     // ========== DEBUG ==========
     case 'getTotalSupply':

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Launchpad | PumpChain</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -44,32 +45,17 @@
     }
     .subtitle { color: #6B6B8A; margin-bottom: 48px; }
     
-    /* Two Column Layout */
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
     
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-      nav { padding: 18px 24px; }
-      .nav-links { display: none; }
-      main { padding: 100px 24px 48px; }
-    }
-    
-    /* Cards */
     .card {
       background: rgba(8,8,24,0.6);
       border: 1px solid rgba(0,255,163,0.12);
       border-radius: 20px;
       padding: 32px;
     }
-    .card h2 {
-      font-size: 20px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .card h2 { font-size: 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
     
-    /* Form */
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; color: #6B6B8A; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
     .form-group input, .form-group textarea {
@@ -82,13 +68,9 @@
       font-family: 'Syne', sans-serif;
       font-size: 14px;
     }
-    .form-group input:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: #00FFA3;
-    }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #00FFA3; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     
-    /* Buttons */
     .btn {
       width: 100%;
       padding: 16px;
@@ -105,14 +87,9 @@
       color: #000;
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,163,0.3); }
-    .btn-pump {
-      background: linear-gradient(135deg, #9945FF, #FF3CAC);
-      color: #fff;
-    }
-    .btn-pump:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(153,69,255,0.3); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    /* Token List */
-    .token-list { display: flex; flex-direction: column; gap: 12px; }
+    .token-list { display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; }
     .token-item {
       display: flex;
       align-items: center;
@@ -130,63 +107,60 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
+      font-weight: 700;
     }
     .token-info { flex: 1; }
     .token-name { font-weight: 700; font-size: 16px; }
     .token-meta { color: #6B6B8A; font-size: 12px; margin-top: 2px; }
-    .token-price { text-align: right; }
-    .token-price-value { font-weight: 700; color: #00FFA3; }
-    .token-price-change { font-size: 12px; color: #6B6B8A; }
-    .badge-pump {
-      background: linear-gradient(135deg, #9945FF, #FF3CAC);
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 100px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
+    .token-mint { font-family: 'Space Mono', monospace; font-size: 10px; color: #4A4A6A; }
     
-    /* Pump.fun Section */
-    .pump-banner {
-      background: linear-gradient(135deg, rgba(153,69,255,0.1), rgba(255,60,172,0.1));
-      border: 1px solid rgba(153,69,255,0.3);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-    .pump-banner h3 {
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-    .pump-banner p {
-      color: #6B6B8A;
-      font-size: 14px;
-      margin-bottom: 16px;
-    }
-    
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding-bottom: 16px;
-    }
-    .tab {
-      padding: 8px 16px;
-      background: transparent;
-      border: none;
-      color: #6B6B8A;
-      font-family: 'Syne', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-    .tab.active {
+    .success-banner {
       background: rgba(0,255,163,0.1);
+      border: 1px solid rgba(0,255,163,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    .success-banner.show { display: block; }
+    .success-banner h3 { color: #00FFA3; margin-bottom: 8px; }
+    .success-banner p { color: #6B6B8A; font-size: 14px; }
+    .success-banner .mint-address {
+      font-family: 'Space Mono', monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      word-break: break-all;
+      font-size: 12px;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .wallet-status {
+      background: rgba(255,193,7,0.1);
+      border: 1px solid rgba(255,193,7,0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      color: #FFC107;
+      font-size: 14px;
+    }
+    .wallet-status.connected {
+      background: rgba(0,255,163,0.1);
+      border-color: rgba(0,255,163,0.3);
       color: #00FFA3;
     }
   </style>
@@ -208,30 +182,32 @@
   
   <main>
     <h1>🚀 Launchpad</h1>
-    <p class="subtitle">Launch your token on PumpChain + Pump.fun</p>
+    <p class="subtitle">Create and launch tokens directly on PumpChain</p>
     
     <div class="grid">
-      <!-- Left: Launch Form -->
+      <!-- Left: Create Token -->
       <div class="card">
         <h2>📝 Create Token</h2>
         
-        <div class="pump-banner">
-          <h3>🔗 Pump.fun Integration</h3>
-          <p>Tokens launched here will also be listed on Pump.fun automatically</p>
-          <button class="btn btn-pump" onclick="launchOnPumpFun()">
-            🚀 Launch on Pump.fun
-          </button>
+        <div class="wallet-status" id="walletStatus">
+          ⚠️ Please connect your wallet to create tokens
+        </div>
+        
+        <div class="success-banner" id="successBanner">
+          <h3>✅ Token Created Successfully!</h3>
+          <p>Your token has been minted on PumpChain</p>
+          <div class="mint-address" id="mintAddress"></div>
         </div>
         
         <form id="launchForm">
           <div class="form-group">
             <label>Token Name</label>
-            <input type="text" id="tokenName" placeholder="e.g., PumpChain Token" required>
+            <input type="text" id="tokenName" placeholder="e.g., Moon Rocket" required>
           </div>
           
           <div class="form-group">
             <label>Token Symbol</label>
-            <input type="text" id="tokenSymbol" placeholder="e.g., PUMP" required>
+            <input type="text" id="tokenSymbol" placeholder="e.g., MOON" maxlength="8" required>
           </div>
           
           <div class="form-row">
@@ -250,68 +226,22 @@
             <textarea id="description" rows="3" placeholder="Describe your token..."></textarea>
           </div>
           
-          <button type="submit" class="btn btn-primary">
-            🚀 Launch Token
+          <button type="submit" class="btn btn-primary" id="launchBtn">
+            🚀 Create Token
           </button>
         </form>
       </div>
       
       <!-- Right: Token List -->
       <div class="card">
-        <h2>📊 Launched Tokens</h2>
-        
-        <div class="tabs">
-          <button class="tab active" onclick="showTab('all')">All</button>
-          <button class="tab" onclick="showTab('pumpfun')">On Pump.fun</button>
-          <button class="tab" onclick="showTab('trending')">Trending</button>
-        </div>
-        
+        <h2>📊 Recently Created Tokens</h2>
         <div class="token-list" id="tokenList">
           <div class="token-item">
-            <div class="token-icon">🚀</div>
+            <div class="token-icon">P</div>
             <div class="token-info">
-              <div class="token-name">PumpChain <span class="badge-pump">On Pump.fun</span></div>
-              <div class="token-meta">PUMP • Launched 2h ago</div>
-            </div>
-            <div class="token-price">
-              <div class="token-price-value">$0.0012</div>
-              <div class="token-price-change">+245%</div>
-            </div>
-          </div>
-          
-          <div class="token-item">
-            <div class="token-icon" style="background: linear-gradient(135deg, #FF3CAC, #9945FF);">💎</div>
-            <div class="token-info">
-              <div class="token-name">DiamondHands</div>
-              <div class="token-meta">DMND • Launched 5h ago</div>
-            </div>
-            <div class="token-price">
-              <div class="token-price-value">$0.0008</div>
-              <div class="token-price-change">+120%</div>
-            </div>
-          </div>
-          
-          <div class="token-item">
-            <div class="token-icon" style="background: linear-gradient(135deg, #03E1FF, #00FFA3);">🌊</div>
-            <div class="token-info">
-              <div class="token-name">WaveToken <span class="badge-pump">On Pump.fun</span></div>
-              <div class="token-meta">WAVE • Launched 1d ago</div>
-            </div>
-            <div class="token-price">
-              <div class="token-price-value">$0.0025</div>
-              <div class="token-price-change">+890%</div>
-            </div>
-          </div>
-          
-          <div class="token-item">
-            <div class="token-icon" style="background: linear-gradient(135deg, #FFD700, #FFA500);">⚡</div>
-            <div class="token-info">
-              <div class="token-name">FlashCoin</div>
-              <div class="token-meta">FLASH • Launched 2d ago</div>
-            </div>
-            <div class="token-price">
-              <div class="token-price-value">$0.0005</div>
-              <div class="token-price-change" style="color: #FF4444;">-15%</div>
+              <div class="token-name">PumpChain</div>
+              <div class="token-meta">PUMP • 1B Supply</div>
+              <div class="token-mint">Pump111111111111111111111111111111111111111</div>
             </div>
           </div>
         </div>
@@ -320,39 +250,187 @@
   </main>
   
   <script>
-    // Launch on Pump.fun
-    function launchOnPumpFun() {
-      // Open Pump.fun in new tab
-      window.open('https://pump.fun/create', '_blank');
+    const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
+    let wallet = null;
+    let connection = null;
+    
+    // Check wallet connection on load
+    async function init() {
+      connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
+      
+      // Check if Phantom is connected
+      if (window.phantom?.solana?.isConnected) {
+        wallet = window.phantom.solana;
+        onWalletConnected();
+      } else if (window.solflare?.isConnected) {
+        wallet = window.solflare;
+        onWalletConnected();
+      }
+      
+      // Load existing tokens
+      loadTokens();
     }
     
-    // Form submission
-    document.getElementById('launchForm').addEventListener('submit', function(e) {
+    function onWalletConnected() {
+      const status = document.getElementById('walletStatus');
+      status.classList.add('connected');
+      status.textContent = `✅ Connected: ${wallet.publicKey.toString().slice(0, 20)}...`;
+      document.getElementById('launchBtn').disabled = false;
+    }
+    
+    // Connect wallet
+    async function connectWallet() {
+      try {
+        if (window.phantom?.solana) {
+          const resp = await window.phantom.solana.connect();
+          wallet = window.phantom.solana;
+          onWalletConnected();
+        } else if (window.solflare) {
+          await window.solflare.connect();
+          wallet = window.solflare;
+          onWalletConnected();
+        } else {
+          window.open('connect.html', '_blank');
+        }
+      } catch (err) {
+        console.error('Connection error:', err);
+        alert('Failed to connect wallet: ' + err.message);
+      }
+    }
+    
+    // Create token
+    document.getElementById('launchForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const name = document.getElementById('tokenName').value;
-      const symbol = document.getElementById('tokenSymbol').value;
-      const supply = document.getElementById('totalSupply').value;
+      if (!wallet) {
+        const connect = confirm('Wallet not connected. Connect now?');
+        if (connect) connectWallet();
+        return;
+      }
       
-      // Show confirmation
-      if (confirm(`🚀 Launch "${name}" (${symbol}) on PumpChain?\n\nThis token will also be listed on Pump.fun`)) {
-        alert('✅ Token submitted for launch!\n\nRedirecting to Pump.fun for final deployment...');
+      const btn = document.getElementById('launchBtn');
+      btn.disabled = true;
+      btn.innerHTML = '🚀 Creating<span class="loading"></span>';
+      
+      try {
+        const name = document.getElementById('tokenName').value;
+        const symbol = document.getElementById('tokenSymbol').value;
+        const supply = parseInt(document.getElementById('totalSupply').value);
+        const decimals = parseInt(document.getElementById('decimals').value);
         
-        // Redirect to pump.fun
-        setTimeout(() => {
-          window.open('https://pump.fun/create', '_blank');
-        }, 1500);
+        // Step 1: Create token on blockchain
+        const createResponse = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'createToken',
+            params: [{
+              name,
+              symbol,
+              decimals,
+              authority: wallet.publicKey.toString()
+            }]
+          })
+        });
+        
+        const createData = await createResponse.json();
+        
+        if (!createData.result?.success) {
+          throw new Error('Token creation failed');
+        }
+        
+        const mint = createData.result.mint;
+        
+        // Step 2: Mint initial supply
+        const mintResponse = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'mintToken',
+            params: [{
+              mint,
+              amount: supply,
+              destination: wallet.publicKey.toString()
+            }]
+          })
+        });
+        
+        const mintResult = await mintResponse.json();
+        
+        if (!mintResult.result?.success) {
+          throw new Error('Token minting failed');
+        }
+        
+        // Show success
+        document.getElementById('successBanner').classList.add('show');
+        document.getElementById('mintAddress').textContent = mint;
+        
+        // Add to list
+        addTokenToList({
+          mint,
+          name,
+          symbol,
+          totalSupply: supply
+        });
+        
+        // Reset form
+        document.getElementById('launchForm').reset();
+        
+      } catch (err) {
+        console.error('Launch error:', err);
+        alert('Token creation failed: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Create Token';
       }
     });
     
-    // Tab switching
-    function showTab(tab) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      // In real implementation, this would filter the token list
-      console.log('Showing tab:', tab);
+    function addTokenToList(token) {
+      const list = document.getElementById('tokenList');
+      const item = document.createElement('div');
+      item.className = 'token-item';
+      item.innerHTML = `
+        <div class="token-icon">${token.symbol[0]}</div>
+        <div class="token-info">
+          <div class="token-name">${token.name}</div>
+          <div class="token-meta">${token.symbol} • ${(token.totalSupply / 1000000000).toFixed(1)}B Supply</div>
+          <div class="token-mint">${token.mint}</div>
+        </div>
+      `;
+      list.insertBefore(item, list.firstChild.nextSibling);
     }
+    
+    async function loadTokens() {
+      try {
+        const response = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getAllTokens'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.result && data.result.length > 1) {
+          // Skip PUMP (first one)
+          data.result.slice(1).forEach(token => {
+            addTokenToList(token);
+          });
+        }
+      } catch (e) {
+        console.log('Failed to load tokens:', e);
+      }
+    }
+    
+    // Initialize
+    init();
   </script>
 </body>
 </html>
