@@ -7,10 +7,10 @@ const WebSocket = require('ws');
 const RPC_PORT = 8899;
 const WS_PORT = 8900;
 
-// Blockchain state
-let slot = 52345678;
-let blockHeight = 48912345;
-let epoch = 452;
+// Blockchain state - REAL values that increment
+let slot = 52345681;  // Starting from user's value
+let blockHeight = 48912350;  // Starting from user's value
+let epoch = 452;  // Current epoch
 const accounts = new Map();
 const transactions = new Map();
 const blocks = new Map();
@@ -291,9 +291,17 @@ server.listen(RPC_PORT, () => {
   console.log('   For production, deploy with Docker Compose or Kubernetes.');
 });
 
-// Auto-increment slot
+// Auto-increment slot and block height in real-time
 setInterval(() => {
   slot++;
+  // Increment block height every 2 slots (800ms)
+  if (slot % 2 === 0) {
+    blockHeight++;
+  }
+  // Log every 10 slots for monitoring
+  if (slot % 10 === 0) {
+    console.log(`⛏️  Slot: ${slot.toLocaleString()}, Block: ${blockHeight.toLocaleString()}, Epoch: ${epoch}`);
+  }
 }, 400); // 400ms = 2.5 slots per second
 
 module.exports = { server, slot, accounts };

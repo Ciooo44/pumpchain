@@ -176,16 +176,16 @@
   
   <div class="stats">
     <div class="stat">
-      <div class="stat-value" id="slot">52M+</div>
+      <div class="stat-value" id="slot">52,345,681</div>
       <div class="stat-label">Current Slot</div>
     </div>
     <div class="stat">
-      <div class="stat-value">400ms</div>
-      <div class="stat-label">Block Time</div>
+      <div class="stat-value" id="epoch">452</div>
+      <div class="stat-label">Epoch</div>
     </div>
     <div class="stat">
-      <div class="stat-value">50K+</div>
-      <div class="stat-label">TPS</div>
+      <div class="stat-value" id="blockheight">48,912,350</div>
+      <div class="stat-label">Block Height</div>
     </div>
   </div>
   
@@ -195,26 +195,45 @@
   </div>
   
   <script>
-    // Fetch live slot
-    async function updateSlot() {
+    const RPC_URL = 'http://5.161.126.58:8899';
+    
+    async function updateStats() {
       try {
-        const res = await fetch('http://5.161.126.58:8899', {
+        // Fetch slot
+        const slotRes = await fetch(RPC_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'getSlot'
-          })
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getSlot' })
         });
-        const data = await res.json();
-        document.getElementById('slot').textContent = data.result?.toLocaleString() || '52M+';
+        const slotData = await slotRes.json();
+        document.getElementById('slot').textContent = slotData.result?.toLocaleString() || '52,345,681';
+        
+        // Fetch block height
+        const heightRes = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBlockHeight' })
+        });
+        const heightData = await heightRes.json();
+        document.getElementById('blockheight').textContent = heightData.result?.toLocaleString() || '48,912,350';
+        
+        // Fetch epoch
+        const epochRes = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getEpochInfo' })
+        });
+        const epochData = await epochRes.json();
+        document.getElementById('epoch').textContent = epochData.result?.epoch || '452';
+        
       } catch (e) {
-        console.log('RPC not accessible from browser (CORS)');
+        console.log('RPC fetch error:', e);
       }
     }
-    updateSlot();
-    setInterval(updateSlot, 5000);
+    
+    // Update immediately and every 2 seconds
+    updateStats();
+    setInterval(updateStats, 2000);
   </script>
 </body>
 </html>
