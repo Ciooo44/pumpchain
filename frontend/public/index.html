@@ -701,7 +701,38 @@
 </footer>
 
 <script>
+  // PumpChain Testnet Configuration
+  const PUMPCHAIN_RPC = 'https://testnet.pumpchain.io';
   let currentMethod = 'getSlot';
+  let isConnected = false;
+
+  // Check connection on load
+  async function checkConnection() {
+    try {
+      const response = await fetch(PUMPCHAIN_RPC, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getSlot'
+        })
+      });
+      isConnected = response.ok;
+      updateConnectionStatus();
+    } catch (e) {
+      isConnected = false;
+      updateConnectionStatus();
+    }
+  }
+
+  function updateConnectionStatus() {
+    const statusEl = document.querySelector('.rpc-header span:last-child');
+    if (statusEl) {
+      statusEl.textContent = isConnected ? '● LIVE' : '● OFFLINE';
+      statusEl.style.color = isConnected ? 'var(--green)' : 'var(--pink)';
+    }
+  }
 
   function selectMethod(method) {
     currentMethod = method;
@@ -709,49 +740,108 @@
     event.target.classList.add('active');
 
     const requestEl = document.getElementById('rpcRequest');
+    let params = '';
+    if (method === 'getBalance') {
+      params = ',<br>  <span class="key">"params"</span>: [<span class="str">"Cioo...44"</span>]';
+    }
     requestEl.innerHTML = `
       <span class="key">"jsonrpc"</span>: <span class="str">"2.0"</span>,<br>
       <span class="key">"id"</span>: <span class="val">1</span>,<br>
-      <span class="key">"method"</span>: <span class="str">"${method}"</span>
+      <span class="key">"method"</span>: <span class="str">"${method}"</span>${params}
     `;
     document.getElementById('rpcResponse').textContent = '$ click run to execute ▋';
   }
 
-  function runRpc() {
+  async function runRpc() {
     const res = document.getElementById('rpcResponse');
-    res.textContent = 'Executing...';
+    res.textContent = 'Connecting...';
 
-    const responses = {
-      getSlot:        `{ "result": ${Math.floor(Math.random()*1e8 + 5e7)} }`,
-      getBlockHeight: `{ "result": ${Math.floor(Math.random()*1e8 + 4e7)} }`,
-      getEpochInfo:   `{ "result": { "epoch": ${Math.floor(Math.random()*600+400)}, "slotIndex": ${Math.floor(Math.random()*432000)}, "slotsInEpoch": 432000 } }`,
-      getVersion:     `{ "result": { "solana-core": "2.1.0", "feature-set": 4215500110 } }`,
-      getBalance:     `{ "result": { "value": ${Math.floor(Math.random()*1e9)} } }`,
-    };
+    try {
+      const response = await fetch(PUMPCHAIN_RPC, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: currentMethod,
+          params: currentMethod === 'getBalance' ? ['Cioo44PumpChainTestAddress'] : []
+        })
+      });
 
-    setTimeout(() => {
-      res.textContent = responses[currentMethod] || '{ "result": null }';
-    }, 400);
+      if (!response.ok) throw new Error('RPC Error');
+
+      const data = await response.json();
+      res.textContent = JSON.stringify(data, null, 2);
+      isConnected = true;
+      updateConnectionStatus();
+    } catch (e) {
+      // Fallback to mock data if RPC is not available
+      const responses = {
+        getSlot:        { result: 52345678 },
+        getBlockHeight: { result: 48912345 },
+        getEpochInfo:   { result: { epoch: 452, slotIndex: 125000, slotsInEpoch: 432000 } },
+        getVersion:     { result: { 'solana-core': 'pumpchain-0.1.0-testnet', 'feature-set': 4215500110 } },
+        getBalance:     { result: { value: 1000000000 } },
+      };
+      res.textContent = JSON.stringify(responses[currentMethod] || { result: null }, null, 2);
+    }
+  }
+
+  async function requestFaucet() {
+    const address = prompt('Enter your wallet address:');
+    if (!address) return;
+
+    try {
+      const response = await fetch('https://faucet.pumpchain.io/faucet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, amount: 1000 })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(`✅ ${data.amount} PUMP sent!\nTx: ${data.signature}`);
+      } else {
+        alert(`❌ Error: ${data.error}`);
+      }
+    } catch (e) {
+      alert('⚠️ Faucet is currently offline. Try again later.');
+    }
   }
 
   function copyRpc() {
-    navigator.clipboard.writeText('https://mainnet.pumpchain.io');
+    navigator.clipboard.writeText('https://testnet.pumpchain.io');
     const btn = document.querySelector('.copy');
     btn.textContent = 'COPIED!';
     setTimeout(() => btn.textContent = 'COPY', 1500);
   }
 
+  async function fetchRealStats() {
+    try {
+      const response = await fetch('https://testnet.pumpchain.io/stats');
+      const data = await response.json();
+      document.getElementById('slot').textContent = data.slot.toLocaleString();
+      document.getElementById('epoch').textContent = data.epoch;
+      document.getElementById('blockheight').textContent = data.blockHeight.toLocaleString();
+    } catch (e) {
+      // Fallback to animated stats
+      animateStats();
+    }
+  }
+
   function animateStats() {
-    const slot = Math.floor(Math.random() * 1e8 + 5e7);
-    const epoch = Math.floor(Math.random() * 600 + 400);
-    const bh = Math.floor(Math.random() * 1e8 + 4e7);
+    const slot = 52345678 + Math.floor(Math.random() * 100);
+    const epoch = 452;
+    const bh = 48912345 + Math.floor(Math.random() * 100);
     document.getElementById('slot').textContent = slot.toLocaleString();
     document.getElementById('epoch').textContent = epoch;
     document.getElementById('blockheight').textContent = bh.toLocaleString();
   }
 
-  animateStats();
-  setInterval(animateStats, 3000);
+  // Initialize
+  checkConnection();
+  fetchRealStats();
+  setInterval(fetchRealStats, 5000);
 </script>
 </body>
 </html>
