@@ -198,14 +198,27 @@ class Blockchain {
 const chain = new Blockchain();
 
 const server = http.createServer((req, res) => {
+  // CORS headers for wallet compatibility
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Solana-Client');
+  res.setHeader('Access-Control-Max-Age', '86400');
   res.setHeader('Content-Type', 'application/json');
   
   if (req.method === 'OPTIONS') {
-    res.writeHead(200);
+    res.writeHead(204);
     res.end();
+    return;
+  }
+  
+  // Handle GET requests (for health checks)
+  if (req.method === 'GET') {
+    res.writeHead(200);
+    res.end(JSON.stringify({ 
+      jsonrpc: '2.0', 
+      result: 'PumpChain RPC is running. Use POST for RPC calls.', 
+      id: null 
+    }));
     return;
   }
   
@@ -246,9 +259,15 @@ function handleRPC(method, params) {
       
     case 'getVersion':
       return {
-        'solana-core': 'pumpchain-1.0.0-mainnet',
+        'solana-core': '1.17.0',
         'feature-set': 4215500110
       };
+      
+    case 'getFeatureSet':
+      return 4215500110;
+      
+    case 'getClusterTime':
+      return Math.floor(Date.now() / 1000);
       
     case 'getGenesisHash':
       return chain.genesisHash;
@@ -409,13 +428,30 @@ function handleRPC(method, params) {
     
     // ========== TRANSACTIONS ==========
     case 'getRecentBlockhash':
+      const recentHash = chain.generateHash(`hash-${chain.slot}-${Date.now()}`);
       return {
         context: { slot: chain.slot, apiVersion: '1.17.0' },
         value: {
-          blockhash: chain.generateHash(`hash-${chain.slot}`),
+          blockhash: recentHash,
           feeCalculator: { lamportsPerSignature: 5000 },
           lastValidBlockHeight: chain.blockHeight + 150
         }
+      };
+      
+    case 'isBlockhashValid':
+      const checkHash = params?.[0];
+      const commitment = params?.[1]?.commitment || 'confirmed';
+      // For demo, assume all blockhashes are valid within last 150 blocks
+      return {
+        context: { slot: chain.slot, apiVersion: '1.17.0' },
+        value: true
+      };
+      
+    case 'getFeeForMessage':
+      const message = params?.[0];
+      return {
+        context: { slot: chain.slot, apiVersion: '1.17.0' },
+        value: { blockhashValid: true, fee: 5000 }
       };
       
     case 'getFeeCalculatorForBlockhash':
