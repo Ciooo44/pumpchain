@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # PumpChain Validator Node (Mainnet)
+  validator:
+    build:
+      context: ../validator
+      dockerfile: Dockerfile
+    container_name: pumpchain-validator-mainnet
+    ports:
+      - "8899:8899"    # RPC
+      - "8900:8900"    # WS
+      - "8001:8001"    # P2P
+    volumes:
+      - validator-data-mainnet:/root/.pumpchain
+    environment:
+      - NETWORK=mainnet
+      - RPC_BIND=0.0.0.0:8899
+      - DATA_DIR=/root/.pumpchain
+    networks:
+      - pumpchain-mainnet
+    restart: unless-stopped
+
+  # Explorer API (Mainnet)
+  explorer-api:
+    build:
+      context: ./explorer-api
+      dockerfile: Dockerfile
+    container_name: pumpchain-explorer-api-mainnet
+    ports:
+      - "3001:3001"
+    environment:
+      - RPC_URL=http://validator:8899
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/explorer
+      - NETWORK=mainnet
+    depends_on:
+      - validator
+      - postgres
+    networks:
+      - pumpchain-mainnet
+    restart: unless-stopped
+
+  # PostgreSQL for Explorer
+  postgres:
+    image: postgres:15-alpine
+    container_name: pumpchain-postgres-mainnet
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=explorer
+    volumes:
+      - postgres-data-mainnet:/var/lib/postgresql/data
+    networks:
+      - pumpchain-mainnet
+    restart: unless-stopped
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: pumpchain-redis-mainnet
+    volumes:
+      - redis-data-mainnet:/data
+    networks:
+      - pumpchain-mainnet
+    restart: unless-stopped
+
+volumes:
+  validator-data-mainnet:
+  postgres-data-mainnet:
+  redis-data-mainnet:
+
+networks:
+  pumpchain-mainnet:
+    driver: bridge
