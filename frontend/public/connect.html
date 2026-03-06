@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connect Wallet | PumpChain Devnet</title>
+  <title>Connect Wallet | PumpChain</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -36,48 +37,23 @@
       -webkit-text-fill-color: transparent;
     }
     p { color: #6B6B8A; margin-bottom: 32px; font-size: 14px; }
-    .rpc-box {
+    .status-box {
       background: rgba(0, 255, 163, 0.05);
       border: 1px solid rgba(0, 255, 163, 0.2);
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 32px;
-      text-align: left;
+      padding: 16px;
+      margin-bottom: 24px;
     }
-    .rpc-label {
+    .status-text {
       color: #00FFA3;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 8px;
-    }
-    .rpc-url {
-      font-family: 'Space Mono', monospace;
-      font-size: 13px;
-      color: #E8E8F0;
-      word-break: break-all;
-      margin-bottom: 12px;
-    }
-    .copy-btn {
-      background: rgba(0, 255, 163, 0.1);
-      border: 1px solid rgba(0, 255, 163, 0.3);
-      color: #00FFA3;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-    }
-    .copy-btn:hover {
-      background: rgba(0, 255, 163, 0.2);
+      font-size: 14px;
+      font-weight: 600;
     }
     .wallet-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     .wallet-btn {
       display: flex;
@@ -99,6 +75,10 @@
       border-color: #00FFA3;
       background: rgba(0, 255, 163, 0.05);
     }
+    .wallet-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
     .wallet-icon {
       width: 40px;
       height: 40px;
@@ -108,30 +88,56 @@
       justify-content: center;
       font-size: 20px;
     }
-    .backpack { background: linear-gradient(135deg, #E08D54, #C45C26); }
     .phantom { background: linear-gradient(135deg, #AB9FF2, #5346B3); }
+    .backpack { background: linear-gradient(135deg, #E08D54, #C45C26); }
     .solflare { background: linear-gradient(135deg, #FC744A, #F15A24); }
-    .instructions {
-      background: rgba(255, 255, 255, 0.03);
+    
+    .connected-box {
+      background: rgba(0, 255, 163, 0.1);
+      border: 1px solid #00FFA3;
       border-radius: 12px;
       padding: 20px;
-      text-align: left;
       margin-bottom: 24px;
+      display: none;
     }
-    .instructions h3 {
-      color: #00FFA3;
+    .connected-box.show { display: block; }
+    .address {
+      font-family: 'Space Mono', monospace;
       font-size: 14px;
-      margin-bottom: 12px;
+      color: #00FFA3;
+      word-break: break-all;
     }
-    .instructions ol {
+    .balance {
+      font-size: 24px;
+      font-weight: 700;
+      color: #E8E8F0;
+      margin-top: 8px;
+    }
+    .disconnect-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #6B6B8A;
-      font-size: 13px;
-      padding-left: 20px;
-      line-height: 1.8;
+      padding: 8px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
     }
-    .instructions li {
-      margin-bottom: 8px;
+    .disconnect-btn:hover {
+      border-color: #FF3CAC;
+      color: #FF3CAC;
     }
+    .error-box {
+      background: rgba(255, 60, 172, 0.1);
+      border: 1px solid rgba(255, 60, 172, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      color: #FF3CAC;
+      font-size: 14px;
+      display: none;
+    }
+    .error-box.show { display: block; }
     .back-link {
       display: inline-block;
       color: #6B6B8A;
@@ -146,40 +152,34 @@
   <div class="container">
     <div class="logo">🚀</div>
     <h1>Connect Wallet</h1>
-    <p>Add PumpChain Devnet to your wallet</p>
+    <p id="statusText">Select your wallet to connect to PumpChain</p>
     
-    <div class="rpc-box">
-      <div class="rpc-label">RPC URL</div>
-      <div class="rpc-url" id="rpcUrl">https://databases-chief-patent-del.trycloudflare.com</div>
-      <button class="copy-btn" onclick="copyRPC()">Copy RPC URL</button>
+    <div class="status-box" id="rpcStatus">
+      <div class="status-text">⏳ Checking RPC...</div>
     </div>
     
-    <div class="instructions">
-      <h3>⚙️ Setup Instructions</h3>
-      <ol>
-        <li>Open your wallet (Phantom/Backpack/Solflare)</li>
-        <li>Go to Settings → Network or Developer</li>
-        <li>Add Custom Network</li>
-        <li>Name: <strong>PumpChain Devnet</strong></li>
-        <li>RPC: <strong>https://databases-chief-patent-del.trycloudflare.com</strong></li>
-        <li>Chain ID: <strong>1397</strong></li>
-        <li>Currency: <strong>PUMP</strong></li>
-        <li>Save and switch to PumpChain!</li>
-      </ol>
+    <div class="error-box" id="errorBox">
+      ⚠️ <span id="errorText"></span>
     </div>
     
-    <div class="wallet-list">
-      <button class="wallet-btn" onclick="openPhantom()">
+    <div class="connected-box" id="connectedBox">
+      <div class="address" id="walletAddress"></div>
+      <div class="balance" id="walletBalance">0 PUMP</div>
+      <button class="disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
+    </div>
+    
+    <div class="wallet-list" id="walletList">
+      <button class="wallet-btn" id="phantomBtn" onclick="connectPhantom()">
         <div class="wallet-icon phantom">👻</div>
-        <span>Phantom Wallet</span>
+        <span>Phantom</span>
       </button>
-      <button class="wallet-btn" onclick="openBackpack()">
+      <button class="wallet-btn" id="backpackBtn" onclick="connectBackpack()">
         <div class="wallet-icon backpack">🎒</div>
-        <span>Backpack Wallet</span>
+        <span>Backpack</span>
       </button>
-      <button class="wallet-btn" onclick="openSolflare()">
+      <button class="wallet-btn" id="solflareBtn" onclick="connectSolflare()">
         <div class="wallet-icon solflare">☀️</div>
-        <span>Solflare Wallet</span>
+        <span>Solflare</span>
       </button>
     </div>
     
@@ -188,25 +188,136 @@
   
   <script>
     const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
+    let connection = null;
+    let currentWallet = null;
     
-    function copyRPC() {
-      navigator.clipboard.writeText(RPC_URL);
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = 'Copied!';
-      setTimeout(() => btn.textContent = 'Copy RPC URL', 2000);
+    // Check RPC on load
+    async function checkRPC() {
+      try {
+        const response = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getHealth' })
+        });
+        const data = await response.json();
+        if (data.result === 'ok') {
+          document.getElementById('rpcStatus').innerHTML = '<div class="status-text">✅ PumpChain RPC Connected</div>';
+          connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
+        } else {
+          throw new Error('RPC not healthy');
+        }
+      } catch (e) {
+        document.getElementById('rpcStatus').innerHTML = '<div class="status-text" style="color: #FF3CAC;">❌ RPC Connection Failed</div>';
+      }
     }
     
-    function openPhantom() {
-      window.open('https://phantom.app/', '_blank');
+    // Connect Phantom
+    async function connectPhantom() {
+      try {
+        const provider = window.phantom?.solana;
+        
+        if (!provider) {
+          showError('Phantom not found. Please install Phantom extension.');
+          return;
+        }
+        
+        // This triggers the popup
+        const response = await provider.connect();
+        const publicKey = response.publicKey.toString();
+        
+        currentWallet = { provider, name: 'Phantom', publicKey };
+        await onConnected(publicKey);
+        
+      } catch (err) {
+        console.error('Phantom connection error:', err);
+        showError(err.message || 'Failed to connect to Phantom');
+      }
     }
     
-    function openBackpack() {
-      window.open('https://www.backpack.app/', '_blank');
+    // Connect Backpack
+    async function connectBackpack() {
+      try {
+        const provider = window.backpack?.solana || window.backpack;
+        
+        if (!provider) {
+          showError('Backpack not found. Please install Backpack extension.');
+          return;
+        }
+        
+        const response = await provider.connect();
+        const publicKey = response.publicKey?.toString() || provider.publicKey?.toString();
+        
+        currentWallet = { provider, name: 'Backpack', publicKey };
+        await onConnected(publicKey);
+        
+      } catch (err) {
+        console.error('Backpack connection error:', err);
+        showError(err.message || 'Failed to connect to Backpack');
+      }
     }
     
-    function openSolflare() {
-      window.open('https://solflare.com/', '_blank');
+    // Connect Solflare
+    async function connectSolflare() {
+      try {
+        const provider = window.solflare;
+        
+        if (!provider) {
+          showError('Solflare not found. Please install Solflare extension.');
+          return;
+        }
+        
+        await provider.connect();
+        const publicKey = provider.publicKey.toString();
+        
+        currentWallet = { provider, name: 'Solflare', publicKey };
+        await onConnected(publicKey);
+        
+      } catch (err) {
+        console.error('Solflare connection error:', err);
+        showError(err.message || 'Failed to connect to Solflare');
+      }
     }
+    
+    async function onConnected(publicKey) {
+      document.getElementById('walletList').style.display = 'none';
+      document.getElementById('statusText').textContent = `Connected with ${currentWallet.name}`;
+      document.getElementById('connectedBox').classList.add('show');
+      document.getElementById('walletAddress').textContent = publicKey;
+      
+      // Get balance
+      if (connection) {
+        try {
+          const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
+          document.getElementById('walletBalance').textContent = (balance / 1000000000).toFixed(4) + ' PUMP';
+        } catch (e) {
+          document.getElementById('walletBalance').textContent = '0 PUMP';
+        }
+      }
+      
+      hideError();
+    }
+    
+    function disconnectWallet() {
+      if (currentWallet?.provider?.disconnect) {
+        currentWallet.provider.disconnect();
+      }
+      currentWallet = null;
+      document.getElementById('walletList').style.display = 'flex';
+      document.getElementById('statusText').textContent = 'Select your wallet to connect to PumpChain';
+      document.getElementById('connectedBox').classList.remove('show');
+    }
+    
+    function showError(msg) {
+      document.getElementById('errorText').textContent = msg;
+      document.getElementById('errorBox').classList.add('show');
+    }
+    
+    function hideError() {
+      document.getElementById('errorBox').classList.remove('show');
+    }
+    
+    // Check RPC on page load
+    checkRPC();
   </script>
 </body>
 </html>
