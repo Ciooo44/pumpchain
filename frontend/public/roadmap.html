@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PumpChain Roadmap 2025</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #04040C;
+      color: #E8E8F0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #00FFA3, #03E1FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      color: #6B6B8A;
+      margin-bottom: 50px;
+    }
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 60px;
+      position: relative;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 30px;
+      left: 5%;
+      right: 5%;
+      height: 4px;
+      background: linear-gradient(90deg, #00FFA3, #03E1FF, #9945FF);
+      border-radius: 2px;
+    }
+    .phase {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+    .phase-dot {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .phase-1 .phase-dot { background: #00FFA3; color: #000; }
+    .phase-2 .phase-dot { background: #03E1FF; color: #000; }
+    .phase-3 .phase-dot { background: #9945FF; color: #fff; }
+    .phase-4 .phase-dot { background: #FF3CAC; color: #fff; }
+    .phase-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .phase-date {
+      color: #6B6B8A;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    .tasks {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,255,163,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+    }
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .task:last-child { border-bottom: none; }
+    .status {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-done { background: #00FFA3; }
+    .status-progress { background: #03E1FF; animation: pulse 2s infinite; }
+    .status-todo { background: #6B6B8A; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .summary {
+      background: rgba(0,255,163,0.05);
+      border: 1px solid rgba(0,255,163,0.2);
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 40px;
+    }
+    .summary h2 {
+      color: #00FFA3;
+      margin-bottom: 20px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00FFA3;
+    }
+    .stat-label {
+      color: #6B6B8A;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+    @media (max-width: 768px) {
+      .timeline { flex-direction: column; }
+      .timeline::before { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 PumpChain 2025 Roadmap</h1>
+    <p class="subtitle">The fastest SVM-powered L2 blockchain</p>
+
+    <div class="timeline">
+      <div class="phase phase-1">
+        <div class="phase-dot">✓</div>
+        <div class="phase-title">Faz 1</div>
+        <div class="phase-date">Q1 2025</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="status status-done"></div>
+            <span>Website Launch</span>
+          </div>
+          <div class="task">
+            <div class="status status-done"></div>
+            <span>Testnet Live</span>
+          </div>
+          <div class="task">
+            <div class="status status-done"></div>
+            <span>GitHub Repos</span>
+          </div>
+          <div class="task">
+            <div class="status status-done"></div>
+            <span>Mainnet Migration</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase phase-2">
+        <div class="phase-dot">2</div>
+        <div class="phase-title">Faz 2</div>
+        <div class="phase-date">Q2 2025</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="status status-progress"></div>
+            <span>Validator Optimization</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>Launchpad Audit</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>Cross-Chain Bridge</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>Unity SDK v1.0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase phase-3">
+        <div class="phase-dot">3</div>
+        <div class="phase-title">Faz 3</div>
+        <div class="phase-date">Q3 2025</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>DEX Launch (PumpSwap)</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>NFT Marketplace</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>Grant Program</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase phase-4">
+        <div class="phase-dot">4</div>
+        <div class="phase-title">Faz 4</div>
+        <div class="phase-date">Q4 2025</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>GameJam Etkinliği</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>Lending Protocol</span>
+          </div>
+          <div class="task">
+            <div class="status status-todo"></div>
+            <span>2026 Roadmap</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h2>📊 Güncel Durum</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-value">5</div>
+          <div class="stat-label">Aktif Repo</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">4/16</div>
+          <div class="stat-label">Tamamlanan</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">%25</div>
+          <div class="stat-label">İlerleme</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">Q2</div>
+          <div class="stat-label">Sonraki Faz</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
