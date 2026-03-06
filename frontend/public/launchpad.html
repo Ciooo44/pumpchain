@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Launchpad | PumpChain</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -17,14 +18,26 @@
       --border:  rgba(0,255,163,0.12);
       --text:    #E8E8F0;
       --muted:   #6B6B8A;
+      --error:   #FF4444;
+      --success: #00FFA3;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Syne', sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
     }
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:0; opacity:.4;
+    }
+    
+    /* Navigation */
     nav {
       position: fixed; top:0; left:0; right:0; z-index:100;
       display:flex; align-items:center; justify-content:space-between;
@@ -33,17 +46,106 @@
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
-    .nav-logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem; }
-    .logo-text { background: linear-gradient(90deg, var(--green), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-logo { 
+      display:flex; align-items:center; gap:10px; 
+      font-weight:800; font-size:1.2rem;
+      text-decoration: none;
+    }
+    .logo-icon { width:32px; height:32px; }
+    .logo-text { 
+      background: linear-gradient(90deg, var(--green), var(--cyan)); 
+      -webkit-background-clip:text; 
+      -webkit-text-fill-color:transparent; 
+    }
     .nav-links { display:flex; gap:8px; }
-    .nav-links a { color: var(--muted); text-decoration:none; font-size:.85rem; font-weight:600; padding: 8px 18px; border-radius:8px; border: 1px solid transparent; transition: all .2s; }
-    .nav-links a:hover, .nav-links a.active { color: var(--green); border-color: var(--border); background: rgba(0,255,163,0.05); }
-    .container { max-width: 900px; margin: 0 auto; padding: 120px 24px 60px; }
-    h1 { font-size: 2.5rem; font-weight:800; margin-bottom: 16px; background: linear-gradient(90deg, var(--green), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .subtitle { color: var(--muted); margin-bottom: 40px; font-size: 1.1rem; }
-    .launch-form { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
-    .form-group { margin-bottom: 24px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; }
+    .nav-links a { 
+      color: var(--muted); 
+      text-decoration:none; 
+      font-size:.85rem; 
+      font-weight:600; 
+      padding: 8px 18px; 
+      border-radius:8px; 
+      border: 1px solid transparent; 
+      transition: all .2s; 
+    }
+    .nav-links a:hover { 
+      color: var(--green); 
+      border-color: var(--border); 
+      background: rgba(0,255,163,0.05); 
+    }
+    .nav-links a.active { 
+      color: var(--green); 
+      border-color: rgba(0,255,163,0.3); 
+      background: rgba(0,255,163,0.07); 
+    }
+    .nav-wallet {
+      display:flex; align-items:center; gap:6px;
+      font-size:.8rem; color: var(--muted);
+      text-decoration:none;
+      padding: 8px 16px;
+      border-radius:8px;
+      border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .nav-wallet:hover { color:var(--green); border-color:rgba(0,255,163,.3); }
+    
+    /* Main Container */
+    .container { 
+      max-width: 1000px; 
+      margin: 0 auto; 
+      padding: 120px 24px 60px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    h1 { 
+      font-size: clamp(1.8rem, 5vw, 2.5rem); 
+      font-weight:800; 
+      margin-bottom: 16px; 
+      background: linear-gradient(90deg, var(--green), var(--cyan)); 
+      -webkit-background-clip:text; 
+      -webkit-text-fill-color:transparent; 
+    }
+    .subtitle { 
+      color: var(--muted); 
+      margin-bottom: 40px; 
+      font-size: 1.1rem; 
+      max-width: 600px;
+    }
+    
+    /* Two Column Layout */
+    .launchpad-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+    }
+    
+    @media (max-width: 900px) {
+      .launchpad-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Launch Form */
+    .launch-form { 
+      background: var(--bg2); 
+      border: 1px solid var(--border); 
+      border-radius: 16px; 
+      padding: 32px; 
+    }
+    .form-group { 
+      margin-bottom: 24px; 
+      position: relative;
+    }
+    label { 
+      display: block; 
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      margin-bottom: 8px; 
+      color: var(--green); 
+      text-transform: uppercase; 
+      letter-spacing: 0.1em; 
+    }
     input, textarea {
       width: 100%;
       background: var(--bg3);
@@ -53,8 +155,33 @@
       color: var(--text);
       font-family: 'Space Mono', monospace;
       font-size: 0.9rem;
+      transition: all .2s;
     }
-    input:focus, textarea:focus { outline: none; border-color: var(--green); }
+    input:focus, textarea:focus { 
+      outline: none; 
+      border-color: var(--green); 
+      box-shadow: 0 0 0 3px rgba(0,255,163,0.1);
+    }
+    input.error, textarea.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(255,68,68,0.1);
+    }
+    .error-message {
+      color: var(--error);
+      font-size: 0.75rem;
+      margin-top: 6px;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+    .input-hint {
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-top: 6px;
+    }
+    
+    /* Button States */
     .btn-primary {
       width: 100%;
       padding: 16px;
@@ -67,28 +194,303 @@
       cursor: pointer;
       transition: all .2s;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,163,0.3); }
+    .btn-primary:hover:not(:disabled) { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 30px rgba(0,255,163,0.3); 
+    }
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .btn-primary.loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Status Messages */
+    .status-message {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .status-message.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .status-message.success {
+      background: rgba(0,255,163,0.1);
+      border: 1px solid rgba(0,255,163,0.3);
+      color: var(--green);
+    }
+    .status-message.error {
+      background: rgba(255,68,68,0.1);
+      border: 1px solid rgba(255,68,68,0.3);
+      color: var(--error);
+    }
+    
+    /* Bonding Curve Panel */
+    .info-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
     .info-box { 
-      background: rgba(0,255,163,0.05); 
-      border: 1px solid rgba(0,255,163,0.2); 
-      border-radius: 12px; 
-      padding: 20px; 
-      margin-top: 32px;
+      background: var(--bg2); 
+      border: 1px solid var(--border); 
+      border-radius: 16px; 
+      padding: 24px; 
     }
-    .info-box h3 { color: var(--green); margin-bottom: 12px; font-size: 0.95rem; }
-    .info-box p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+    .info-box h3 { 
+      color: var(--green); 
+      margin-bottom: 16px; 
+      font-size: 0.95rem; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-box p { 
+      color: var(--muted); 
+      font-size: 0.85rem; 
+      line-height: 1.7; 
+    }
+    
+    /* Bonding Curve Visualization */
+    .bonding-curve {
+      margin-top: 16px;
+    }
+    .curve-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.75rem;
+    }
+    .curve-label { color: var(--muted); }
+    .curve-value { 
+      color: var(--green); 
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+    }
+    .curve-bar {
+      height: 8px;
+      background: var(--bg3);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .curve-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+    .curve-markers {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    
+    /* Token Preview */
+    .token-preview {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .token-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .token-info h4 {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    .token-info span {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: 'Space Mono', monospace;
+    }
+    .preview-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .preview-stat {
+      background: var(--bg2);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .preview-stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .preview-stat-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--green);
+    }
+    
+    /* Success Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 24px;
+    }
+    .modal h2 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    .modal p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .tx-hash {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan);
+      word-break: break-all;
+      margin-bottom: 24px;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .modal-btn {
+      flex: 1;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-btn.primary {
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      color: #000;
+      border: none;
+    }
+    .modal-btn.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .modal-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
       .nav-links { display: none; }
       h1 { font-size: 1.8rem; }
+      .container { padding: 100px 16px 40px; }
+      .launch-form { padding: 20px; }
+      .preview-stats { grid-template-columns: 1fr; }
+      .modal { padding: 24px; }
+      .modal-buttons { flex-direction: column; }
     }
   </style>
 </head>
 <body>
+  <!-- Navigation -->
   <nav>
     <a href="index.html" class="nav-logo">
-      <span style="font-size: 1.5rem;">🚀</span>
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00FFA3"/>
+            <stop offset="1" stop-color="#03E1FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M6 26V6H18C23.5 6 26 9 26 13C26 17 23.5 20 18 20H11V26H6Z" fill="url(#lg)"/>
+        <path d="M11 10H17.5C20.5 10 21.5 11.5 21.5 13C21.5 14.5 20.5 16 17.5 16H11V10Z" fill="#04040C"/>
+      </svg>
       <span class="logo-text">PumpChain</span>
     </a>
     <div class="nav-links">
@@ -97,59 +499,304 @@
       <a href="bridge.html">Bridge</a>
       <a href="explorer.html">Explorer</a>
     </div>
+    <a href="connect.html" class="nav-wallet">🔌 Connect</a>
   </nav>
 
   <div class="container">
     <h1>🚀 Token Launchpad</h1>
-    <p class="subtitle">Launch your token instantly with automatic AMM liquidity on PumpChain.</p>
+    <p class="subtitle">Launch your token instantly with automatic AMM liquidity migration on PumpChain.</p>
 
-    <div class="launch-form">
-      <div class="form-group">
-        <label>Token Name</label>
-        <input type="text" id="tokenName" placeholder="e.g., PumpToken" maxlength="32">
+    <div class="launchpad-grid">
+      <!-- Launch Form -->
+      <div class="launch-form">
+        <div class="form-group">
+          <label>Token Name *</label>
+          <input type="text" id="tokenName" placeholder="e.g., PumpToken" maxlength="32">
+          <div class="error-message" id="nameError">Token name is required (2-32 characters)</div>
+          <div class="input-hint">This will be the full name of your token</div>
+        </div>
+
+        <div class="form-group">
+          <label>Token Symbol *</label>
+          <input type="text" id="tokenSymbol" placeholder="e.g., PUMP" maxlength="10">
+          <div class="error-message" id="symbolError">Symbol is required (2-10 alphanumeric characters)</div>
+          <div class="input-hint">Short ticker symbol, e.g., BTC, ETH, PUMP</div>
+        </div>
+
+        <div class="form-group">
+          <label>Total Supply *</label>
+          <input type="number" id="tokenSupply" placeholder="e.g., 1000000000" min="1" max="1000000000000">
+          <div class="error-message" id="supplyError">Supply must be between 1 and 1 trillion</div>
+          <div class="input-hint">Total number of tokens to mint</div>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="tokenDesc" rows="3" placeholder="Describe your token..."></textarea>
+        </div>
+
+        <button class="btn-primary" id="launchBtn" onclick="launchToken()">
+          Launch Token
+        </button>
+        
+        <div class="status-message" id="statusMessage"></div>
       </div>
 
-      <div class="form-group">
-        <label>Token Symbol</label>
-        <input type="text" id="tokenSymbol" placeholder="e.g., PUMP" maxlength="10">
-      </div>
+      <!-- Info Panel -->
+      <div class="info-panel">
+        <!-- Bonding Curve -->
+        <div class="info-box">
+          <h3>⚡ Bonding Curve</h3>
+          <p>Tokens are sold on a bonding curve. Price increases as more tokens are purchased. When market cap hits $69,420, liquidity auto-migrates to Raydium AMM.</p>
+          
+          <div class="bonding-curve">
+            <div class="curve-header">
+              <span class="curve-label">Migration Progress</span>
+              <span class="curve-value" id="migrationProgress">0%</span>
+            </div>
+            <div class="curve-bar">
+              <div class="curve-progress" id="curveProgress"></div>
+            </div>
+            <div class="curve-markers">
+              <span>Launch</span>
+              <span>$34K</span>
+              <span style="color: var(--green);">$69.4K ✓</span>
+            </div>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label>Total Supply</label>
-        <input type="number" id="tokenSupply" placeholder="e.g., 1000000000" min="1">
-      </div>
+        <!-- How It Works -->
+        <div class="info-box">
+          <h3>📋 How it works</h3>
+          <p>
+            1. Fill in your token details<br>
+            2. Deploy with one click<br>
+            3. Trading starts instantly on bonding curve<br>
+            4. When market cap reaches $69,420, liquidity auto-migrates to Raydium AMM<br>
+            5. LP tokens are burned forever - no rug possible!
+          </p>
+        </div>
 
-      <div class="form-group">
-        <label>Description</label>
-        <textarea id="tokenDesc" rows="3" placeholder="Describe your token..."></textarea>
+        <!-- Token Preview -->
+        <div class="token-preview" id="tokenPreview" style="display: none;">
+          <div class="preview-header">
+            <div class="token-logo" id="previewLogo">🚀</div>
+            <div class="token-info">
+              <h4 id="previewName">Token Name</h4>
+              <span id="previewSymbol">SYMBOL</span>
+            </div>
+          </div>
+          <div class="preview-stats">
+            <div class="preview-stat">
+              <div class="preview-stat-label">Total Supply</div>
+              <div class="preview-stat-value" id="previewSupply">0</div>
+            </div>
+            <div class="preview-stat">
+              <div class="preview-stat-label">Initial Price</div>
+              <div class="preview-stat-value">$0.0001</div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <button class="btn-primary" onclick="launchToken()">Launch Token</button>
     </div>
+  </div>
 
-    <div class="info-box">
-      <h3>⚡ How it works</h3>
-      <p>1. Fill in your token details above<br>
-         2. Deploy with one click<br>
-         3. Trading starts instantly on bonding curve<br>
-         4. When market cap reaches $69,420, liquidity auto-migrates to Raydium AMM<br>
-         5. LP tokens are burned forever - no rug possible!</p>
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <div class="modal-icon">🎉</div>
+      <h2>Token Launched!</h2>
+      <p>Your token has been successfully deployed on PumpChain. Trading is now live on the bonding curve!</p>
+      <div class="tx-hash" id="txHash">pumpTx...abc123</div>
+      <div class="modal-buttons">
+        <a href="explorer.html" class="modal-btn primary">View on Explorer</a>
+        <button class="modal-btn secondary" onclick="closeModal()">Launch Another</button>
+      </div>
     </div>
   </div>
 
   <script>
-    function launchToken() {
+    // Form validation
+    const validators = {
+      tokenName: (value) => value.trim().length >= 2 && value.trim().length <= 32,
+      tokenSymbol: (value) => /^[A-Za-z0-9]{2,10}$/.test(value),
+      tokenSupply: (value) => {
+        const num = parseFloat(value);
+        return !isNaN(num) && num >= 1 && num <= 1000000000000;
+      }
+    };
+
+    // Real-time validation
+    document.getElementById('tokenName').addEventListener('input', function(e) {
+      validateField('tokenName', 'nameError', validators.tokenName(e.target.value));
+      updatePreview();
+    });
+
+    document.getElementById('tokenSymbol').addEventListener('input', function(e) {
+      // Auto-uppercase
+      e.target.value = e.target.value.toUpperCase();
+      validateField('tokenSymbol', 'symbolError', validators.tokenSymbol(e.target.value));
+      updatePreview();
+    });
+
+    document.getElementById('tokenSupply').addEventListener('input', function(e) {
+      validateField('tokenSupply', 'supplyError', validators.tokenSupply(e.target.value));
+      updatePreview();
+    });
+
+    function validateField(fieldId, errorId, isValid) {
+      const field = document.getElementById(fieldId);
+      const error = document.getElementById(errorId);
+      
+      if (field.value && !isValid) {
+        field.classList.add('error');
+        error.classList.add('show');
+        return false;
+      } else {
+        field.classList.remove('error');
+        error.classList.remove('show');
+        return true;
+      }
+    }
+
+    function updatePreview() {
       const name = document.getElementById('tokenName').value;
       const symbol = document.getElementById('tokenSymbol').value;
       const supply = document.getElementById('tokenSupply').value;
+      
+      if (name || symbol) {
+        document.getElementById('tokenPreview').style.display = 'block';
+        document.getElementById('previewName').textContent = name || 'Token Name';
+        document.getElementById('previewSymbol').textContent = symbol || 'SYMBOL';
+        document.getElementById('previewSupply').textContent = supply ? parseInt(supply).toLocaleString() : '0';
+        document.getElementById('previewLogo').textContent = name ? name.charAt(0).toUpperCase() : '🚀';
+      } else {
+        document.getElementById('tokenPreview').style.display = 'none';
+      }
+    }
 
-      if (!name || !symbol || !supply) {
-        alert('Please fill in all fields!');
+    async function launchToken() {
+      const name = document.getElementById('tokenName').value.trim();
+      const symbol = document.getElementById('tokenSymbol').value.trim();
+      const supply = document.getElementById('tokenSupply').value;
+      const desc = document.getElementById('tokenDesc').value.trim();
+      const btn = document.getElementById('launchBtn');
+      const status = document.getElementById('statusMessage');
+
+      // Validate all fields
+      const isNameValid = validators.tokenName(name);
+      const isSymbolValid = validators.tokenSymbol(symbol);
+      const isSupplyValid = validators.tokenSupply(supply);
+
+      validateField('tokenName', 'nameError', isNameValid);
+      validateField('tokenSymbol', 'symbolError', isSymbolValid);
+      validateField('tokenSupply', 'supplyError', isSupplyValid);
+
+      if (!isNameValid || !isSymbolValid || !isSupplyValid) {
+        showStatus('Please fix the errors above', 'error');
         return;
       }
 
-      alert(`🚀 Launching ${name} ($${symbol})...\n\nThis would connect to PumpChain testnet and deploy your token!`);
+      // Set loading state
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.textContent = 'Launching';
+      hideStatus();
+
+      // Simulate API call
+      try {
+        await simulateLaunch({ name, symbol, supply, desc });
+        
+        // Show success modal
+        const txHash = generateTxHash();
+        document.getElementById('txHash').textContent = txHash;
+        document.getElementById('successModal').classList.add('show');
+        
+        // Animate bonding curve
+        animateCurveProgress();
+        
+      } catch (error) {
+        showStatus('❌ Launch failed: ' + error.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.textContent = 'Launch Token';
+      }
     }
+
+    function simulateLaunch(data) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // 95% success rate for demo
+          if (Math.random() > 0.05) {
+            resolve({ success: true, data });
+          } else {
+            reject(new Error('Network congestion. Please try again.'));
+          }
+        }, 2000 + Math.random() * 1000);
+      });
+    }
+
+    function generateTxHash() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let hash = 'pump';
+      for (let i = 0; i < 44; i++) {
+        hash += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return hash;
+    }
+
+    function animateCurveProgress() {
+      const progress = document.getElementById('curveProgress');
+      const text = document.getElementById('migrationProgress');
+      
+      // Start at a small percentage to show it's launched
+      const targetPercent = 2.5;
+      
+      setTimeout(() => {
+        progress.style.width = targetPercent + '%';
+        text.textContent = targetPercent + '%';
+      }, 500);
+    }
+
+    function showStatus(message, type) {
+      const status = document.getElementById('statusMessage');
+      status.textContent = message;
+      status.className = 'status-message ' + type + ' show';
+    }
+
+    function hideStatus() {
+      document.getElementById('statusMessage').classList.remove('show');
+    }
+
+    function closeModal() {
+      document.getElementById('successModal').classList.remove('show');
+      // Reset form
+      document.getElementById('tokenName').value = '';
+      document.getElementById('tokenSymbol').value = '';
+      document.getElementById('tokenSupply').value = '';
+      document.getElementById('tokenDesc').value = '';
+      document.getElementById('tokenPreview').style.display = 'none';
+      document.getElementById('curveProgress').style.width = '0%';
+      document.getElementById('migrationProgress').textContent = '0%';
+    }
+
+    // Close modal on overlay click
+    document.getElementById('successModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Enter key support
+    document.querySelectorAll('input, textarea').forEach(input => {
+      input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          launchToken();
+        }
+      });
+    });
   </script>
 </body>
 </html>

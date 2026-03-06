@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bridge | PumpChain</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -17,14 +18,26 @@
       --border:  rgba(0,255,163,0.12);
       --text:    #E8E8F0;
       --muted:   #6B6B8A;
+      --error:   #FF4444;
+      --success: #00FFA3;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Syne', sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
     }
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:0; opacity:.4;
+    }
+    
+    /* Navigation */
     nav {
       position: fixed; top:0; left:0; right:0; z-index:100;
       display:flex; align-items:center; justify-content:space-between;
@@ -33,30 +46,312 @@
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
-    .nav-logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem; }
-    .logo-text { background: linear-gradient(90deg, var(--green), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-logo { 
+      display:flex; align-items:center; gap:10px; 
+      font-weight:800; font-size:1.2rem;
+      text-decoration: none;
+    }
+    .logo-icon { width:32px; height:32px; }
+    .logo-text { 
+      background: linear-gradient(90deg, var(--green), var(--cyan)); 
+      -webkit-background-clip:text; 
+      -webkit-text-fill-color:transparent; 
+    }
     .nav-links { display:flex; gap:8px; }
-    .nav-links a { color: var(--muted); text-decoration:none; font-size:.85rem; font-weight:600; padding: 8px 18px; border-radius:8px; border: 1px solid transparent; transition: all .2s; }
-    .nav-links a:hover, .nav-links a.active { color: var(--green); border-color: var(--border); background: rgba(0,255,163,0.05); }
-    .container { max-width: 600px; margin: 0 auto; padding: 120px 24px 60px; }
-    h1 { font-size: 2.5rem; font-weight:800; margin-bottom: 16px; background: linear-gradient(90deg, var(--cyan), var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .subtitle { color: var(--muted); margin-bottom: 40px; font-size: 1.1rem; }
-    .bridge-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
-    .bridge-direction { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      background: var(--bg3);
-      border-radius: 12px;
-      padding: 16px 20px;
+    .nav-links a { 
+      color: var(--muted); 
+      text-decoration:none; 
+      font-size:.85rem; 
+      font-weight:600; 
+      padding: 8px 18px; 
+      border-radius:8px; 
+      border: 1px solid transparent; 
+      transition: all .2s; 
+    }
+    .nav-links a:hover { 
+      color: var(--green); 
+      border-color: var(--border); 
+      background: rgba(0,255,163,0.05); 
+    }
+    .nav-links a.active { 
+      color: var(--green); 
+      border-color: rgba(0,255,163,0.3); 
+      background: rgba(0,255,163,0.07); 
+    }
+    .nav-wallet {
+      display:flex; align-items:center; gap:6px;
+      font-size:.8rem; color: var(--muted);
+      text-decoration:none;
+      padding: 8px 16px;
+      border-radius:8px;
+      border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .nav-wallet:hover { color:var(--green); border-color:rgba(0,255,163,.3); }
+    .nav-wallet.connected {
+      color: var(--green);
+      border-color: rgba(0,255,163,0.3);
+      background: rgba(0,255,163,0.07);
+    }
+    .wallet-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      display: none;
+    }
+    .nav-wallet.connected .wallet-dot {
+      display: block;
+    }
+    
+    /* Main Container */
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      padding: 120px 24px 60px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    h1 { 
+      font-size: clamp(1.8rem, 5vw, 2.5rem); 
+      font-weight:800; 
+      margin-bottom: 16px; 
+      background: linear-gradient(90deg, var(--cyan), var(--purple)); 
+      -webkit-background-clip:text; 
+      -webkit-text-fill-color:transparent; 
+    }
+    .subtitle { 
+      color: var(--muted); 
+      margin-bottom: 40px; 
+      font-size: 1.1rem; 
+    }
+    
+    /* Bridge Box */
+    .bridge-box { 
+      background: var(--bg2); 
+      border: 1px solid var(--border); 
+      border-radius: 16px; 
+      padding: 32px; 
+    }
+    
+    /* Chain Selector */
+    .chain-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
       margin-bottom: 24px;
     }
-    .chain { text-align: center; }
-    .chain-name { font-weight: 700; font-size: 0.9rem; }
-    .chain-network { font-size: 0.75rem; color: var(--muted); }
-    .arrow { font-size: 1.5rem; color: var(--green); }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; }
+    .chain-select {
+      flex: 1;
+    }
+    .chain-select label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .chain-display {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .chain-display:hover {
+      border-color: rgba(0,255,163,0.3);
+    }
+    .chain-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .chain-icon.solana {
+      background: linear-gradient(135deg, #9945FF, #14F195);
+    }
+    .chain-icon.pumpchain {
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+    }
+    .chain-info {
+      flex: 1;
+    }
+    .chain-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .chain-network {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .chain-arrow {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    
+    /* Swap Button */
+    .swap-chains {
+      display: flex;
+      justify-content: center;
+      margin: -12px 0 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .swap-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--green);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .swap-btn:hover {
+      background: rgba(0,255,163,0.1);
+      border-color: var(--green);
+      transform: rotate(180deg);
+    }
+    
+    /* Wallet Connect Section */
+    .wallet-section {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .wallet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .wallet-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .wallet-status {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .status-dot.connected {
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+    .connect-wallet-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .connect-wallet-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(153,69,255,0.3);
+    }
+    .wallet-connected {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(0,255,163,0.05);
+      border: 1px solid rgba(0,255,163,0.2);
+      border-radius: 10px;
+    }
+    .wallet-connected.show {
+      display: flex;
+    }
+    .wallet-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .wallet-details {
+      flex: 1;
+    }
+    .wallet-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .wallet-address {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .disconnect-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .disconnect-btn:hover {
+      color: var(--error);
+      border-color: var(--error);
+    }
+    
+    /* Form Groups */
+    .form-group { 
+      margin-bottom: 20px; 
+    }
+    label { 
+      display: block; 
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      margin-bottom: 8px; 
+      color: var(--green); 
+      text-transform: uppercase; 
+      letter-spacing: 0.1em; 
+    }
+    .input-wrapper {
+      position: relative;
+    }
     input, select {
       width: 100%;
       background: var(--bg3);
@@ -66,8 +361,89 @@
       color: var(--text);
       font-family: 'Space Mono', monospace;
       font-size: 0.9rem;
+      transition: all .2s;
     }
-    input:focus, select:focus { outline: none; border-color: var(--cyan); }
+    input:focus, select:focus { 
+      outline: none; 
+      border-color: var(--cyan); 
+      box-shadow: 0 0 0 3px rgba(3,225,255,0.1);
+    }
+    input.error {
+      border-color: var(--error);
+    }
+    .input-token {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .token-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+    .max-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 4px 10px;
+      background: rgba(0,255,163,0.1);
+      border: 1px solid rgba(0,255,163,0.3);
+      border-radius: 6px;
+      color: var(--green);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .max-btn:hover {
+      background: rgba(0,255,163,0.2);
+    }
+    .error-message {
+      color: var(--error);
+      font-size: 0.75rem;
+      margin-top: 6px;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+    
+    /* Bridge Info */
+    .bridge-info {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 0.85rem;
+    }
+    .info-row:not(:last-child) {
+      border-bottom: 1px solid var(--border);
+    }
+    .info-label {
+      color: var(--muted);
+    }
+    .info-value {
+      font-family: 'Space Mono', monospace;
+      color: var(--cyan);
+    }
+    
+    /* Bridge Button */
     .btn-primary {
       width: 100%;
       padding: 16px;
@@ -80,8 +456,34 @@
       cursor: pointer;
       transition: all .2s;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(3,225,255,0.3); }
+    .btn-primary:hover:not(:disabled) { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 30px rgba(3,225,255,0.3); 
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-primary.loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -89,26 +491,171 @@
       margin-top: 32px;
     }
     .stat-card {
-      background: var(--bg3);
+      background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
       text-align: center;
     }
-    .stat-value { font-size: 1.3rem; font-weight: 800; color: var(--cyan); font-family: 'Space Mono', monospace; }
-    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+    .stat-value { 
+      font-size: 1.3rem; 
+      font-weight: 800; 
+      color: var(--cyan); 
+      font-family: 'Space Mono', monospace; 
+    }
+    .stat-label { 
+      font-size: 0.7rem; 
+      color: var(--muted); 
+      text-transform: uppercase; 
+      letter-spacing: 0.1em; 
+      margin-top: 4px; 
+    }
+    
+    /* Transaction Status Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+    }
+    .modal-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 24px;
+    }
+    .modal-icon.pending {
+      background: rgba(3,225,255,0.1);
+      border: 2px solid var(--cyan);
+      animation: pulse 2s infinite;
+    }
+    .modal-icon.success {
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .modal h2 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+    }
+    .modal p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--bg3);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+    .step-dot.active {
+      background: var(--cyan);
+      border-color: var(--cyan);
+    }
+    .step-dot.completed {
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .modal-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      color: #000;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
       .nav-links { display: none; }
       h1 { font-size: 1.8rem; }
+      .bridge-box { padding: 20px; }
       .stats-grid { grid-template-columns: 1fr; }
+      .chain-selector {
+        flex-direction: column;
+      }
+      .swap-chains {
+        margin: 8px 0;
+      }
+      .swap-btn {
+        transform: rotate(90deg);
+      }
+      .swap-btn:hover {
+        transform: rotate(270deg);
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Navigation -->
   <nav>
     <a href="index.html" class="nav-logo">
-      <span style="font-size: 1.5rem;">🚀</span>
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00FFA3"/>
+            <stop offset="1" stop-color="#03E1FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M6 26V6H18C23.5 6 26 9 26 13C26 17 23.5 20 18 20H11V26H6Z" fill="url(#lg)"/>
+        <path d="M11 10H17.5C20.5 10 21.5 11.5 21.5 13C21.5 14.5 20.5 16 17.5 16H11V10Z" fill="#04040C"/>
+      </svg>
       <span class="logo-text">PumpChain</span>
     </a>
     <div class="nav-links">
@@ -117,6 +664,10 @@
       <a href="bridge.html" class="active">Bridge</a>
       <a href="explorer.html">Explorer</a>
     </div>
+    <a href="connect.html" class="nav-wallet" id="navWallet">
+      <span class="wallet-dot"></span>
+      <span class="wallet-text">🔌 Connect</span>
+    </a>
   </nav>
 
   <div class="container">
@@ -124,43 +675,100 @@
     <p class="subtitle">Transfer assets between Solana and PumpChain instantly.</p>
 
     <div class="bridge-box">
-      <div class="bridge-direction">
-        <div class="chain">
-          <div class="chain-name">Solana</div>
-          <div class="chain-network">Devnet</div>
+      <!-- Chain Selector -->
+      <div class="chain-selector">
+        <div class="chain-select">
+          <label>From</label>
+          <div class="chain-display" id="sourceChain" onclick="selectChain('source')">
+            <div class="chain-icon solana">◉</div>
+            <div class="chain-info">
+              <div class="chain-name">Solana</div>
+              <div class="chain-network">Devnet</div>
+            </div>
+            <span class="chain-arrow">▼</span>
+          </div>
         </div>
-        <div class="arrow">→</div>
-        <div class="chain">
-          <div class="chain-name">PumpChain</div>
-          <div class="chain-network">Testnet</div>
+      </div>
+      
+      <!-- Swap Button -->
+      <div class="swap-chains">
+        <button class="swap-btn" onclick="swapChains()" title="Swap chains">⇅</button>
+      </div>
+      
+      <div class="chain-selector">
+        <div class="chain-select">
+          <label>To</label>
+          <div class="chain-display" id="destChain">
+            <div class="chain-icon pumpchain">🚀</div>
+            <div class="chain-info">
+              <div class="chain-name">PumpChain</div>
+              <div class="chain-network">Mainnet</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label>From Address</label>
-        <input type="text" id="fromAddress" placeholder="Your Solana address">
+      <!-- Wallet Connect -->
+      <div class="wallet-section">
+        <div class="wallet-header">
+          <span class="wallet-label">Wallet</span>
+          <span class="wallet-status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Not connected</span>
+          </span>
+        </div>
+        <button class="connect-wallet-btn" id="connectBtn" onclick="openWalletModal()">
+          🔌 Connect Wallet
+        </button>
+        <div class="wallet-connected" id="walletConnected">
+          <div class="wallet-avatar">👤</div>
+          <div class="wallet-details">
+            <div class="wallet-name" id="walletName">Backpack</div>
+            <div class="wallet-address" id="walletAddress">0x1234...5678</div>
+          </div>
+          <button class="disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>To Address</label>
-        <input type="text" id="toAddress" placeholder="Your PumpChain address">
-      </div>
-
+      <!-- Token Selection -->
       <div class="form-group">
         <label>Token</label>
-        <select id="token">
-          <option value="SOL">SOL</option>
-          <option value="USDC">USDC</option>
-          <option value="PUMP">PUMP</option>
+        <select id="token" onchange="updateToken()">
+          <option value="SOL" data-icon="◎">SOL</option>
+          <option value="USDC" data-icon="$">USDC</option>
+          <option value="PUMP" data-icon="🚀">PUMP</option>
         </select>
       </div>
 
+      <!-- Amount Input -->
       <div class="form-group">
         <label>Amount</label>
-        <input type="number" id="amount" placeholder="0.00" min="0" step="0.001">
+        <div class="input-wrapper">
+          <input type="number" id="amount" placeholder="0.00" min="0.001" step="0.001" oninput="validateAmount()">
+          <span class="max-btn" onclick="setMaxAmount()">MAX</span>
+        </div>
+        <div class="error-message" id="amountError">Minimum amount is 0.001</div>
+      </div>
+      
+      <!-- Bridge Info -->
+      <div class="bridge-info">
+        <div class="info-row">
+          <span class="info-label">Bridge Fee</span>
+          <span class="info-value" id="bridgeFee">0.001 SOL</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Estimated Time</span>
+          <span class="info-value">&lt; 2 min</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">You will receive</span>
+          <span class="info-value" id="receiveAmount">0.00</span>
+        </div>
       </div>
 
-      <button class="btn-primary" onclick="bridgeAssets()">Bridge Assets</button>
+      <button class="btn-primary" id="bridgeBtn" onclick="bridgeAssets()">
+        Bridge Assets
+      </button>
     </div>
 
     <div class="stats-grid">
@@ -179,20 +787,240 @@
     </div>
   </div>
 
-  <script>
-    function bridgeAssets() {
-      const from = document.getElementById('fromAddress').value;
-      const to = document.getElementById('toAddress').value;
-      const token = document.getElementById('token').value;
-      const amount = document.getElementById('amount').value;
+  <!-- Transaction Modal -->
+  <div class="modal-overlay" id="txModal">
+    <div class="modal">
+      <div class="modal-icon pending" id="modalIcon">⏳</div>
+      <h2 id="modalTitle">Processing Bridge</h2>
+      <p id="modalText">Your assets are being transferred across chains...</p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-steps">
+        <div class="progress-step">
+          <span class="step-dot active" id="step1"></span>
+          <span>Initiate</span>
+        </div>
+        <div class="progress-step">
+          <span class="step-dot" id="step2"></span>
+          <span>Confirm</span>
+        </div>
+        <div class="progress-step">
+          <span class="step-dot" id="step3"></span>
+          <span>Complete</span>
+        </div>
+      </div>
+      <button class="modal-btn" id="modalBtn" onclick="closeModal()" style="display: none;">
+        View on Explorer
+      </button>
+    </div>
+  </div>
 
-      if (!from || !to || !amount) {
-        alert('Please fill in all fields!');
+  <script>
+    let isWalletConnected = false;
+    let currentDirection = 'solana-to-pump'; // or 'pump-to-solana'
+    let walletAddress = '';
+    
+    const tokenFees = {
+      'SOL': '0.001 SOL',
+      'USDC': '0.5 USDC',
+      'PUMP': '1 PUMP'
+    };
+    
+    // Check if wallet was previously connected
+    window.addEventListener('load', () => {
+      const savedWallet = localStorage.getItem('pumpchain_wallet');
+      if (savedWallet) {
+        const wallet = JSON.parse(savedWallet);
+        connectWallet(wallet.type, wallet.address);
+      }
+    });
+    
+    function swapChains() {
+      const sourceEl = document.getElementById('sourceChain');
+      const destEl = document.getElementById('destChain');
+      
+      // Swap the HTML content
+      const sourceHTML = sourceEl.innerHTML;
+      const destHTML = destEl.innerHTML;
+      
+      sourceEl.innerHTML = destHTML;
+      destEl.innerHTML = sourceHTML;
+      
+      // Update direction
+      currentDirection = currentDirection === 'solana-to-pump' ? 'pump-to-solana' : 'solana-to-pump';
+      
+      // Update fees and validation
+      updateToken();
+    }
+    
+    function openWalletModal() {
+      // Open wallet selection in new window or redirect
+      window.open('connect.html', '_blank', 'width=500,height=600');
+    }
+    
+    function connectWallet(type, address) {
+      isWalletConnected = true;
+      walletAddress = address || '0x' + Math.random().toString(16).substr(2, 40);
+      
+      // Save to localStorage
+      localStorage.setItem('pumpchain_wallet', JSON.stringify({
+        type: type || 'backpack',
+        address: walletAddress
+      }));
+      
+      // Update UI
+      document.getElementById('connectBtn').style.display = 'none';
+      document.getElementById('walletConnected').classList.add('show');
+      document.getElementById('walletName').textContent = type ? type.charAt(0).toUpperCase() + type.slice(1) : 'Backpack';
+      document.getElementById('walletAddress').textContent = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+      
+      // Update status
+      document.getElementById('statusDot').classList.add('connected');
+      document.getElementById('statusText').textContent = 'Connected';
+      
+      // Update nav
+      const navWallet = document.getElementById('navWallet');
+      navWallet.classList.add('connected');
+      navWallet.querySelector('.wallet-text').textContent = walletAddress.slice(0, 4) + '...' + walletAddress.slice(-4);
+    }
+    
+    function disconnectWallet() {
+      isWalletConnected = false;
+      walletAddress = '';
+      localStorage.removeItem('pumpchain_wallet');
+      
+      // Update UI
+      document.getElementById('connectBtn').style.display = 'flex';
+      document.getElementById('walletConnected').classList.remove('show');
+      document.getElementById('statusDot').classList.remove('connected');
+      document.getElementById('statusText').textContent = 'Not connected';
+      
+      // Update nav
+      const navWallet = document.getElementById('navWallet');
+      navWallet.classList.remove('connected');
+      navWallet.querySelector('.wallet-text').textContent = '🔌 Connect';
+    }
+    
+    function updateToken() {
+      const token = document.getElementById('token').value;
+      document.getElementById('bridgeFee').textContent = tokenFees[token];
+      calculateReceiveAmount();
+    }
+    
+    function validateAmount() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const errorEl = document.getElementById('amountError');
+      const inputEl = document.getElementById('amount');
+      
+      if (document.getElementById('amount').value && (isNaN(amount) || amount < 0.001)) {
+        errorEl.classList.add('show');
+        inputEl.classList.add('error');
+        return false;
+      } else {
+        errorEl.classList.remove('show');
+        inputEl.classList.remove('error');
+        calculateReceiveAmount();
+        return true;
+      }
+    }
+    
+    function calculateReceiveAmount() {
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+      const token = document.getElementById('token').value;
+      
+      // Subtract fee
+      let fee = 0;
+      if (token === 'SOL') fee = 0.001;
+      else if (token === 'USDC') fee = 0.5;
+      else if (token === 'PUMP') fee = 1;
+      
+      const receive = Math.max(0, amount - fee);
+      document.getElementById('receiveAmount').textContent = receive.toFixed(token === 'SOL' ? 3 : 2) + ' ' + token;
+    }
+    
+    function setMaxAmount() {
+      // Simulate max balance
+      const maxBalances = { 'SOL': 10.5, 'USDC': 1000, 'PUMP': 50000 };
+      const token = document.getElementById('token').value;
+      document.getElementById('amount').value = maxBalances[token];
+      validateAmount();
+    }
+    
+    async function bridgeAssets() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const token = document.getElementById('token').value;
+      
+      // Validation
+      if (!isWalletConnected) {
+        alert('Please connect your wallet first!');
+        openWalletModal();
         return;
       }
-
-      alert(`🌉 Bridging ${amount} ${token}...\n\nFrom: ${from}\nTo: ${to}\n\nThis would initiate the cross-chain transfer!`);
+      
+      if (!validateAmount()) {
+        return;
+      }
+      
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount!');
+        return;
+      }
+      
+      // Show modal
+      const modal = document.getElementById('txModal');
+      modal.classList.add('show');
+      
+      // Reset modal state
+      document.getElementById('modalIcon').className = 'modal-icon pending';
+      document.getElementById('modalIcon').textContent = '⏳';
+      document.getElementById('modalTitle').textContent = 'Processing Bridge';
+      document.getElementById('modalText').textContent = 'Your assets are being transferred across chains...';
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('modalBtn').style.display = 'none';
+      
+      // Reset steps
+      document.querySelectorAll('.step-dot').forEach(dot => {
+        dot.className = 'step-dot';
+      });
+      document.getElementById('step1').classList.add('active');
+      
+      // Simulate bridge process
+      await new Promise(r => setTimeout(r, 1000));
+      document.getElementById('progressFill').style.width = '33%';
+      document.getElementById('step1').classList.add('completed');
+      document.getElementById('step2').classList.add('active');
+      
+      await new Promise(r => setTimeout(r, 1500));
+      document.getElementById('progressFill').style.width = '66%';
+      document.getElementById('step2').classList.add('completed');
+      document.getElementById('step3').classList.add('active');
+      
+      await new Promise(r => setTimeout(r, 1000));
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('step3').classList.add('completed');
+      
+      // Success state
+      document.getElementById('modalIcon').className = 'modal-icon success';
+      document.getElementById('modalIcon').textContent = '✓';
+      document.getElementById('modalTitle').textContent = 'Bridge Complete!';
+      document.getElementById('modalText').textContent = `Successfully bridged ${amount} ${token} to ${currentDirection === 'solana-to-pump' ? 'PumpChain' : 'Solana'}!`;
+      document.getElementById('modalBtn').style.display = 'inline-block';
     }
+    
+    function closeModal() {
+      document.getElementById('txModal').classList.remove('show');
+      // Reset form
+      document.getElementById('amount').value = '';
+      document.getElementById('receiveAmount').textContent = '0.00';
+    }
+    
+    // Close modal on overlay click
+    document.getElementById('txModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
   </script>
 </body>
 </html>

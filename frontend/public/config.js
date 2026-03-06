@@ -1,20 +1,20 @@
-// PumpChain Testnet Configuration
-const TESTNET_CONFIG = {
+// PumpChain Mainnet Configuration
+const MAINNET_CONFIG = {
   // Network
-  NETWORK: 'testnet',
+  NETWORK: 'mainnet',
   CHAIN_ID: 1397,
   
   // RPC Endpoints
-  RPC_URL: 'https://testnet.pumpchain.io',
-  WS_URL: 'wss://testnet.pumpchain.io',
+  RPC_URL: 'https://mainnet.pumpchain.io',
+  WS_URL: 'wss://mainnet.pumpchain.io',
   
   // Explorer
-  EXPLORER_URL: 'https://testnet.pumpscan.app',
+  EXPLORER_URL: 'https://pumpscan.app',
   
-  // Faucet
-  FAUCET_URL: 'https://faucet.pumpchain.io',
+  // Faucet (optional - mainnet may not have faucet)
+  FAUCET_URL: 'https://mainnet.pumpchain.io/faucet',
   
-  // Program IDs (Testnet)
+  // Program IDs (Mainnet)
   PROGRAMS: {
     LAUNCHPAD: 'pumpLchPad1111111111111111111111111111111',
     PROOF: 'pumpProof11111111111111111111111111111111',
@@ -25,7 +25,7 @@ const TESTNET_CONFIG = {
   NATIVE_TOKEN: {
     SYMBOL: 'PUMP',
     DECIMALS: 9,
-    NAME: 'PumpChain Testnet Token',
+    NAME: 'PumpChain Token',
   },
   
   // Gas
@@ -35,10 +35,10 @@ const TESTNET_CONFIG = {
 
 // Export for use
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = TESTNET_CONFIG;
+  module.exports = MAINNET_CONFIG;
 }
 
 // Browser global
 if (typeof window !== 'undefined') {
-  window.PUMPCHAIN_TESTNET = TESTNET_CONFIG;
+  window.PUMPCHAIN_MAINNET = MAINNET_CONFIG;
 }
