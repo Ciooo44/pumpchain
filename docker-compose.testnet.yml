@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # PumpChain Validator Node
+  validator:
+    build:
+      context: ../validator
+      dockerfile: Dockerfile
+    container_name: pumpchain-validator
+    ports:
+      - "8899:8899"    # RPC
+      - "8900:8900"    # WS
+      - "8001:8001"    # P2P
+    volumes:
+      - validator-data:/root/.pumpchain
+    environment:
+      - NETWORK=testnet
+      - RPC_BIND=0.0.0.0:8899
+      - DATA_DIR=/root/.pumpchain
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # Faucet Service
+  faucet:
+    build:
+      context: ./faucet
+      dockerfile: Dockerfile
+    container_name: pumpchain-faucet
+    ports:
+      - "3000:3000"
+    environment:
+      - RPC_URL=http://validator:8899
+      - FAUCET_AMOUNT=1000
+      - RATE_LIMIT=60
+    depends_on:
+      - validator
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # Explorer API
+  explorer-api:
+    build:
+      context: ./explorer-api
+      dockerfile: Dockerfile
+    container_name: pumpchain-explorer-api
+    ports:
+      - "3001:3001"
+    environment:
+      - RPC_URL=http://validator:8899
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/explorer
+    depends_on:
+      - validator
+      - postgres
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # PostgreSQL for Explorer
+  postgres:
+    image: postgres:15-alpine
+    container_name: pumpchain-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=explorer
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: pumpchain-redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+volumes:
+  validator-data:
+  postgres-data:
+  redis-data:
+
+networks:
+  pumpchain-net:
+    driver: bridge
