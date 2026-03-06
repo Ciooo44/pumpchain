@@ -88,12 +88,13 @@
     }
     .buttons {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
+      margin-bottom: 16px;
     }
     .btn {
-      padding: 16px 32px;
+      padding: 14px 24px;
       border-radius: 12px;
       font-weight: 700;
       font-size: 14px;
@@ -117,10 +118,24 @@
       border-color: #00FFA3;
       color: #00FFA3;
     }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      margin: 24px 0 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nav-link {
+      color: #6B6B8A;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #00FFA3; }
     .stats {
       display: flex;
       gap: 40px;
-      margin-top: 48px;
+      margin-top: 32px;
     }
     .stat {
       text-align: center;
@@ -138,18 +153,6 @@
       letter-spacing: 0.1em;
       margin-top: 4px;
     }
-    .links {
-      margin-top: 48px;
-      display: flex;
-      gap: 24px;
-    }
-    .link {
-      color: #6B6B8A;
-      text-decoration: none;
-      font-size: 14px;
-      transition: color 0.2s;
-    }
-    .link:hover { color: #00FFA3; }
   </style>
 </head>
 <body>
@@ -171,7 +174,15 @@
   
   <div class="buttons">
     <a href="connect.html" class="btn btn-primary">Connect Wallet</a>
-    <a href="https://github.com/Ciooo44/pumpchain" class="btn btn-secondary" target="_blank">GitHub</a>
+    <a href="launchpad.html" class="btn btn-secondary">Launchpad</a>
+    <a href="bridge.html" class="btn btn-secondary">Bridge</a>
+    <a href="explorer.html" class="btn btn-secondary">Explorer</a>
+  </div>
+  
+  <div class="nav-links">
+    <a href="roadmap.html" class="nav-link">Roadmap</a>
+    <a href="https://github.com/Ciooo44/pumpchain" class="nav-link" target="_blank">GitHub</a>
+    <a href="https://twitter.com/0Xmizuno" class="nav-link" target="_blank">Twitter</a>
   </div>
   
   <div class="stats">
@@ -189,17 +200,11 @@
     </div>
   </div>
   
-  <div class="links">
-    <a href="https://github.com/Ciooo44/pumpchain" class="link" target="_blank">GitHub</a>
-    <a href="https://twitter.com/0Xmizuno" class="link" target="_blank">Twitter</a>
-  </div>
-  
   <script>
     const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
     
     async function updateStats() {
       try {
-        // Fetch slot
         const slotRes = await fetch(RPC_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -208,7 +213,6 @@
         const slotData = await slotRes.json();
         document.getElementById('slot').textContent = slotData.result?.toLocaleString() || '52,345,681';
         
-        // Fetch block height
         const heightRes = await fetch(RPC_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -217,7 +221,6 @@
         const heightData = await heightRes.json();
         document.getElementById('blockheight').textContent = heightData.result?.toLocaleString() || '48,912,350';
         
-        // Fetch epoch
         const epochRes = await fetch(RPC_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -225,13 +228,11 @@
         });
         const epochData = await epochRes.json();
         document.getElementById('epoch').textContent = epochData.result?.epoch || '452';
-        
       } catch (e) {
         console.log('RPC fetch error:', e);
       }
     }
     
-    // Update immediately and every 2 seconds
     updateStats();
     setInterval(updateStats, 2000);
   </script>
