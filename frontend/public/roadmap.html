@@ -3,19 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PumpChain Roadmap 2025</title>
+  <title>Roadmap | PumpChain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #04040C;
       color: #E8E8F0;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 40px 20px;
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
     }
-    .container { max-width: 1200px; margin: 0 auto; }
+    
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(4,4,12,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,255,163,0.12);
+      z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo span { font-size: 24px; }
+    .nav-logo strong { color: #00FFA3; font-size: 18px; }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { color: #6B6B8A; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: #00FFA3; }
+    
+    /* Main */
+    main { padding: 120px 48px 48px; max-width: 1200px; margin: 0 auto; }
+    
     h1 {
       text-align: center;
-      font-size: 2.5rem;
+      font-size: 42px;
       margin-bottom: 10px;
       background: linear-gradient(90deg, #00FFA3, #03E1FF);
       -webkit-background-clip: text;
@@ -26,6 +47,8 @@
       color: #6B6B8A;
       margin-bottom: 50px;
     }
+    
+    /* Timeline */
     .timeline {
       display: flex;
       justify-content: space-between;
@@ -64,16 +87,8 @@
     .phase-2 .phase-dot { background: #03E1FF; color: #000; }
     .phase-3 .phase-dot { background: #9945FF; color: #fff; }
     .phase-4 .phase-dot { background: #FF3CAC; color: #fff; }
-    .phase-title {
-      font-size: 1.3rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    .phase-date {
-      color: #6B6B8A;
-      font-size: 0.9rem;
-      margin-bottom: 20px;
-    }
+    .phase-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 10px; }
+    .phase-date { color: #6B6B8A; font-size: 0.9rem; margin-bottom: 20px; }
     .tasks {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(0,255,163,0.1);
@@ -98,10 +113,9 @@
     .status-done { background: #00FFA3; }
     .status-progress { background: #03E1FF; animation: pulse 2s infinite; }
     .status-todo { background: #6B6B8A; }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    
+    /* Summary */
     .summary {
       background: rgba(0,255,163,0.05);
       border: 1px solid rgba(0,255,163,0.2);
@@ -109,10 +123,7 @@
       padding: 30px;
       margin-top: 40px;
     }
-    .summary h2 {
-      color: #00FFA3;
-      margin-bottom: 20px;
-    }
+    .summary h2 { color: #00FFA3; margin-bottom: 20px; text-align: center; }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -124,25 +135,36 @@
       padding: 20px;
       text-align: center;
     }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #00FFA3;
-    }
-    .stat-label {
-      color: #6B6B8A;
-      font-size: 0.85rem;
-      margin-top: 5px;
-    }
+    .stat-value { font-size: 2rem; font-weight: bold; color: #00FFA3; }
+    .stat-label { color: #6B6B8A; font-size: 0.85rem; margin-top: 5px; }
+    
     @media (max-width: 768px) {
       .timeline { flex-direction: column; }
       .timeline::before { display: none; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { padding: 18px 24px; }
+      .nav-links { display: none; }
+      main { padding: 100px 24px 48px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <span>🚀</span>
+      <strong>PumpChain</strong>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="launchpad.html">Launchpad</a>
+      <a href="bridge.html">Bridge</a>
+      <a href="explorer.html">Explorer</a>
+      <a href="roadmap.html" class="active">Roadmap</a>
+      <a href="connect.html">Connect</a>
+    </div>
+  </nav>
+  
+  <main>
     <h1>🚀 PumpChain 2025 Roadmap</h1>
     <p class="subtitle">The fastest SVM-powered L2 blockchain</p>
 
@@ -152,22 +174,10 @@
         <div class="phase-title">Faz 1</div>
         <div class="phase-date">Q1 2025</div>
         <div class="tasks">
-          <div class="task">
-            <div class="status status-done"></div>
-            <span>Website Launch</span>
-          </div>
-          <div class="task">
-            <div class="status status-done"></div>
-            <span>Testnet Live</span>
-          </div>
-          <div class="task">
-            <div class="status status-done"></div>
-            <span>GitHub Repos</span>
-          </div>
-          <div class="task">
-            <div class="status status-done"></div>
-            <span>Mainnet Migration</span>
-          </div>
+          <div class="task"><div class="status status-done"></div><span>Website Launch</span></div>
+          <div class="task"><div class="status status-done"></div><span>Testnet Live</span></div>
+          <div class="task"><div class="status status-done"></div><span>GitHub Repos</span></div>
+          <div class="task"><div class="status status-done"></div><span>Mainnet Migration</span></div>
         </div>
       </div>
 
@@ -176,22 +186,10 @@
         <div class="phase-title">Faz 2</div>
         <div class="phase-date">Q2 2025</div>
         <div class="tasks">
-          <div class="task">
-            <div class="status status-progress"></div>
-            <span>Validator Optimization</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>Launchpad Audit</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>Cross-Chain Bridge</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>Unity SDK v1.0</span>
-          </div>
+          <div class="task"><div class="status status-progress"></div><span>Validator Optimization</span></div>
+          <div class="task"><div class="status status-todo"></div><span>Launchpad Audit</span></div>
+          <div class="task"><div class="status status-todo"></div><span>Cross-Chain Bridge</span></div>
+          <div class="task"><div class="status status-todo"></div><span>Unity SDK v1.0</span></div>
         </div>
       </div>
 
@@ -200,18 +198,9 @@
         <div class="phase-title">Faz 3</div>
         <div class="phase-date">Q3 2025</div>
         <div class="tasks">
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>DEX Launch (PumpSwap)</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>NFT Marketplace</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>Grant Program</span>
-          </div>
+          <div class="task"><div class="status status-todo"></div><span>DEX Launch (PumpSwap)</span></div>
+          <div class="task"><div class="status status-todo"></div><span>NFT Marketplace</span></div>
+          <div class="task"><div class="status status-todo"></div><span>Grant Program</span></div>
         </div>
       </div>
 
@@ -220,18 +209,9 @@
         <div class="phase-title">Faz 4</div>
         <div class="phase-date">Q4 2025</div>
         <div class="tasks">
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>GameJam Etkinliği</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>Lending Protocol</span>
-          </div>
-          <div class="task">
-            <div class="status status-todo"></div>
-            <span>2026 Roadmap</span>
-          </div>
+          <div class="task"><div class="status status-todo"></div><span>GameJam Etkinliği</span></div>
+          <div class="task"><div class="status status-todo"></div><span>Lending Protocol</span></div>
+          <div class="task"><div class="status status-todo"></div><span>2026 Roadmap</span></div>
         </div>
       </div>
     </div>
@@ -257,6 +237,6 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </body>
 </html>
