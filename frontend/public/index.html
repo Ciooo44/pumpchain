@@ -1,1003 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PumpChain — The Fastest SVM-Powered L2</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PumpChain - In Development</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --green:   #00FFA3;
-      --cyan:    #03E1FF;
-      --purple:  #9945FF;
-      --pink:    #FF3CAC;
-      --bg:      #04040C;
-      --bg2:     #080818;
-      --bg3:     #0D0D22;
-      --border:  rgba(0,255,163,0.12);
-      --text:    #E8E8F0;
-      --muted:   #6B6B8A;
-    }
-
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html { scroll-behavior: smooth; }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: #04040C;
+      color: #E8E8F0;
       font-family: 'Syne', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* NOISE OVERLAY */
-    body::before {
-      content:'';
-      position:fixed; inset:0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events:none; z-index:0; opacity:.4;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed; top:0; left:0; right:0; z-index:100;
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 18px 48px;
-      background: rgba(4,4,12,0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-logo {
-      display:flex; align-items:center; gap:10px;
-      font-family:'Syne', sans-serif; font-weight:800; font-size:1.2rem;
-      letter-spacing:0.05em;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width:32px; height:32px;
-    }
-
-    .logo-text {
-      background: linear-gradient(90deg, var(--green), var(--cyan));
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    }
-
-    .nav-links {
-      display:flex; gap:8px;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration:none;
-      font-size:.85rem;
-      font-weight:600;
-      letter-spacing:.06em;
-      padding: 8px 18px;
-      border-radius:8px;
-      border: 1px solid transparent;
-      transition: all .2s;
-    }
-
-    .nav-links a:hover {
-      color: var(--green);
-      border-color: var(--border);
-      background: rgba(0,255,163,0.05);
-    }
-
-    .nav-links a.active {
-      color: var(--green);
-      border-color: rgba(0,255,163,0.3);
-      background: rgba(0,255,163,0.07);
-    }
-
-    .nav-wallet {
-      display:flex; align-items:center; gap:6px;
-      font-size:.8rem; color: var(--muted);
-      text-decoration:none;
-      padding: 8px 16px;
-      border-radius:8px;
-      border: 1px solid var(--border);
-      transition: all .2s;
-    }
-    .nav-wallet:hover { color:var(--green); border-color:rgba(0,255,163,.3); }
-    .nav-wallet.connected {
-      color: var(--green);
-      border-color: rgba(0,255,163,0.3);
-      background: rgba(0,255,163,0.07);
-    }
-
-    .live-dot {
-      width:7px; height:7px; border-radius:50%;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:.5; transform:scale(.8); }
-    }
-
-    /* HERO */
-    .hero {
       min-height: 100vh;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      text-align:center;
-      padding: 120px 24px 80px;
-      position:relative;
-      overflow:hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
     }
-
-    .hero-bg {
-      position:absolute; inset:0; z-index:-1;
+    .logo { font-size: 64px; margin-bottom: 24px; }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #00FFA3, #03E1FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-
-    .orb {
-      position:absolute; border-radius:50%;
-      filter:blur(80px); pointer-events:none;
+    .subtitle {
+      color: #6B6B8A;
+      font-size: 16px;
+      max-width: 500px;
+      line-height: 1.6;
+      margin-bottom: 40px;
     }
-    .orb-1 { width:500px; height:500px; top:-100px; left:50%; transform:translateX(-50%);
-              background: radial-gradient(circle, rgba(0,255,163,.15), transparent 70%); }
-    .orb-2 { width:350px; height:350px; top:20%; left:10%;
-              background: radial-gradient(circle, rgba(153,69,255,.1), transparent 70%); }
-    .orb-3 { width:300px; height:300px; top:30%; right:8%;
-              background: radial-gradient(circle, rgba(3,225,255,.08), transparent 70%); }
-
-    .grid-lines {
-      position:absolute; inset:0;
-      background-image:
-        linear-gradient(rgba(0,255,163,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,163,.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-    }
-
-    .hero-badge {
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 6px 16px;
-      border-radius:100px;
-      border:1px solid rgba(0,255,163,.25);
-      background: rgba(0,255,163,.06);
-      font-size:.78rem; font-weight:700; letter-spacing:.1em;
-      color: var(--green);
-      margin-bottom:28px;
-      text-transform:uppercase;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
-      font-weight:800;
-      line-height:1.05;
-      letter-spacing:-.02em;
-      margin-bottom:24px;
-    }
-
-    .hero h1 .line1 { color: var(--text); }
-    .hero h1 .line2 {
-      background: linear-gradient(90deg, var(--green), var(--cyan), var(--purple));
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    }
-
-    .hero-sub {
-      font-size:1.1rem; color:var(--muted); max-width:480px; line-height:1.6;
-      margin-bottom:40px;
-    }
-
-    .hero-ctas {
-      display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
-      margin-bottom:60px;
-    }
-
-    .btn-primary {
-      padding:14px 32px; border-radius:10px;
-      background: linear-gradient(135deg, var(--green), var(--cyan));
-      color:#000; font-weight:700; font-size:.9rem; letter-spacing:.04em;
-      text-decoration:none; border:none; cursor:pointer;
-      transition: all .2s; text-transform:uppercase;
-    }
-    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,255,163,.3); }
-
-    .btn-secondary {
-      padding:14px 32px; border-radius:10px;
-      background: transparent;
-      color:var(--text); font-weight:700; font-size:.9rem; letter-spacing:.04em;
-      text-decoration:none; border:1px solid var(--border); cursor:pointer;
-      transition: all .2s; text-transform:uppercase;
-    }
-    .btn-secondary:hover { border-color:rgba(3,225,255,.4); color:var(--cyan); transform:translateY(-2px); }
-
-    .btn-wallet {
-      padding:14px 32px; border-radius:10px;
-      background: linear-gradient(135deg, var(--purple), var(--pink));
-      color:#fff; font-weight:700; font-size:.9rem; letter-spacing:.04em;
-      text-decoration:none; border:none; cursor:pointer;
-      transition: all .2s; text-transform:uppercase;
-    }
-    .btn-wallet:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(153,69,255,.3); }
-
-    /* STATS BAR */
-    .stats-bar {
-      display:flex; gap:0;
-      border:1px solid var(--border);
-      border-radius:16px;
-      overflow:hidden;
-      background: var(--bg2);
-      margin-bottom:0;
+    .status-box {
+      background: rgba(0, 255, 163, 0.05);
+      border: 1px solid rgba(0, 255, 163, 0.2);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 600px;
       width: 100%;
-      max-width: 800px;
     }
-
-    .stat-item {
-      flex:1; padding:20px 24px; text-align:center;
-      border-right:1px solid var(--border);
-      position:relative;
-      transition: all 0.3s;
+    .status-title {
+      color: #00FFA3;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
-    .stat-item:last-child { border-right:none; }
-    .stat-item:hover {
-      background: rgba(0,255,163,0.03);
+    .phase-list {
+      text-align: left;
     }
-
-    .stat-value {
-      font-size:1.4rem; font-weight:800;
-      background: linear-gradient(135deg, var(--green), var(--cyan));
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      font-family:'Space Mono', monospace;
-      transition: all 0.3s;
+    .phase {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-
-    .stat-label {
-      font-size:.72rem; color:var(--muted); letter-spacing:.1em;
-      text-transform:uppercase; margin-top:6px;
-    }
-
-    .stat-change {
-      font-size: 0.7rem;
-      color: var(--green);
-      margin-top: 4px;
-    }
-
-    /* SECTION */
-    section {
-      max-width:1100px; margin:0 auto; padding:100px 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .section-label {
-      font-size:.75rem; font-weight:700; letter-spacing:.15em;
-      text-transform:uppercase; color:var(--green);
-      margin-bottom:16px;
-    }
-
-    .section-title {
-      font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:800;
-      line-height:1.1; letter-spacing:-.02em;
-      margin-bottom:16px;
-    }
-
-    .section-sub {
-      font-size:1rem; color:var(--muted); max-width:500px; line-height:1.65;
-      margin-bottom:56px;
-    }
-
-    /* STEPS */
-    .steps {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
-    }
-
-    .step-card {
-      background:var(--bg2);
-      border:1px solid var(--border);
-      border-radius:16px; padding:32px;
-      position:relative; overflow:hidden;
-      transition: border-color .2s, transform .2s;
-    }
-    .step-card:hover { border-color:rgba(0,255,163,.3); transform:translateY(-4px); }
-
-    .step-num {
-      width:36px; height:36px; border-radius:10px;
-      background: linear-gradient(135deg, var(--green), var(--cyan));
-      color:#000; font-weight:800; font-size:.9rem;
-      display:flex; align-items:center; justify-content:center;
-      margin-bottom:20px;
-    }
-
-    .step-card h3 {
-      font-size:1rem; font-weight:700; margin-bottom:10px; letter-spacing:-.01em;
-    }
-
-    .step-card p { font-size:.88rem; color:var(--muted); line-height:1.6; }
-
-    .step-card a {
-      display:inline-block; margin-top:16px;
-      font-size:.82rem; font-weight:700; color:var(--cyan);
-      text-decoration:none; letter-spacing:.04em;
-    }
-    .step-card a:hover { color:var(--green); }
-
-    /* RPC TERMINAL */
-    .rpc-grid {
-      display:grid; grid-template-columns:1fr 1fr; gap:24px;
-    }
-
-    .rpc-box {
-      background:var(--bg2); border:1px solid var(--border);
-      border-radius:16px; overflow:hidden;
-    }
-
-    .rpc-header {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 20px;
-      border-bottom:1px solid var(--border);
-      font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-      color:var(--muted);
-    }
-
-    .rpc-method-list {
-      padding:16px;
-      display:flex; flex-wrap:wrap; gap:8px;
-    }
-
-    .rpc-method {
-      padding:6px 14px; border-radius:8px;
-      background:var(--bg3); border:1px solid var(--border);
-      font-family:'Space Mono', monospace; font-size:.75rem;
-      color:var(--cyan); cursor:pointer; transition:all .15s;
-    }
-    .rpc-method:hover { background:rgba(3,225,255,.08); border-color:rgba(3,225,255,.3); }
-    .rpc-method.active { background:rgba(0,255,163,.08); border-color:rgba(0,255,163,.3); color:var(--green); }
-
-    .rpc-code {
-      padding:16px 20px;
-      font-family:'Space Mono', monospace; font-size:.78rem;
-      color:#8888AA; line-height:1.7;
-      border-top:1px solid var(--border);
-      min-height:140px;
-      background: var(--bg3);
-    }
-    .rpc-code .key   { color:var(--purple); }
-    .rpc-code .val   { color:var(--green); }
-    .rpc-code .str   { color:var(--cyan); }
-
-    .run-btn {
-      margin:12px 20px;
-      padding:8px 20px; border-radius:8px;
-      background:rgba(0,255,163,.1); border:1px solid rgba(0,255,163,.3);
-      color:var(--green); font-family:'Space Mono',monospace; font-size:.78rem;
-      cursor:pointer; transition:all .15s; font-weight:700;
-    }
-    .run-btn:hover { background:rgba(0,255,163,.18); }
-    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .run-btn.running::after {
-      content: '';
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border: 2px solid transparent;
-      border-top-color: var(--green);
+    .phase:last-child { border-bottom: none; }
+    .phase-check {
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-left: 8px;
-      vertical-align: middle;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .done { background: #00FFA3; color: #000; }
+    .pending { background: #6B6B8A; }
+    .phase-text { font-size: 14px; }
+    .phase-text.done { color: #E8E8F0; }
+    .phase-text.pending { color: #6B6B8A; }
+    .links {
+      margin-top: 32px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
     }
-
-    /* CONNECT CARD */
-    .connect-card {
-      background:var(--bg2); border:1px solid var(--border);
-      border-radius:16px; padding:28px;
-    }
-
-    .connect-card h3 { font-size:1rem; font-weight:700; margin-bottom:20px; }
-
-    .wallet-ui {
-      background:var(--bg3); border-radius:12px;
-      border:1px solid var(--border); overflow:hidden;
-    }
-
-    .wallet-row {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 16px; border-bottom:1px solid var(--border);
-      font-size:.82rem;
-    }
-    .wallet-row:last-child { border-bottom:none; }
-    .wallet-row .label { color:var(--muted); }
-    .wallet-row .val   { font-family:'Space Mono',monospace; font-size:.78rem; color:var(--green); }
-    .wallet-row .copy  {
-      font-size:.7rem; padding:3px 10px; border-radius:6px;
-      background:rgba(0,255,163,.08); border:1px solid rgba(0,255,163,.2);
-      color:var(--green); cursor:pointer; letter-spacing:.06em;
-      transition: all 0.2s;
-    }
-    .wallet-row .copy:hover {
-      background:rgba(0,255,163,.15);
-    }
-    .wallet-row .copy.copied {
-      background: var(--green);
-      color: #000;
-    }
-
-    /* DEV RESOURCES */
-    .dev-grid {
-      display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
-    }
-
-    .dev-card {
-      background:var(--bg2); border:1px solid var(--border);
-      border-radius:14px; padding:28px;
-      text-decoration:none; color:var(--text);
-      transition:all .2s; display:block;
-    }
-    .dev-card:hover { border-color:rgba(0,255,163,.3); transform:translateY(-3px); }
-
-    .dev-card-icon {
-      width:40px; height:40px; border-radius:10px; margin-bottom:16px;
-      background:linear-gradient(135deg,var(--green),var(--cyan));
-      display:flex; align-items:center; justify-content:center; font-size:1.1rem;
-    }
-
-    .dev-card h3 { font-size:1rem; font-weight:700; margin-bottom:6px; }
-    .dev-card p  { font-size:.84rem; color:var(--muted); line-height:1.5; }
-
-    /* GITHUB REPOS */
-    .repos-grid {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
-    }
-
-    .repo-card {
-      background:var(--bg2); border:1px solid var(--border);
-      border-radius:14px; padding:24px;
-      transition:all .2s;
+    .link {
+      color: #6B6B8A;
       text-decoration: none;
-      color: var(--text);
-      display: block;
+      font-size: 14px;
+      transition: color 0.2s;
     }
-    .repo-card:hover { border-color:rgba(153,69,255,.4); transform:translateY(-3px); }
-
-    .repo-lang {
-      display:inline-block; padding:3px 10px; border-radius:6px;
-      font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-      background:rgba(153,69,255,.1); border:1px solid rgba(153,69,255,.2);
-      color:var(--purple); margin-bottom:12px;
-    }
-
-    .repo-card h3 { font-size:.95rem; font-weight:700; margin-bottom:8px; color:var(--cyan); }
-    .repo-card p  { font-size:.82rem; color:var(--muted); line-height:1.5; }
-
-    /* FOOTER */
-    footer {
-      border-top:1px solid var(--border);
-      padding:32px 48px;
-      display:flex; align-items:center; justify-content:space-between;
-      font-size:.8rem; color:var(--muted);
-      position: relative;
-      z-index: 1;
-    }
-
-    footer a { color:var(--muted); text-decoration:none; transition: color 0.2s; }
-    footer a:hover { color:var(--green); }
-
-    /* RESPONSIVE */
-    @media (max-width:768px) {
-      nav { padding:14px 20px; }
-      .nav-links { display:none; }
-      .steps { grid-template-columns:1fr; }
-      .rpc-grid { grid-template-columns:1fr; }
-      .dev-grid { grid-template-columns:1fr; }
-      .repos-grid { grid-template-columns:1fr; }
-      .stats-bar { flex-wrap:wrap; }
-      .stat-item { flex:1 1 45%; border-right:none; border-bottom:1px solid var(--border); padding:16px; }
-      .stat-item:nth-child(2) { border-bottom:1px solid var(--border); }
-      .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom:none; }
-      footer { flex-direction:column; gap:12px; text-align:center; padding:24px 20px; }
-    }
-
-    /* fade-in on load */
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(24px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-    .hero > * { animation: fadeUp .6s ease both; }
-    .hero > *:nth-child(1) { animation-delay:.1s; }
-    .hero > *:nth-child(2) { animation-delay:.2s; }
-    .hero > *:nth-child(3) { animation-delay:.3s; }
-    .hero > *:nth-child(4) { animation-delay:.4s; }
-    .hero > *:nth-child(5) { animation-delay:.5s; }
+    .link:hover { color: #00FFA3; }
   </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo">
-    <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#00FFA3"/>
-          <stop offset="1" stop-color="#03E1FF"/>
-        </linearGradient>
-      </defs>
-      <path d="M6 26V6H18C23.5 6 26 9 26 13C26 17 23.5 20 18 20H11V26H6Z" fill="url(#lg)"/>
-      <path d="M11 10H17.5C20.5 10 21.5 11.5 21.5 13C21.5 14.5 20.5 16 17.5 16H11V10Z" fill="#04040C"/>
-    </svg>
-    <span class="logo-text">PumpChain</span>
-  </a>
-  <div class="nav-links">
-    <a href="index.html" class="active">Home</a>
-    <a href="launchpad.html">Launchpad</a>
-    <a href="bridge.html">Bridge</a>
-    <a href="explorer.html">Explorer</a>
-    <a href="https://github.com/Ciooo44/pumpchain" target="_blank">GitHub</a>
-  </div>
-  <a href="connect.html" class="nav-wallet" id="navWallet">
-    <div class="live-dot"></div>
-    <span id="walletText">Connect Wallet</span>
-  </a>
-</nav>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-bg">
-    <div class="grid-lines"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
-
-  <div class="hero-badge">
-    <div class="live-dot"></div>
-    Coming Soon
-  </div>
-
-  <h1>
-    <div class="line1">The fastest SVM-powered</div>
-    <div class="line2">chain for DeFi & Gaming.</div>
-  </h1>
-
-  <p class="hero-sub">
-    Launch tokens instantly. Trade with sub-400ms finality. Build the next generation of on-chain games. All on PumpChain.
+  <div class="logo">🚀</div>
+  <h1>PumpChain</h1>
+  <p class="subtitle">
+    The fastest SVM-powered L2 blockchain for DeFi and Gaming.<br>
+    Currently in active development.
   </p>
-
-  <div class="hero-ctas">
-    <a href="launchpad.html" class="btn-primary">Launchpad →</a>
-    <a href="bridge.html" class="btn-secondary">Bridge</a>
-    <a href="explorer.html" class="btn-secondary">Explorer</a>
-    <a href="connect.html" class="btn-wallet" id="heroWalletBtn">🔌 Connect Wallet</a>
-  </div>
-
-  <div class="stats-bar">
-    <div class="stat-item">
-      <div class="stat-value" id="slot">—</div>
-      <div class="stat-label">Current Slot</div>
-      <div class="stat-change" id="slotChange">+0</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="epoch">—</div>
-      <div class="stat-label">Epoch</div>
-      <div class="stat-change">Epoch 452</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="blockheight">—</div>
-      <div class="stat-label">Block Height</div>
-      <div class="stat-change" id="blockChange">+0</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="tps">50K+</div>
-      <div class="stat-label">TPS</div>
-      <div class="stat-change">Sub-400ms</div>
-    </div>
-  </div>
-</div>
-
-<!-- BUILD SECTION -->
-<section id="build">
-  <div class="section-label"># Start Building</div>
-  <h2 class="section-title">Connect to PumpChain in 3 steps</h2>
-  <p class="section-sub">The fastest SVM-powered chain for DeFi and Gaming. Get started in under 2 minutes.</p>
-
-  <div class="steps">
-    <div class="step-card">
-      <div class="step-num">1</div>
-      <h3>Get Backpack Wallet</h3>
-      <p>Download and install the Backpack wallet extension for your browser or mobile device.</p>
-      <a href="https://backpack.app" target="_blank">Get Backpack ↗</a>
-    </div>
-    <div class="step-card">
-      <div class="step-num">2</div>
-      <h3>Set Custom RPC</h3>
-      <p>Open Backpack Settings → Solana → RPC Connection → Custom, then paste the PumpChain RPC URL.</p>
-    </div>
-    <div class="step-card">
-      <div class="step-num">3</div>
-      <h3>You're Connected</h3>
-      <p>Save and you're all set. Use the Launchpad to deploy tokens, trade on the DEX, or explore the chain.</p>
-    </div>
-  </div>
-</section>
-
-<!-- RPC SECTION -->
-<section id="rpc" style="padding-top:0;">
-  <div class="section-label"># Developer</div>
-  <h2 class="section-title">RPC Terminal</h2>
-  <p class="section-sub">Query the PumpChain RPC live. Test methods directly in your browser.</p>
-
-  <div class="rpc-grid">
-    <!-- Terminal -->
-    <div class="rpc-box">
-      <div class="rpc-header">
-        <span>RPC Terminal</span>
-        <span style="color:var(--green); font-family:'Space Mono',monospace;" id="rpcStatus">⏳ SOON</span>
+  
+  <div class="status-box">
+    <div class="status-title">Development Status</div>
+    <div class="phase-list">
+      <div class="phase">
+        <div class="phase-check done">✓</div>
+        <div class="phase-text done">Website & Documentation</div>
       </div>
-      <div class="rpc-method-list">
-        <div class="rpc-method active" onclick="selectMethod('getSlot')">getSlot</div>
-        <div class="rpc-method" onclick="selectMethod('getBlockHeight')">getBlockHeight</div>
-        <div class="rpc-method" onclick="selectMethod('getEpochInfo')">getEpochInfo</div>
-        <div class="rpc-method" onclick="selectMethod('getVersion')">getVersion</div>
-        <div class="rpc-method" onclick="selectMethod('getBalance')">getBalance</div>
+      <div class="phase">
+        <div class="phase-check done">✓</div>
+        <div class="phase-text done">Smart Contracts (Rust/Anchor)</div>
       </div>
-      <div class="rpc-code" id="rpcRequest">
-        <span class="key">"jsonrpc"</span>: <span class="str">"2.0"</span>,<br>
-        <span class="key">"id"</span>: <span class="val">1</span>,<br>
-        <span class="key">"method"</span>: <span class="str">"getSlot"</span>
+      <div class="phase">
+        <div class="phase-check done">✓</div>
+        <div class="phase-text done">GitHub Repositories</div>
       </div>
-      <button class="run-btn" id="runBtn" onclick="runRpc()">▸ run</button>
-      <div class="rpc-code" id="rpcResponse" style="color:var(--green); min-height:80px;">
-        $ click run to execute ▋
+      <div class="phase">
+        <div class="phase-check pending"></div>
+        <div class="phase-text pending">Validator Nodes (21 needed)</div>
+      </div>
+      <div class="phase">
+        <div class="phase-check pending"></div>
+        <div class="phase-text pending">Live RPC Endpoint</div>
+      </div>
+      <div class="phase">
+        <div class="phase-check pending"></div>
+        <div class="phase-text pending">Mainnet Launch</div>
       </div>
     </div>
-
-    <!-- Connect Card -->
-    <div class="connect-card">
-      <h3>Connect to PumpChain</h3>
-      <div class="wallet-ui">
-        <div class="wallet-row">
-          <span class="label">RPC Endpoint</span>
-          <span class="val">mainnet.pumpchain.io</span>
-          <span class="copy" id="copyRpc" onclick="copyRpc()">COPY</span>
-        </div>
-        <div class="wallet-row">
-          <span class="label">Explorer</span>
-          <span class="val">pumpchain.org/explorer</span>
-        </div>
-        <div class="wallet-row">
-          <span class="label">Block Time</span>
-          <span class="val" style="color:var(--cyan);">400ms</span>
-        </div>
-        <div class="wallet-row">
-          <span class="label">TPS</span>
-          <span class="val" style="color:var(--green);">50,000+</span>
-        </div>
-        <div class="wallet-row">
-          <span class="label">Fees</span>
-          <span class="val" style="color:var(--green);">$0.001</span>
-        </div>
-        <div class="wallet-row">
-          <span class="label">L1 Anchor</span>
-          <span class="val" style="color:var(--purple);">Solana Mainnet</span>
-        </div>
-      </div>
-      <a href="https://backpack.app" class="btn-primary" target="_blank" style="display:inline-block;margin-top:20px;font-size:.82rem;">
-        Get Backpack Wallet
-      </a>
-    </div>
   </div>
-</section>
-
-<!-- DEV RESOURCES -->
-<section id="resources" style="padding-top:0;">
-  <div class="section-label"># Resources</div>
-  <h2 class="section-title">Developer Resources</h2>
-  <p class="section-sub">Everything you need to build, launch, and scale on PumpChain.</p>
-
-  <div class="dev-grid">
-    <a href="bridge.html" class="dev-card">
-      <div class="dev-card-icon">🌉</div>
-      <h3>Bridge</h3>
-      <p>Cross-chain transfers. Move assets between Solana and PumpChain instantly.</p>
-    </a>
-    <a href="launchpad.html" class="dev-card">
-      <div class="dev-card-icon">🚀</div>
-      <h3>Launchpad</h3>
-      <p>Deploy tokens with automatic Raydium AMM liquidity migration.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/validator" class="dev-card" target="_blank">
-      <div class="dev-card-icon">⚙️</div>
-      <h3>Validator Node</h3>
-      <p>SVM-powered L2 built on Agave. Run a validator and secure the network.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/unity-sdk" class="dev-card" target="_blank">
-      <div class="dev-card-icon">🎮</div>
-      <h3>Unity Gaming SDK</h3>
-      <p>Build on-chain games with the PumpChain Unity SDK. Full C# support.</p>
-    </a>
+  
+  <div class="links">
+    <a href="https://github.com/Ciooo44/pumpchain" class="link" target="_blank">GitHub</a>
+    <a href="https://twitter.com/0Xmizuno" class="link" target="_blank">Twitter</a>
   </div>
-</section>
-
-<!-- GITHUB REPOS -->
-<section id="repos" style="padding-top:0;">
-  <div class="section-label"># Open Source</div>
-  <h2 class="section-title">GitHub Repositories</h2>
-  <p class="section-sub">PumpChain is open source. Explore, fork, and build.</p>
-
-  <div class="repos-grid">
-    <a href="https://github.com/Ciooo44/pump-launchpad" class="repo-card" target="_blank">
-      <div class="repo-lang">Rust</div>
-      <h3>pump-launchpad</h3>
-      <p>On-chain token launchpad for PumpChain — deploy tokens with instant AMM liquidity.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/pump-proof" class="repo-card" target="_blank">
-      <div class="repo-lang">Rust</div>
-      <h3>pump-proof</h3>
-      <p>PumpProof — On-chain state proof anchoring for PumpChain on Solana mainnet.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/validator" class="repo-card" target="_blank">
-      <div class="repo-lang">Rust</div>
-      <h3>validator</h3>
-      <p>PumpChain validator node — SVM-powered L2 built on Agave.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/pump-anchor" class="repo-card" target="_blank">
-      <div class="repo-lang">Rust</div>
-      <h3>pump-anchor</h3>
-      <p>PumpAnchor framework for building programs on PumpChain.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/pump-token" class="repo-card" target="_blank">
-      <div class="repo-lang">Rust</div>
-      <h3>pump-token</h3>
-      <p>Native token programs for PumpChain genesis.</p>
-    </a>
-    <a href="https://github.com/Ciooo44/unity-sdk" class="repo-card" target="_blank">
-      <div class="repo-lang">C#</div>
-      <h3>unity-sdk</h3>
-      <p>Unity SDK for building on-chain games on PumpChain. Full C# support.</p>
-    </a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <span>PumpChain © 2025 — Built by 0Xmizuno</span>
-  <div style="display:flex;gap:24px;">
-    <a href="https://github.com/Ciooo44/pumpchain" target="_blank">GitHub</a>
-    <a href="https://twitter.com/0Xmizuno" target="_blank">Twitter/X</a>
-    <a href="#" target="_blank" onclick="alert('Discord coming soon!')">Discord</a>
-    <a href="explorer.html">Explorer</a>
-  </div>
-</footer>
-
-<script>
-  // PumpChain Mainnet Configuration
-  const PUMPCHAIN_RPC = 'https://mainnet.pumpchain.io';
-  let currentMethod = 'getSlot';
-  let isConnected = false;
-  let slotNumber = 52345678;
-  let blockHeight = 48912345;
-  let lastSlot = slotNumber;
-  let lastBlock = blockHeight;
-
-  // Check for connected wallet
-  window.addEventListener('load', () => {
-    const savedWallet = localStorage.getItem('pumpchain_wallet');
-    if (savedWallet) {
-      const wallet = JSON.parse(savedWallet);
-      updateWalletUI(wallet.address);
-    }
-    
-    // Check connection on load
-    checkConnection();
-    fetchRealStats();
-    
-    // Update stats every 5 seconds
-    setInterval(fetchRealStats, 5000);
-  });
-
-  function updateWalletUI(address) {
-    const navWallet = document.getElementById('navWallet');
-    const walletText = document.getElementById('walletText');
-    const heroBtn = document.getElementById('heroWalletBtn');
-    
-    navWallet.classList.add('connected');
-    walletText.textContent = address.slice(0, 4) + '...' + address.slice(-4);
-    
-    if (heroBtn) {
-      heroBtn.textContent = '✓ Connected';
-      heroBtn.style.background = 'linear-gradient(135deg, var(--green), var(--cyan))';
-      heroBtn.style.color = '#000';
-    }
-  }
-
-  // Check connection on load
-  async function checkConnection() {
-    try {
-      const response = await fetch(PUMPCHAIN_RPC, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'getSlot'
-        }),
-        signal: AbortSignal.timeout(5000)
-      });
-      isConnected = response.ok;
-      updateConnectionStatus();
-    } catch (e) {
-      isConnected = false;
-      updateConnectionStatus();
-    }
-  }
-
-  function updateConnectionStatus() {
-    const statusEl = document.getElementById('rpcStatus');
-    if (statusEl) {
-      statusEl.textContent = isConnected ? '⏳ SOON' : '● OFFLINE';
-      statusEl.style.color = isConnected ? 'var(--green)' : 'var(--pink)';
-    }
-  }
-
-  function selectMethod(method) {
-    currentMethod = method;
-    document.querySelectorAll('.rpc-method').forEach(el => el.classList.remove('active'));
-    event.target.classList.add('active');
-
-    const requestEl = document.getElementById('rpcRequest');
-    let params = '';
-    if (method === 'getBalance') {
-      params = ',<br>  <span class="key">"params"</span>: [<span class="str">"Cioo...44"</span>]';
-    }
-    requestEl.innerHTML = `
-      <span class="key">"jsonrpc"</span>: <span class="str">"2.0"</span>,<br>
-      <span class="key">"id"</span>: <span class="val">1</span>,<br>
-      <span class="key">"method"</span>: <span class="str">"${method}"</span>${params}
-    `;
-    document.getElementById('rpcResponse').textContent = '$ click run to execute ▋';
-  }
-
-  async function runRpc() {
-    const res = document.getElementById('rpcResponse');
-    const btn = document.getElementById('runBtn');
-    
-    btn.disabled = true;
-    btn.classList.add('running');
-    res.textContent = 'Connecting...';
-
-    try {
-      const response = await fetch(PUMPCHAIN_RPC, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: currentMethod,
-          params: currentMethod === 'getBalance' ? ['Cioo44PumpChainTestAddress'] : []
-        }),
-        signal: AbortSignal.timeout(10000)
-      });
-
-      if (!response.ok) throw new Error('RPC Error');
-
-      const data = await response.json();
-      res.innerHTML = `<span style="color: var(--green);">${JSON.stringify(data, null, 2)}</span>`;
-      isConnected = true;
-      updateConnectionStatus();
-    } catch (e) {
-      // Fallback to mock data if RPC is not available
-      const responses = {
-        getSlot:        { jsonrpc: "2.0", id: 1, result: slotNumber },
-        getBlockHeight: { jsonrpc: "2.0", id: 1, result: blockHeight },
-        getEpochInfo:   { jsonrpc: "2.0", id: 1, result: { epoch: 452, slotIndex: 125000, slotsInEpoch: 432000 } },
-        getVersion:     { jsonrpc: "2.0", id: 1, result: { "solana-core": "pumpchain-0.1.0-mainnet", "feature-set": 4215500110 } },
-        getBalance:     { jsonrpc: "2.0", id: 1, result: { value: 1000000000, context: { slot: slotNumber } } },
-      };
-      const mockResponse = responses[currentMethod] || { jsonrpc: "2.0", id: 1, result: null };
-      res.innerHTML = `<span style="color: var(--green);">${JSON.stringify(mockResponse, null, 2)}</span>
-<span style="color: var(--muted); font-size: 0.75rem;">// Using mock data (RPC offline)</span>`;
-    } finally {
-      btn.disabled = false;
-      btn.classList.remove('running');
-    }
-  }
-
-  async function requestFaucet() {
-    const address = prompt('Enter your wallet address:');
-    if (!address) return;
-
-    try {
-      const response = await fetch('https://faucet.pumpchain.io/faucet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, amount: 1000 })
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        alert(`✅ ${data.amount} PUMP sent!\nTx: ${data.signature}`);
-      } else {
-        alert(`❌ Error: ${data.error}`);
-      }
-    } catch (e) {
-      alert('⚠️ Faucet is currently offline. Try again later.');
-    }
-  }
-
-  function copyRpc() {
-    navigator.clipboard.writeText('https://mainnet.pumpchain.io');
-    const btn = document.getElementById('copyRpc');
-    btn.textContent = 'COPIED!';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'COPY';
-      btn.classList.remove('copied');
-    }, 1500);
-  }
-
-  function animateStats() {
-    slotNumber += Math.floor(Math.random() * 5) + 1;
-    blockHeight += Math.floor(Math.random() * 3) + 1;
-    
-    const slotChange = slotNumber - lastSlot;
-    const blockChange = blockHeight - lastBlock;
-    
-    document.getElementById('slot').textContent = slotNumber.toLocaleString();
-    document.getElementById('epoch').textContent = '452';
-    document.getElementById('blockheight').textContent = blockHeight.toLocaleString();
-    
-    const slotChangeEl = document.getElementById('slotChange');
-    const blockChangeEl = document.getElementById('blockChange');
-    
-    slotChangeEl.textContent = '+' + slotChange;
-    blockChangeEl.textContent = '+' + blockChange;
-    
-    lastSlot = slotNumber;
-    lastBlock = blockHeight;
-  }
-
-  async function fetchRealStats() {
-    try {
-      const response = await fetch(PUMPCHAIN_RPC, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'getSlot'
-        }),
-        signal: AbortSignal.timeout(3000)
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.result) {
-          slotNumber = data.result;
-          document.getElementById('slot').textContent = slotNumber.toLocaleString();
-          document.getElementById('slotChange').textContent = '+' + (slotNumber - lastSlot);
-          lastSlot = slotNumber;
-          isConnected = true;
-        }
-      } else {
-        animateStats();
-      }
-    } catch (e) {
-      animateStats();
-    }
-    updateConnectionStatus();
-  }
-
-  // Listen for wallet connection messages
-  window.addEventListener('message', function(e) {
-    if (e.data.type === 'WALLET_CONNECTED') {
-      updateWalletUI(e.data.address);
-    }
-  });
-
-  // Initialize
-  checkConnection();
-  fetchRealStats();
-</script>
 </body>
 </html>
