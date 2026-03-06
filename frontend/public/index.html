@@ -552,7 +552,7 @@
 
   <div class="hero-badge">
     <div class="live-dot"></div>
-    Mainnet Live
+    Coming Soon
   </div>
 
   <h1>
@@ -632,7 +632,7 @@
     <div class="rpc-box">
       <div class="rpc-header">
         <span>RPC Terminal</span>
-        <span style="color:var(--green); font-family:'Space Mono',monospace;" id="rpcStatus">● LIVE</span>
+        <span style="color:var(--green); font-family:'Space Mono',monospace;" id="rpcStatus">⏳ SOON</span>
       </div>
       <div class="rpc-method-list">
         <div class="rpc-method active" onclick="selectMethod('getSlot')">getSlot</div>
@@ -835,7 +835,7 @@
   function updateConnectionStatus() {
     const statusEl = document.getElementById('rpcStatus');
     if (statusEl) {
-      statusEl.textContent = isConnected ? '● LIVE' : '● OFFLINE';
+      statusEl.textContent = isConnected ? '⏳ SOON' : '● OFFLINE';
       statusEl.style.color = isConnected ? 'var(--green)' : 'var(--pink)';
     }
   }
