@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bridge | PumpChain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:   #00FFA3;
+      --cyan:    #03E1FF;
+      --purple:  #9945FF;
+      --pink:    #FF3CAC;
+      --bg:      #04040C;
+      --bg2:     #080818;
+      --bg3:     #0D0D22;
+      --border:  rgba(0,255,163,0.12);
+      --text:    #E8E8F0;
+      --muted:   #6B6B8A;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+    }
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 18px 48px;
+      background: rgba(4,4,12,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem; }
+    .logo-text { background: linear-gradient(90deg, var(--green), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-links { display:flex; gap:8px; }
+    .nav-links a { color: var(--muted); text-decoration:none; font-size:.85rem; font-weight:600; padding: 8px 18px; border-radius:8px; border: 1px solid transparent; transition: all .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--green); border-color: var(--border); background: rgba(0,255,163,0.05); }
+    .container { max-width: 600px; margin: 0 auto; padding: 120px 24px 60px; }
+    h1 { font-size: 2.5rem; font-weight:800; margin-bottom: 16px; background: linear-gradient(90deg, var(--cyan), var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .subtitle { color: var(--muted); margin-bottom: 40px; font-size: 1.1rem; }
+    .bridge-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+    .bridge-direction { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      background: var(--bg3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .chain { text-align: center; }
+    .chain-name { font-weight: 700; font-size: 0.9rem; }
+    .chain-network { font-size: 0.75rem; color: var(--muted); }
+    .arrow { font-size: 1.5rem; color: var(--green); }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; }
+    input, select {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--cyan); }
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      text-transform: uppercase;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(3,225,255,0.3); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .stat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-value { font-size: 1.3rem; font-weight: 800; color: var(--cyan); font-family: 'Space Mono', monospace; }
+    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      h1 { font-size: 1.8rem; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <span style="font-size: 1.5rem;">🚀</span>
+      <span class="logo-text">PumpChain</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="launchpad.html">Launchpad</a>
+      <a href="bridge.html" class="active">Bridge</a>
+      <a href="explorer.html">Explorer</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>🌉 Bridge</h1>
+    <p class="subtitle">Transfer assets between Solana and PumpChain instantly.</p>
+
+    <div class="bridge-box">
+      <div class="bridge-direction">
+        <div class="chain">
+          <div class="chain-name">Solana</div>
+          <div class="chain-network">Devnet</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="chain">
+          <div class="chain-name">PumpChain</div>
+          <div class="chain-network">Testnet</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>From Address</label>
+        <input type="text" id="fromAddress" placeholder="Your Solana address">
+      </div>
+
+      <div class="form-group">
+        <label>To Address</label>
+        <input type="text" id="toAddress" placeholder="Your PumpChain address">
+      </div>
+
+      <div class="form-group">
+        <label>Token</label>
+        <select id="token">
+          <option value="SOL">SOL</option>
+          <option value="USDC">USDC</option>
+          <option value="PUMP">PUMP</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" id="amount" placeholder="0.00" min="0" step="0.001">
+      </div>
+
+      <button class="btn-primary" onclick="bridgeAssets()">Bridge Assets</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">&lt;2 min</div>
+        <div class="stat-label">Transfer Time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$0.01</div>
+        <div class="stat-label">Bridge Fee</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$2.5M+</div>
+        <div class="stat-label">Total Bridged</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function bridgeAssets() {
+      const from = document.getElementById('fromAddress').value;
+      const to = document.getElementById('toAddress').value;
+      const token = document.getElementById('token').value;
+      const amount = document.getElementById('amount').value;
+
+      if (!from || !to || !amount) {
+        alert('Please fill in all fields!');
+        return;
+      }
+
+      alert(`🌉 Bridging ${amount} ${token}...\n\nFrom: ${from}\nTo: ${to}\n\nThis would initiate the cross-chain transfer!`);
+    }
+  </script>
+</body>
+</html>

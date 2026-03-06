@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explorer | PumpChain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:   #00FFA3;
+      --cyan:    #03E1FF;
+      --purple:  #9945FF;
+      --pink:    #FF3CAC;
+      --bg:      #04040C;
+      --bg2:     #080818;
+      --bg3:     #0D0D22;
+      --border:  rgba(0,255,163,0.12);
+      --text:    #E8E8F0;
+      --muted:   #6B6B8A;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+    }
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 18px 48px;
+      background: rgba(4,4,12,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem; }
+    .logo-text { background: linear-gradient(90deg, var(--green), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-links { display:flex; gap:8px; }
+    .nav-links a { color: var(--muted); text-decoration:none; font-size:.85rem; font-weight:600; padding: 8px 18px; border-radius:8px; border: 1px solid transparent; transition: all .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--green); border-color: var(--border); background: rgba(0,255,163,0.05); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 100px 24px 60px; }
+    h1 { font-size: 2rem; font-weight:800; margin-bottom: 24px; }
+    .search-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.95rem;
+    }
+    .search-box input:focus { outline: none; }
+    .search-box input::placeholder { color: var(--muted); }
+    .search-btn {
+      padding: 10px 24px;
+      background: var(--green);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--green); font-family: 'Space Mono', monospace; }
+    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+    .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--cyan); }
+    .blocks-table {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table-header {
+      display: grid;
+      grid-template-columns: 100px 1fr 150px 100px;
+      padding: 16px 20px;
+      background: var(--bg3);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .table-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 150px 100px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-family: 'Space Mono', monospace;
+    }
+    .table-row:hover { background: rgba(0,255,163,0.03); }
+    .block-num { color: var(--green); }
+    .tx-hash { color: var(--cyan); }
+    .time { color: var(--muted); font-size: 0.8rem; }
+    .status { color: var(--green); }
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .table-header, .table-row { 
+        grid-template-columns: 60px 1fr 80px; 
+        font-size: 0.75rem;
+      }
+      .table-header > :nth-child(2), .table-row > :nth-child(2) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <span style="font-size: 1.5rem;">🚀</span>
+      <span class="logo-text">PumpChain</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="launchpad.html">Launchpad</a>
+      <a href="bridge.html">Bridge</a>
+      <a href="explorer.html" class="active">Explorer</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>🔍 Block Explorer</h1>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search by address, tx hash, block number...">
+      <button class="search-btn" onclick="search()">Search</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value" id="latestBlock">52,345,678</div>
+        <div class="stat-label">Latest Block</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="totalTx">12.4M</div>
+        <div class="stat-label">Total Transactions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="tps">47,832</div>
+        <div class="stat-label">TPS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="avgFee">$0.001</div>
+        <div class="stat-label">Avg Fee</div>
+      </div>
+    </div>
+
+    <div class="section-title">Latest Blocks</div>
+    <div class="blocks-table">
+      <div class="table-header">
+        <div>Block</div>
+        <div>Hash</div>
+        <div>Time</div>
+        <div>Txs</div>
+      </div>
+      <div class="table-row">
+        <div class="block-num">#52345678</div>
+        <div class="tx-hash">pump7x...3a9f</div>
+        <div class="time">2 secs ago</div>
+        <div class="status">847</div>
+      </div>
+      <div class="table-row">
+        <div class="block-num">#52345677</div>
+        <div class="tx-hash">pump9a...2b8c</div>
+        <div class="time">5 secs ago</div>
+        <div class="status">1,203</div>
+      </div>
+      <div class="table-row">
+        <div class="block-num">#52345676</div>
+        <div class="tx-hash">pump4d...8e1a</div>
+        <div class="time">8 secs ago</div>
+        <div class="status">692</div>
+      </div>
+      <div class="table-row">
+        <div class="block-num">#52345675</div>
+        <div class="tx-hash">pump2f...5c7d</div>
+        <div class="time">12 secs ago</div>
+        <div class="status">1,541</div>
+      </div>
+      <div class="table-row">
+        <div class="block-num">#52345674</div>
+        <div class="tx-hash">pump8b...1f4e</div>
+        <div class="time">15 secs ago</div>
+        <div class="status">423</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function search() {
+      const query = document.getElementById('searchInput').value;
+      if (!query) {
+        alert('Please enter a search query!');
+        return;
+      }
+      alert(`🔍 Searching for: ${query}\n\nThis would query the PumpChain blockchain!`);
+    }
+
+    // Animate block number
+    setInterval(() => {
+      const blockEl = document.getElementById('latestBlock');
+      let current = parseInt(blockEl.textContent.replace(/,/g, ''));
+      blockEl.textContent = (current + 1).toLocaleString();
+    }, 5000);
+  </script>
+</body>
+</html>
