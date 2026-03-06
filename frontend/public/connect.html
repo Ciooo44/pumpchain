@@ -1,124 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connect Wallet | PumpChain</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --green:   #00FFA3;
-      --cyan:    #03E1FF;
-      --purple:  #9945FF;
-      --pink:    #FF3CAC;
-      --bg:      #04040C;
-      --bg2:     #080818;
-      --bg3:     #0D0D22;
-      --border:  rgba(0,255,163,0.12);
-      --text:    #E8E8F0;
-      --muted:   #6B6B8A;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: #04040C;
+      color: #E8E8F0;
       font-family: 'Syne', sans-serif;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
-    .connect-box {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+    
+    .container {
+      background: #080818;
+      border: 1px solid rgba(0,255,163,0.12);
       border-radius: 20px;
-      padding: 40px;
+      padding: 48px 40px;
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       text-align: center;
     }
-    .logo { font-size: 3rem; margin-bottom: 16px; }
-    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
-    p { color: var(--muted); margin-bottom: 32px; font-size: 0.9rem; }
+    
+    .logo {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #00FFA3, #03E1FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    p {
+      color: #6B6B8A;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    
+    .wallet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
     .wallet-btn {
       display: flex;
       align-items: center;
       gap: 16px;
       width: 100%;
       padding: 16px 20px;
-      margin-bottom: 12px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
+      background: #0D0D22;
+      border: 1px solid rgba(0,255,163,0.12);
       border-radius: 12px;
-      color: var(--text);
-      font-size: 1rem;
+      color: #E8E8F0;
+      font-size: 16px;
       font-weight: 600;
+      font-family: 'Syne', sans-serif;
       cursor: pointer;
-      transition: all .2s;
+      transition: all 0.2s;
     }
+    
     .wallet-btn:hover {
-      border-color: var(--green);
+      border-color: #00FFA3;
       background: rgba(0,255,163,0.05);
+      transform: translateY(-2px);
     }
+    
     .wallet-icon {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--green), var(--cyan));
-      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 20px;
     }
+    
+    .backpack { background: linear-gradient(135deg, #E08D54, #C45C26); }
+    .phantom { background: linear-gradient(135deg, #AB9FF2, #5346B3); }
+    .solflare { background: linear-gradient(135deg, #FC744A, #F15A24); }
+    
     .back-link {
       display: inline-block;
-      margin-top: 24px;
-      color: var(--muted);
+      margin-top: 32px;
+      color: #6B6B8A;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 14px;
+      transition: color 0.2s;
     }
-    .back-link:hover { color: var(--green); }
+    
+    .back-link:hover {
+      color: #00FFA3;
+    }
+    
+    .rpc-info {
+      margin-top: 24px;
+      padding: 16px;
+      background: rgba(0,255,163,0.05);
+      border: 1px solid rgba(0,255,163,0.2);
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+    }
+    
+    .rpc-label {
+      color: #00FFA3;
+      margin-bottom: 4px;
+    }
+    
+    .rpc-url {
+      color: #6B6B8A;
+      word-break: break-all;
+    }
   </style>
 </head>
 <body>
-  <div class="connect-box">
+  <div class="container">
     <div class="logo">🚀</div>
     <h1>Connect Wallet</h1>
-    <p>Select your preferred wallet to connect to PumpChain</p>
+    <p>Select your wallet to connect to PumpChain Testnet</p>
 
-    <button class="wallet-btn" onclick="connectBackpack()">
-      <div class="wallet-icon">🎒</div>
-      <span>Backpack</span>
-    </button>
+    <div class="wallet-list">
+      <button class="wallet-btn" onclick="connectWallet('backpack')">
+        <div class="wallet-icon backpack">🎒</div>
+        <span>Backpack</span>
+      </button>
 
-    <button class="wallet-btn" onclick="connectPhantom()">
-      <div class="wallet-icon">👻</div>
-      <span>Phantom</span>
-    </button>
+      <button class="wallet-btn" onclick="connectWallet('phantom')">
+        <div class="wallet-icon phantom">👻</div>
+        <span>Phantom</span>
+      </button>
 
-    <button class="wallet-btn" onclick="connectSolflare()">
-      <div class="wallet-icon">☀️</div>
-      <span>Solflare</span>
-    </button>
+      <button class="wallet-btn" onclick="connectWallet('solflare')">
+        <div class="wallet-icon solflare">☀️</div>
+        <span>Solflare</span>
+      </button>
+    </div>
+
+    <div class="rpc-info">
+      <div class="rpc-label">PumpChain Testnet RPC:</div>
+      <div class="rpc-url">https://testnet.pumpchain.io</div>
+    </div>
 
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    function connectBackpack() {
+    function connectWallet(wallet) {
       const rpc = 'https://testnet.pumpchain.io';
-      alert(`🎒 Backpack Connection\n\n1. Open Backpack extension\n2. Go to Settings → Solana\n3. Set RPC to:\n${rpc}\n\nPumpChain will be added automatically!`);
+      const instructions = {
+        backpack: `🎒 Backpack Setup:\n\n1. Open Backpack extension\n2. Click Settings (⚙️)\n3. Select 'Solana'\n4. Click 'RPC Connection'\n5. Choose 'Custom'\n6. Enter:\n${rpc}\n7. Save and connect!`,
+        
+        phantom: `👻 Phantom Setup:\n\n1. Open Phantom extension\n2. Click Settings (⚙️)\n3. Go to 'Developer Settings'\n4. Enable 'Custom RPC'\n5. Add Network:\n   Name: PumpChain\n   RPC: ${rpc}\n   Chain ID: 1397\n6. Switch to PumpChain network!`,
+        
+        solflare: `☀️ Solflare Setup:\n\n1. Open Solflare\n2. Go to Settings\n3. Select 'Network'\n4. Click 'Add Custom Network'\n5. Enter:\n   Name: PumpChain Testnet\n   RPC: ${rpc}\n   Chain ID: 1397\n6. Save and connect!`
+      };
+      
+      alert(instructions[wallet]);
     }
-
-    function connectPhantom() {
-      const rpc = 'https://testnet.pumpchain.io';
-      alert(`👻 Phantom Connection\n\n1. Open Phantom extension\n2. Go to Settings → Developer\n3. Enable "Custom RPC"\n4. Add:\n${rpc}\n\nPumpChain will be added!`);
-    }
-
-    function connectSolflare() {
-      const rpc = 'https://testnet.pumpchain.io';
-      alert(`☀️ Solflare Connection\n\n1. Open Solflare\n2. Go to Settings → Network\n3. Add custom RPC:\n${rpc}\n\nPumpChain will be available!`);
-    }
+    
+    // Auto-detect if wallet is installed
+    window.addEventListener('load', function() {
+      const hasBackpack = window.backpack || window.backpack?.solana;
+      const hasPhantom = window.phantom?.solana || window.solana?.isPhantom;
+      const hasSolflare = window.solflare || window.solflare?.solana;
+      
+      if (hasBackpack) {
+        document.querySelector('.wallet-btn:nth-child(1)').style.borderColor = '#00FFA3';
+      }
+      if (hasPhantom) {
+        document.querySelector('.wallet-btn:nth-child(2)').style.borderColor = '#00FFA3';
+      }
+      if (hasSolflare) {
+        document.querySelector('.wallet-btn:nth-child(3)').style.borderColor = '#00FFA3';
+      }
+    });
   </script>
 </body>
 </html>
