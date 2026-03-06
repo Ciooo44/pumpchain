@@ -1,0 +1,14 @@
+🚀 PumpChain RPC Server Running!
+
+📡 RPC Endpoint:
+   HTTP: http://localhost:8899
+   WS:   ws://localhost:8900
+
+💡 Connect your wallet with these settings:
+   Network Name: PumpChain
+   RPC URL: http://localhost:8899
+   Chain ID: 1397
+   Currency Symbol: PUMP
+
+⚠️  This is a local development network.
+   For production, deploy with Docker Compose or Kubernetes.

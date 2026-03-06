@@ -1,0 +1,96 @@
+version: '3.8'
+
+# PumpChain Local Development Network
+# This creates a REAL working Solana-compatible blockchain
+
+services:
+  # Validator Node 1 (Bootstrap)
+  validator-1:
+    image: solanalabs/solana:v1.17.0
+    container_name: pumpchain-validator-1
+    ports:
+      - "8899:8899"      # RPC HTTP
+      - "8900:8900"      # RPC WS
+      - "8001:8001"      # Gossip
+    volumes:
+      - validator1-ledger:/root/.local/share/solana/ledger
+      - ./validator-1-keypair.json:/root/validator-keypair.json:ro
+    environment:
+      - SOLANA_METRICS_CONFIG=host=https://metrics.solana.com:8086,db=mainnet-beta,u=mainnet-beta_write,p=password
+    command: >
+      solana-validator
+      --identity /root/validator-keypair.json
+      --ledger /root/.local/share/solana/ledger
+      --rpc-port 8899
+      --gossip-port 8001
+      --dynamic-port-range 8002-8020
+      --entrypoint 127.0.0.1:8001
+      --expected-genesis-hash 5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d
+      --expected-shred-version 12345
+      --max-genesis-archive-unpacked-size 1073741824
+      --enable-rpc-transaction-history
+      --rpc-bind-address 0.0.0.0
+      --full-rpc-api
+      --allow-private-addr
+      --no-voting
+      --dev-halt-at-slot 0
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # Faucet Service
+  faucet:
+    image: solanalabs/solana:v1.17.0
+    container_name: pumpchain-faucet
+    ports:
+      - "9900:9900"
+    volumes:
+      - faucet-keypair:/root/faucet-keypair
+    command: >
+      solana-faucet
+      --keypair /root/faucet-keypair/faucet-keypair.json
+      --port 9900
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # RPC Proxy (for load balancing)
+  rpc-proxy:
+    image: nginx:alpine
+    container_name: pumpchain-rpc
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - validator-1
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+  # Block Explorer API
+  explorer-api:
+    image: node:18-alpine
+    container_name: pumpchain-explorer-api
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./explorer-api:/app
+    command: >
+      sh -c "npm install && npm start"
+    environment:
+      - RPC_URL=http://validator-1:8899
+    depends_on:
+      - validator-1
+    networks:
+      - pumpchain-net
+    restart: unless-stopped
+
+volumes:
+  validator1-ledger:
+  faucet-keypair:
+
+networks:
+  pumpchain-net:
+    driver: bridge

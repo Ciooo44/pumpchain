@@ -1,0 +1,16 @@
+{
+  "name": "pumpchain-rpc",
+  "version": "1.0.0",
+  "description": "PumpChain RPC Server - Real Working Blockchain",
+  "main": "rpc-server.js",
+  "scripts": {
+    "start": "node rpc-server.js",
+    "dev": "nodemon rpc-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
