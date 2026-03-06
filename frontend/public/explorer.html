@@ -758,7 +758,7 @@
           <div class="tx-hash">${block.hash}</div>
           <div class="time">${formatTime(block.timestamp)}</div>
           <div class="tx-count">${block.txCount.toLocaleString()}</div>
-          <div class="block-reward">${block.reward} PUMP</div>
+          <div class="block-reward">${block.reward} PUMPC</div>
         </div>
       `).join('');
     }
@@ -836,7 +836,7 @@
           type: 'tx',
           id: query,
           hash: 'pump' + query.substring(0, 20) + '...',
-          details: 'Transfer • 100 PUMP • Success • 5 secs ago'
+          details: 'Transfer • 100 PUMPC • Success • 5 secs ago'
         });
       }
       
@@ -846,15 +846,15 @@
           type: 'address',
           id: query,
           hash: query.substring(0, 20) + '...',
-          details: 'Account • Balance: 1,234 PUMP • 567 transactions'
+          details: 'Account • Balance: 1,234 PUMPC • 567 transactions'
         });
       }
       
       // Always add some token results for demo
       results.push({
         type: 'token',
-        id: 'PUMP',
-        hash: 'PUMP Token',
+        id: 'PUMPC',
+        hash: 'PUMPC Token',
         details: 'PumpChain Native • 1B Supply • $0.0042'
       });
       
@@ -902,7 +902,7 @@ Full details page coming soon!`);
         </div>
         <div class="detail-row">
           <span class="detail-label">Block Reward</span>
-          <span class="detail-value highlight">${block.reward} PUMP</span>
+          <span class="detail-value highlight">${block.reward} PUMPC</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Validator</span>

@@ -164,7 +164,7 @@
     
     <div class="connected-box" id="connectedBox">
       <div class="address" id="walletAddress"></div>
-      <div class="balance" id="walletBalance">0 PUMP</div>
+      <div class="balance" id="walletBalance">0 PUMPC</div>
       <button class="disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
     </div>
     
@@ -288,9 +288,9 @@
       if (connection) {
         try {
           const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
-          document.getElementById('walletBalance').textContent = (balance / 1000000000).toFixed(4) + ' PUMP';
+          document.getElementById('walletBalance').textContent = (balance / 1000000000).toFixed(4) + ' PUMPC';
         } catch (e) {
-          document.getElementById('walletBalance').textContent = '0 PUMP';
+          document.getElementById('walletBalance').textContent = '0 PUMPC';
         }
       }
       

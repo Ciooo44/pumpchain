@@ -33,11 +33,11 @@ class Blockchain {
     this.tokens = new Map();
     this.tokenAccounts = new Map();
     
-    // Initialize native PUMP token
-    this.tokens.set('PUMP', {
+    // Initialize native PUMPC token
+    this.tokens.set('PUMPC', {
       mint: 'Pump111111111111111111111111111111111111111',
       name: 'PumpChain',
-      symbol: 'PUMP',
+      symbol: 'PUMPC',
       decimals: 9,
       totalSupply: 1000000000000000000, // 1 billion
       authority: 'PumpTreasury1111111111111111111111111111111',
