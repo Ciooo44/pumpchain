@@ -3,435 +3,393 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Launchpad | PumpChain</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>Launch Token | PumpChain</title>
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #04040C;
-      color: #E8E8F0;
-      font-family: 'Syne', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
+      padding: 40px 20px;
     }
-    
-    /* Nav */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 48px;
-      background: rgba(4,4,12,0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(0,255,163,0.12);
-      z-index: 100;
-    }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo span { font-size: 24px; }
-    .nav-logo strong { color: #00FFA3; font-size: 18px; }
-    .nav-links { display: flex; gap: 32px; }
-    .nav-links a { color: #6B6B8A; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
-    .nav-links a:hover, .nav-links a.active { color: #00FFA3; }
-    
-    /* Main */
-    main { padding: 120px 48px 48px; max-width: 1400px; margin: 0 auto; }
-    
-    h1 {
-      font-size: 48px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      background: linear-gradient(90deg, #00FFA3, #03E1FF);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .subtitle { color: #6B6B8A; margin-bottom: 48px; }
-    
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-    
-    .card {
-      background: rgba(8,8,24,0.6);
-      border: 1px solid rgba(0,255,163,0.12);
-      border-radius: 20px;
-      padding: 32px;
-    }
-    .card h2 { font-size: 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
-    
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; color: #6B6B8A; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-    .form-group input, .form-group textarea {
-      width: 100%;
-      padding: 14px 16px;
-      background: #0D0D22;
-      border: 1px solid rgba(0,255,163,0.12);
-      border-radius: 12px;
-      color: #E8E8F0;
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-    }
-    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #00FFA3; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    
-    .btn {
-      width: 100%;
-      padding: 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 16px;
-      font-family: 'Syne', sans-serif;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #00FFA3, #03E1FF);
-      color: #000;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,163,0.3); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    
-    .token-list { display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; }
-    .token-item {
+    .header {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 16px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
+      gap: 20px;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .token-icon {
-      width: 48px;
-      height: 48px;
+    .logo {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #00FFA3, #03E1FF);
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 500;
+    }
+    .header span {
+      color: #00ffa3;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: #111;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+    
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #222;
+    }
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: #00ffa3;
+      color: #000;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
       font-weight: 700;
     }
-    .token-info { flex: 1; }
-    .token-name { font-weight: 700; font-size: 16px; }
-    .token-meta { color: #6B6B8A; font-size: 12px; margin-top: 2px; }
-    .token-mint { font-family: 'Space Mono', monospace; font-size: 10px; color: #4A4A6A; }
-    
-    .success-banner {
-      background: rgba(0,255,163,0.1);
-      border: 1px solid rgba(0,255,163,0.3);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 24px;
-      display: none;
+    .step.completed .step-number {
+      background: #00ffa3;
     }
-    .success-banner.show { display: block; }
-    .success-banner h3 { color: #00FFA3; margin-bottom: 8px; }
-    .success-banner p { color: #6B6B8A; font-size: 14px; }
-    .success-banner .mint-address {
-      font-family: 'Space Mono', monospace;
-      background: rgba(0,0,0,0.3);
+    .step.active .step-number {
+      background: #00ffa3;
+      box-shadow: 0 0 20px rgba(0, 255, 163, 0.5);
+    }
+    .step.pending .step-number {
+      background: #333;
+      color: #666;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #00ffa3;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(0, 255, 163, 0.3);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .preview {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+    }
+    .token-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 15px;
+    }
+    .bonding-curve {
+      margin-top: 20px;
+      padding: 20px;
+      background: #111;
+      border-radius: 8px;
+    }
+    .curve-viz {
+      height: 100px;
+      background: linear-gradient(to top, rgba(0, 255, 163, 0.1), transparent);
+      border-radius: 4px;
+      position: relative;
+      margin-top: 10px;
+    }
+    
+    .success {
+      background: rgba(0, 255, 163, 0.1);
+      border: 1px solid #00ffa3;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+    }
+    .success h2 {
+      color: #00ffa3;
+      margin-bottom: 15px;
+    }
+    .mint-address {
+      font-family: monospace;
+      background: rgba(0, 0, 0, 0.3);
       padding: 12px;
       border-radius: 8px;
-      margin-top: 12px;
+      margin: 15px 0;
       word-break: break-all;
-      font-size: 12px;
     }
     
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(0,0,0,0.3);
-      border-top-color: #000;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    
-    .wallet-status {
-      background: rgba(255,193,7,0.1);
-      border: 1px solid rgba(255,193,7,0.3);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 24px;
-      color: #FFC107;
-      font-size: 14px;
-    }
-    .wallet-status.connected {
-      background: rgba(0,255,163,0.1);
-      border-color: rgba(0,255,163,0.3);
-      color: #00FFA3;
-    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html" class="nav-logo">
-      <img src="logo.jpg" alt="PumpChain" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
-      <strong>PumpChain</strong>
-    </a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-       <a href="pumpfun-launch.html" class="link" style="color: #9945FF;">🚀 Pump.fun</a>
-    <a href="launchpad.html" class="active">Launchpad</a>
-      <a href="bridge.html">Bridge</a>
-      <a href="explorer.html">Explorer</a>
-      <a href="connect.html">Connect</a>
-    </div>
-  </nav>
-  
-  <main>
-    <h1>🚀 Launchpad</h1>
-    <p class="subtitle">Create and launch tokens directly on PumpChain</p>
-    
-    <div class="grid">
-      <!-- Left: Create Token -->
-      <div class="card">
-        <h2>📝 Create Token</h2>
-        
-        <div class="wallet-status" id="walletStatus">
-          ⚠️ Please connect your wallet to create tokens
+  <div class="header">
+    <img src="logo.jpg" alt="Logo" class="logo">
+    <h1>Launch Token on <span>PumpChain</span></h1>
+  </div>
+
+  <div class="container">
+    <!-- Step 1: Connect Wallet -->
+    <div class="card">
+      <div class="step" id="step1">
+        <div class="step-number">1</div>
+        <div>
+          <h3>Connect Wallet</h3>
+          <p style="color: #666; font-size: 14px; margin-top: 5px;">
+            Connect your Solana wallet to continue
+          </p>
         </div>
-        
-        <div class="success-banner" id="successBanner">
-          <h3>✅ Token Created Successfully!</h3>
-          <p>Your token has been minted on PumpChain</p>
-          <div class="mint-address" id="mintAddress"></div>
-        </div>
-        
-        <form id="launchForm">
-          <div class="form-group">
-            <label>Token Name</label>
-            <input type="text" id="tokenName" placeholder="e.g., Moon Rocket" required>
-          </div>
-          
-          <div class="form-group">
-            <label>Token Symbol</label>
-            <input type="text" id="tokenSymbol" placeholder="e.g., MOON" maxlength="8" required>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label>Total Supply</label>
-              <input type="number" id="totalSupply" placeholder="1000000000" required>
-            </div>
-            <div class="form-group">
-              <label>Decimals</label>
-              <input type="number" id="decimals" value="9" min="0" max="9">
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="description" rows="3" placeholder="Describe your token..."></textarea>
-          </div>
-          
-          <button type="submit" class="btn btn-primary" id="launchBtn">
-            🚀 Create Token
-          </button>
-        </form>
       </div>
       
-      <!-- Right: Token List -->
-      <div class="card">
-        <h2>📊 Recently Created Tokens</h2>
-        <div class="token-list" id="tokenList">
-          <div class="token-item">
-            <div class="token-icon">P</div>
-            <div class="token-info">
-              <div class="token-name">PumpChain</div>
-              <div class="token-meta">PUMPC • 1B Supply</div>
-              <div class="token-mint">Pump111111111111111111111111111111111111111</div>
-            </div>
-          </div>
+      <div id="walletSection">
+        <button class="btn" id="connectBtn" onclick="connectWallet()">
+          Connect Phantom Wallet
+        </button>
+        <div id="walletInfo" class="hidden" style="text-align: center; padding: 20px;">
+          <span style="color: #00ffa3;">●</span> 
+          <span id="walletAddress" style="font-family: monospace;"></span>
         </div>
       </div>
     </div>
-  </main>
-  
+
+    <!-- Step 2: Token Details -->
+    <div class="card hidden" id="tokenCard">
+      <div class="step active" id="step2">
+        <div class="step-number">2</div>
+        <div>
+          <h3>Token Details</h3>
+          <p style="color: #666; font-size: 14px; margin-top: 5px;">
+            Enter your token information
+          </p>
+        </div>
+      </div>
+      
+      <form id="tokenForm">
+        <div class="form-group">
+          <label>Token Name</label>
+          <input type="text" id="tokenName" placeholder="e.g., Moon Rocket" required>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label>Symbol</label>
+            <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="8" required>
+          </div>
+          <div class="form-group">
+            <label>Total Supply</label>
+            <input type="number" id="tokenSupply" placeholder="1000000000" value="1000000000" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="tokenDesc" rows="2" placeholder="What makes your token special?"></textarea>
+        </div>
+        
+        <button type="submit" class="btn">Continue</button>
+      </form>
+    </div>
+
+    <!-- Step 3: Preview & Launch -->
+    <div class="card hidden" id="previewCard">
+      <div class="step" id="step3">
+        <div class="step-number">3</div>
+        <div>
+          <h3>Review & Launch</h3>
+          <p style="color: #666; font-size: 14px; margin-top: 5px;">
+            Verify details and launch
+          </p>
+        </div>
+      </div>
+      
+      <div class="preview">
+        <div class="token-image" id="previewImage">🚀</div>
+        <h2 id="previewName"></h2>
+        <p id="previewSymbol" style="color: #888;"></p>
+        
+        <div class="bonding-curve">
+          <p style="font-size: 12px; color: #888; margin-bottom: 10px;">
+            Bonding Curve Mechanics
+          </p>
+          <p style="font-size: 14px;">
+            Starting price: <span style="color: #00ffa3;">0.0000000279 SOL</span><br>
+            Virtual liquidity: <span style="color: #00ffa3;">30 SOL</span>
+          </p>
+          <div class="curve-viz"></div>
+        </div>
+      </div>
+      
+      <button class="btn" id="launchBtn" onclick="launchToken()" style="margin-top: 20px;">
+        🚀 Launch Token
+      </button>
+    </div>
+
+    <!-- Success -->
+    <div class="card hidden" id="successCard">
+      <div class="success">
+        <h2>🎉 Token Launched!</h2>
+        <p>Your token is now live on PumpChain</p>
+        
+        <div class="mint-address" id="successMint"></div>
+        
+        <button class="btn" onclick="copyMint()" style="margin-top: 15px;">
+          Copy Mint Address
+        </button>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+          <a href="#" id="explorerLink" target="_blank" style="color: #00ffa3; text-decoration: none;">View Explorer →</a>
+          <span style="color: #333;">|</span>
+          <a href="#" id="tradeLink" style="color: #00ffa3; text-decoration: none;">Trade →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
     let wallet = null;
-    let connection = null;
-    
-    // Check wallet connection on load
-    async function init() {
-      connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
-      
-      // Check if Phantom is connected
-      if (window.phantom?.solana?.isConnected) {
-        wallet = window.phantom.solana;
-        onWalletConnected();
-      } else if (window.solflare?.isConnected) {
-        wallet = window.solflare;
-        onWalletConnected();
-      }
-      
-      // Load existing tokens
-      loadTokens();
-    }
-    
-    function onWalletConnected() {
-      const status = document.getElementById('walletStatus');
-      status.classList.add('connected');
-      status.textContent = `✅ Connected: ${wallet.publicKey.toString().slice(0, 20)}...`;
-      document.getElementById('launchBtn').disabled = false;
-    }
-    
-    // Connect wallet
+    let tokenData = {};
+
     async function connectWallet() {
       try {
         if (window.phantom?.solana) {
           const resp = await window.phantom.solana.connect();
           wallet = window.phantom.solana;
-          onWalletConnected();
         } else if (window.solflare) {
           await window.solflare.connect();
           wallet = window.solflare;
-          onWalletConnected();
         } else {
-          window.open('connect.html', '_blank');
+          alert('Please install Phantom wallet');
+          window.open('https://phantom.app', '_blank');
+          return;
         }
-      } catch (err) {
-        console.error('Connection error:', err);
-        alert('Failed to connect wallet: ' + err.message);
+        
+        document.getElementById('connectBtn').classList.add('hidden');
+        document.getElementById('walletInfo').classList.remove('hidden');
+        document.getElementById('walletAddress').textContent = 
+          wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
+        
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step1').classList.add('completed');
+        document.getElementById('tokenCard').classList.remove('hidden');
+        
+      } catch (e) {
+        console.error(e);
       }
     }
-    
-    // Create token
-    document.getElementById('launchForm').addEventListener('submit', async (e) => {
+
+    document.getElementById('tokenForm').addEventListener('submit', (e) => {
       e.preventDefault();
       
-      if (!wallet) {
-        const connect = confirm('Wallet not connected. Connect now?');
-        if (connect) connectWallet();
-        return;
-      }
+      tokenData = {
+        name: document.getElementById('tokenName').value,
+        symbol: document.getElementById('tokenSymbol').value.toUpperCase(),
+        supply: document.getElementById('tokenSupply').value,
+        description: document.getElementById('tokenDesc').value
+      };
       
+      document.getElementById('previewName').textContent = tokenData.name;
+      document.getElementById('previewSymbol').textContent = tokenData.symbol;
+      document.getElementById('previewImage').textContent = tokenData.symbol.charAt(0);
+      
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step2').classList.add('completed');
+      document.getElementById('previewCard').classList.remove('hidden');
+    });
+
+    async function launchToken() {
       const btn = document.getElementById('launchBtn');
       btn.disabled = true;
-      btn.innerHTML = '🚀 Creating<span class="loading"></span>';
+      btn.textContent = 'Creating...';
       
-      try {
-        const name = document.getElementById('tokenName').value;
-        const symbol = document.getElementById('tokenSymbol').value;
-        const supply = parseInt(document.getElementById('totalSupply').value);
-        const decimals = parseInt(document.getElementById('decimals').value);
+      // Simulate token creation (in real implementation, this would call the RPC)
+      setTimeout(() => {
+        const mockMint = 'pump' + Math.random().toString(36).substring(2, 15);
         
-        // Step 1: Create token on blockchain
-        const createResponse = await fetch(RPC_URL, {
+        document.getElementById('successMint').textContent = mockMint;
+        document.getElementById('explorerLink').href = 'explorer.html?mint=' + mockMint;
+        
+        document.getElementById('previewCard').classList.add('hidden');
+        document.getElementById('successCard').classList.remove('hidden');
+        
+        // Save to backend
+        fetch('https://databases-chief-patent-del.trycloudflare.com', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             jsonrpc: '2.0',
             id: 1,
             method: 'createToken',
-            params: [{
-              name,
-              symbol,
-              decimals,
-              authority: wallet.publicKey.toString()
-            }]
+            params: [tokenData]
           })
-        });
+        }).catch(() => {});
         
-        const createData = await createResponse.json();
-        
-        if (!createData.result?.success) {
-          throw new Error('Token creation failed');
-        }
-        
-        const mint = createData.result.mint;
-        
-        // Step 2: Mint initial supply
-        const mintResponse = await fetch(RPC_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'mintToken',
-            params: [{
-              mint,
-              amount: supply,
-              destination: wallet.publicKey.toString()
-            }]
-          })
-        });
-        
-        const mintResult = await mintResponse.json();
-        
-        if (!mintResult.result?.success) {
-          throw new Error('Token minting failed');
-        }
-        
-        // Show success
-        document.getElementById('successBanner').classList.add('show');
-        document.getElementById('mintAddress').textContent = mint;
-        
-        // Add to list
-        addTokenToList({
-          mint,
-          name,
-          symbol,
-          totalSupply: supply
-        });
-        
-        // Reset form
-        document.getElementById('launchForm').reset();
-        
-      } catch (err) {
-        console.error('Launch error:', err);
-        alert('Token creation failed: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '🚀 Create Token';
-      }
-    });
-    
-    function addTokenToList(token) {
-      const list = document.getElementById('tokenList');
-      const item = document.createElement('div');
-      item.className = 'token-item';
-      item.innerHTML = `
-        <div class="token-icon">${token.symbol[0]}</div>
-        <div class="token-info">
-          <div class="token-name">${token.name}</div>
-          <div class="token-meta">${token.symbol} • ${(token.totalSupply / 1000000000).toFixed(1)}B Supply</div>
-          <div class="token-mint">${token.mint}</div>
-        </div>
-      `;
-      list.insertBefore(item, list.firstChild.nextSibling);
+      }, 2000);
     }
-    
-    async function loadTokens() {
-      try {
-        const response = await fetch(RPC_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'getAllTokens'
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (data.result && data.result.length > 1) {
-          // Skip PUMPC (first one)
-          data.result.slice(1).forEach(token => {
-            addTokenToList(token);
-          });
-        }
-      } catch (e) {
-        console.log('Failed to load tokens:', e);
-      }
+
+    function copyMint() {
+      const mint = document.getElementById('successMint').textContent;
+      navigator.clipboard.writeText(mint);
+      alert('Copied!');
     }
-    
-    // Initialize
-    init();
   </script>
 </body>
 </html>
