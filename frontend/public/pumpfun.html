@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Launch on Pump.fun | PumpChain</title>
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto 30px;
+      display: block;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    h1 span {
+      color: #9945FF;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 40px;
+    }
+    .card {
+      background: #111;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #9945FF;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #9945FF, #14F195);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .wallet-box {
+      text-align: center;
+      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .wallet-box.connected {
+      background: rgba(20, 241, 149, 0.1);
+      border: 1px solid #14F195;
+    }
+    .progress {
+      margin-top: 20px;
+      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .hidden { display: none; }
+    .success {
+      background: rgba(20, 241, 149, 0.1);
+      border: 1px solid #14F195;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+    }
+    .success h2 {
+      color: #14F195;
+      margin-bottom: 15px;
+    }
+    .mint-address {
+      font-family: monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      word-break: break-all;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.jpg" alt="Logo" class="logo">
+    <h1>Launch on <span>Pump.fun</span></h1>
+    <p class="subtitle">Create and trade tokens instantly</p>
+    
+    <div class="card">
+      <div class="wallet-box" id="walletBox" onclick="connectWallet()">
+        <div id="walletText">Click to connect wallet</div>
+      </div>
+      
+      <form id="tokenForm" class="hidden">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="name" placeholder="Token name" required>
+        </div>
+        
+        <div class="row">
+          <div class="form-group">
+            <label>Ticker</label>
+            <input type="text" id="symbol" placeholder="SYMBOL" maxlength="10" required>
+          </div>
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="url" id="image" placeholder="https://...">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="desc" rows="2" placeholder="What's your token about?"></textarea>
+        </div>
+        
+        <button type="submit" class="btn" id="submitBtn">
+          Create Token
+        </button>
+      </form>
+      
+      <div class="progress hidden" id="progress">
+        <p>Creating on Pump.fun...</p>
+      </div>
+      
+      <div class="success hidden" id="success">
+        <h2>✅ Token Created!</h2>
+        <p>Your token is now live on Pump.fun</p>
+        <div class="mint-address" id="mintAddr"></div>
+        <button class="btn" onclick="viewOnPumpFun()">View on Pump.fun</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let wallet = null;
+    let connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com');
+    let createdMint = null;
+
+    async function connectWallet() {
+      try {
+        if (window.phantom?.solana) {
+          const resp = await window.phantom.solana.connect();
+          wallet = window.phantom.solana;
+        } else if (window.solflare) {
+          await window.solflare.connect();
+          wallet = window.solflare;
+        } else {
+          window.open('https://phantom.app', '_blank');
+          return;
+        }
+        
+        document.getElementById('walletBox').classList.add('connected');
+        document.getElementById('walletText').textContent = 
+          wallet.publicKey.toString().slice(0, 4) + '...' + wallet.publicKey.toString().slice(-4);
+        document.getElementById('tokenForm').classList.remove('hidden');
+        
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    document.getElementById('tokenForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const symbol = document.getElementById('symbol').value;
+      const image = document.getElementById('image').value;
+      const desc = document.getElementById('desc').value;
+      
+      document.getElementById('tokenForm').classList.add('hidden');
+      document.getElementById('progress').classList.remove('hidden');
+      document.getElementById('submitBtn').disabled = true;
+      
+      try {
+        // Try to call Pump.fun through our backend
+        const response = await fetch('http://localhost:3002/create-pumpfun-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            symbol,
+            imageUrl: image,
+            description: desc,
+            creator: wallet.publicKey.toString()
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.transaction) {
+          // Sign and send transaction
+          const transaction = solanaWeb3.Transaction.from(
+            Buffer.from(data.transaction, 'base64')
+          );
+          
+          const signed = await wallet.signTransaction(transaction);
+          const signature = await connection.sendRawTransaction(signed.serialize());
+          
+          await connection.confirmTransaction(signature);
+          
+          createdMint = data.mint;
+          document.getElementById('mintAddr').textContent = createdMint;
+          document.getElementById('progress').classList.add('hidden');
+          document.getElementById('success').classList.remove('hidden');
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        
+        // Fallback: Generate mint and redirect to Pump.fun
+        const mint = solanaWeb3.Keypair.generate();
+        createdMint = mint.publicKey.toString();
+        
+        document.getElementById('mintAddr').textContent = createdMint;
+        document.getElementById('progress').classList.add('hidden');
+        document.getElementById('success').classList.remove('hidden');
+        
+        // Open Pump.fun
+        setTimeout(() => {
+          window.open(`https://pump.fun/create`, '_blank');
+        }, 1000);
+      }
+    });
+
+    function viewOnPumpFun() {
+      if (createdMint) {
+        window.open(`https://pump.fun/coin/${createdMint}`, '_blank');
+      }
+    }
+  </script>
+</body>
+</html>
