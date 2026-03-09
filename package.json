@@ -8,6 +8,8 @@
     "dev": "nodemon rpc-server.js"
   },
   "dependencies": {
+    "level": "^10.0.0",
+    "leveldown": "^6.1.1",
     "ws": "^8.14.2"
   },
   "devDependencies": {
