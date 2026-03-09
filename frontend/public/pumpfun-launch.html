@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Launch on Pump.fun | PumpChain</title>
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 36px;
+      font-weight: 300;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 50px;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 16px;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #9945FF;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #9945FF, #14F195);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(153, 69, 255, 0.3);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .info-box {
+      background: rgba(153, 69, 255, 0.1);
+      border: 1px solid rgba(153, 69, 255, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .info-box h3 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #9945FF;
+    }
+    .info-box p {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.6;
+    }
+    .wallet-status {
+      text-align: center;
+      padding: 15px;
+      background: #111;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .wallet-status.connected {
+      background: rgba(20, 241, 149, 0.1);
+      color: #14F195;
+    }
+    .hidden { display: none; }
+    
+    .progress {
+      margin-top: 20px;
+      padding: 20px;
+      background: #111;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .progress-bar {
+      height: 4px;
+      background: #222;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #9945FF, #14F195);
+      width: 0%;
+      transition: width 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <img src="logo.jpg" alt="PumpChain" class="logo">
+  
+  <h1>Launch on <span style="color: #9945FF;">Pump.fun</span></h1>
+  <p class="subtitle">Create your token directly on Pump.fun via PumpChain</p>
+  
+  <div class="container">
+    <div class="info-box">
+      <h3>🚀 How it works</h3>
+      <p>1. Fill in your token details<br>
+         2. Connect your Solana wallet<br>
+         3. Sign the transaction<br>
+         4. Your token launches on Pump.fun!</p>
+    </div>
+    
+    <div class="wallet-status" id="walletStatus">
+      ⚠️ Connect your wallet to continue
+    </div>
+    
+    <form id="launchForm">
+      <div class="form-group">
+        <label>Token Name</label>
+        <input type="text" id="tokenName" placeholder="e.g., Moon Rocket" required>
+      </div>
+      
+      <div class="row">
+        <div class="form-group">
+          <label>Symbol</label>
+          <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="8" required>
+        </div>
+        <div class="form-group">
+          <label>Image URL</label>
+          <input type="url" id="imageUrl" placeholder="https://...">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description" rows="3" placeholder="Tell us about your token..."></textarea>
+      </div>
+      
+      <button type="submit" class="btn" id="launchBtn" disabled>
+        🚀 Launch Token
+      </button>
+    </form>
+    
+    <div class="progress hidden" id="progress">
+      <div id="progressText">Creating token...</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Wallet connection
+    let wallet = null;
+    const walletStatus = document.getElementById('walletStatus');
+    const launchBtn = document.getElementById('launchBtn');
+    
+    async function connectWallet() {
+      try {
+        if (window.phantom?.solana) {
+          const resp = await window.phantom.solana.connect();
+          wallet = window.phantom.solana;
+        } else if (window.solflare) {
+          await window.solflare.connect();
+          wallet = window.solflare;
+        } else {
+          alert('Please install Phantom or Solflare wallet');
+          window.open('https://phantom.app', '_blank');
+          return;
+        }
+        
+        walletStatus.textContent = `✅ Connected: ${wallet.publicKey.toString().slice(0, 20)}...`;
+        walletStatus.classList.add('connected');
+        launchBtn.disabled = false;
+      } catch (e) {
+        console.error('Connection error:', e);
+      }
+    }
+    
+    // Auto-connect on load
+    window.addEventListener('load', () => {
+      if (window.phantom?.solana?.isConnected) {
+        wallet = window.phantom.solana;
+        walletStatus.textContent = `✅ Connected: ${wallet.publicKey.toString().slice(0, 20)}...`;
+        walletStatus.classList.add('connected');
+        launchBtn.disabled = false;
+      } else {
+        connectWallet();
+      }
+    });
+    
+    // Click to connect
+    walletStatus.addEventListener('click', connectWallet);
+    
+    // Form submission
+    document.getElementById('launchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!wallet) {
+        alert('Please connect your wallet first!');
+        return;
+      }
+      
+      const name = document.getElementById('tokenName').value;
+      const symbol = document.getElementById('tokenSymbol').value;
+      const description = document.getElementById('description').value;
+      const imageUrl = document.getElementById('imageUrl').value;
+      
+      // Show progress
+      document.getElementById('progress').classList.remove('hidden');
+      launchBtn.disabled = true;
+      
+      // Method 1: Open Pump.fun with pre-filled data
+      const pumpFunUrl = `https://pump.fun/create?` + new URLSearchParams({
+        name: name,
+        symbol: symbol,
+        description: description,
+        image: imageUrl
+      });
+      
+      // Progress animation
+      document.getElementById('progressFill').style.width = '50%';
+      
+      // Redirect to pump.fun
+      setTimeout(() => {
+        window.open(pumpFunUrl, '_blank');
+        document.getElementById('progressText').textContent = 'Redirecting to Pump.fun...';
+        document.getElementById('progressFill').style.width = '100%';
+        
+        setTimeout(() => {
+          launchBtn.disabled = false;
+          document.getElementById('progress').classList.add('hidden');
+          document.getElementById('launchForm').reset();
+        }, 2000);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
