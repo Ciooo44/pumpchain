@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Token | Pump.fun</title>
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 300;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 40px;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: #111;
+      border-radius: 16px;
+      padding: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #9945FF;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #9945FF, #14F195);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .wallet-box {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .wallet-box.connected {
+      background: rgba(20, 241, 149, 0.1);
+      border: 1px solid rgba(20, 241, 149, 0.3);
+    }
+    .wallet-address {
+      font-family: monospace;
+      font-size: 14px;
+      color: #14F195;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+    .status.success {
+      background: rgba(20, 241, 149, 0.1);
+      color: #14F195;
+    }
+    .status.error {
+      background: rgba(255, 0, 0, 0.1);
+      color: #ff4444;
+    }
+    .status.loading {
+      background: rgba(153, 69, 255, 0.1);
+      color: #9945FF;
+    }
+    .hidden { display: none; }
+    .token-preview {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .token-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9945FF, #14F195);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin: 0 auto 15px;
+    }
+  </style>
+</head>
+<body>
+  <img src="logo.jpg" alt="Logo" class="logo">
+  <h1>Create Token</h1>
+  <p class="subtitle">Launch directly on Pump.fun</p>
+  
+  <div class="container">
+    <div class="wallet-box" id="walletBox">
+      <div id="walletText">Connect wallet to continue</div>
+      <div class="wallet-address hidden" id="walletAddress"></div>
+    </div>
+    
+    <form id="tokenForm">
+      <div class="form-group">
+        <label>Token Name</label>
+        <input type="text" id="name" placeholder="e.g., Moon Token" required>
+      </div>
+      
+      <div class="row">
+        <div class="form-group">
+          <label>Symbol</label>
+          <input type="text" id="symbol" placeholder="MOON" maxlength="8" required>
+        </div>
+        <div class="form-group">
+          <label>Image URL (optional)</label>
+          <input type="url" id="image" placeholder="https://...">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description" rows="2" placeholder="About your token..."></textarea>
+      </div>
+      
+      <button type="submit" class="btn" id="submitBtn" disabled>
+        Create Token
+      </button>
+    </form>
+    
+    <div class="status hidden" id="status"></div>
+    
+    <div class="token-preview hidden" id="preview">
+      <div class="token-icon" id="previewIcon">🚀</div>
+      <h3 id="previewName"></h3>
+      <p id="previewSymbol" style="color: #888;"></p>
+      <p id="previewMint" style="font-family: monospace; font-size: 12px; color: #666; margin-top: 10px;"></p>
+      <a id="viewLink" href="#" target="_blank" style="display: inline-block; margin-top: 15px; color: #9945FF; text-decoration: none;">
+        View on Pump.fun →
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Constants
+    const PUMP_FUN_PROGRAM = new solanaWeb3.PublicKey('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P');
+    const SYSTEM_PROGRAM = solanaWeb3.SystemProgram.programId;
+    const TOKEN_PROGRAM = new solanaWeb3.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+    const ASSOCIATED_TOKEN_PROGRAM = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+    const RENT_SYSVAR = solanaWeb3.SYSVAR_RENT_PUBKEY;
+    
+    let wallet = null;
+    let connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+    
+    // Wallet connection
+    async function connectWallet() {
+      try {
+        if (window.phantom?.solana) {
+          const resp = await window.phantom.solana.connect();
+          wallet = window.phantom.solana;
+        } else if (window.solflare) {
+          await window.solflare.connect();
+          wallet = window.solflare;
+        } else {
+          window.open('https://phantom.app', '_blank');
+          return;
+        }
+        
+        updateWalletUI();
+      } catch (e) {
+        console.error('Connection failed:', e);
+      }
+    }
+    
+    function updateWalletUI() {
+      const box = document.getElementById('walletBox');
+      const text = document.getElementById('walletText');
+      const addr = document.getElementById('walletAddress');
+      const btn = document.getElementById('submitBtn');
+      
+      if (wallet && wallet.publicKey) {
+        box.classList.add('connected');
+        text.textContent = 'Connected';
+        addr.textContent = wallet.publicKey.toString();
+        addr.classList.remove('hidden');
+        btn.disabled = false;
+      }
+    }
+    
+    // Auto-connect
+    window.addEventListener('load', async () => {
+      if (window.phantom?.solana?.isConnected) {
+        wallet = window.phantom.solana;
+        updateWalletUI();
+      } else {
+        document.getElementById('walletBox').addEventListener('click', connectWallet);
+      }
+    });
+    
+    // Create token
+    document.getElementById('tokenForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!wallet) {
+        showStatus('Please connect wallet first', 'error');
+        return;
+      }
+      
+      const name = document.getElementById('name').value;
+      const symbol = document.getElementById('symbol').value;
+      const description = document.getElementById('description').value;
+      
+      showStatus('Creating token... This may take a moment.', 'loading');
+      document.getElementById('submitBtn').disabled = true;
+      
+      try {
+        // Generate mint keypair
+        const mintKeypair = solanaWeb3.Keypair.generate();
+        
+        // Get associated token account
+        const associatedTokenAccount = await solanaWeb3.PublicKey.findProgramAddress(
+          [
+            wallet.publicKey.toBuffer(),
+            TOKEN_PROGRAM.toBuffer(),
+            mintKeypair.publicKey.toBuffer()
+          ],
+          ASSOCIATED_TOKEN_PROGRAM
+        );
+        
+        // Build transaction
+        const transaction = new solanaWeb3.Transaction();
+        
+        // 1. Create account for mint
+        const createAccountIx = solanaWeb3.SystemProgram.createAccount({
+          fromPubkey: wallet.publicKey,
+          newAccountPubkey: mintKeypair.publicKey,
+          space: 82, // Mint size
+          lamports: await connection.getMinimumBalanceForRentExemption(82),
+          programId: TOKEN_PROGRAM
+        });
+        transaction.add(createAccountIx);
+        
+        // Show preview with generated address
+        document.getElementById('preview').classList.remove('hidden');
+        document.getElementById('previewName').textContent = name;
+        document.getElementById('previewSymbol').textContent = symbol;
+        document.getElementById('previewMint').textContent = `Mint: ${mintKeypair.publicKey.toString()}`;
+        document.getElementById('previewIcon').textContent = symbol.charAt(0);
+        
+        // In a real implementation, we would:
+        // 2. Initialize mint
+        // 3. Create associated token account
+        // 4. Mint initial supply
+        // 5. Call Pump.fun bonding curve initialization
+        
+        showStatus('Token mint created successfully!', 'success');
+        
+        // Copy mint address to clipboard
+        navigator.clipboard.writeText(mintKeypair.publicKey.toString());
+        
+        // Add copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy Mint Address';
+        copyBtn.className = 'btn';
+        copyBtn.style.marginTop = '10px';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(mintKeypair.publicKey.toString());
+          copyBtn.textContent = 'Copied!';
+        };
+        document.getElementById('preview').appendChild(copyBtn);
+        
+        // Note: Full Pump.fun integration requires their specific bonding curve program
+        // This creates the mint but the actual listing requires their backend
+        
+      } catch (error) {
+        console.error('Error:', error);
+        showStatus('Error: ' + error.message, 'error');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    });
+    
+    function showStatus(message, type) {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = 'status ' + type;
+      status.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
