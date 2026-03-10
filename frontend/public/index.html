@@ -145,11 +145,24 @@
     </div>
   </div>
   
+  <div class="ca-box" onclick="copyCA()" style="cursor: pointer; margin-top: 20px; padding: 15px 25px; background: #111; border: 1px solid #333; border-radius: 8px; font-family: monospace; font-size: 13px; color: #888; transition: all 0.3s;">
+    <span style="color: #00ffa3;">CA:</span> JjiS6HcDEtEzZDvhA3ZsLqjn7Pn8AhdhQuyCceZpump
+    <span style="color: #666; margin-left: 10px;">📋</span>
+  </div>
+  
   <div class="footer">
     <span style="color: #00ffa3;">●</span> Devnet Live <span style="color: #666;">|</span> <span style="color: #ffa500;">Mainnet Coming</span>
     <a href="https://github.com/Ciooo44/pumpchain" target="_blank">GitHub</a>
     <a href="https://x.com/pumpchain_org" target="_blank">X</a>
   </div>
+  
+  <script>
+    function copyCA() {
+      const ca = 'JjiS6HcDEtEzZDvhA3ZsLqjn7Pn8AhdhQuyCceZpump';
+      navigator.clipboard.writeText(ca);
+      alert('CA copied: ' + ca);
+    }
+  </script>
   
   <script>
     const RPC = 'https://databases-chief-patent-del.trycloudflare.com';
