@@ -3,109 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Launch Token | PumpChain</title>
+  <title>Bridge | PumpChain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0a0a;
       color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
       padding: 40px 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
     }
     .header {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 15px;
       margin-bottom: 40px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
     }
     .logo {
       width: 50px;
       height: 50px;
       border-radius: 50%;
+      border: 2px solid #00ffa3;
     }
-    .header h1 {
-      font-size: 24px;
-      font-weight: 500;
+    h1 {
+      font-size: 28px;
+      font-weight: 400;
     }
-    .header span {
+    h1 span {
       color: #00ffa3;
     }
     
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .card {
+    /* Bridge Card */
+    .bridge-card {
       background: #111;
       border-radius: 16px;
       padding: 30px;
-      margin-bottom: 20px;
-    }
-    
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 15px;
       margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #222;
     }
-    .step-number {
-      width: 36px;
-      height: 36px;
-      background: #00ffa3;
-      color: #000;
-      border-radius: 50%;
+    .bridge-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      font-weight: 700;
+      margin-bottom: 25px;
     }
-    .step.completed .step-number {
-      background: #00ffa3;
+    .bridge-title {
+      font-size: 14px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
-    .step.active .step-number {
-      background: #00ffa3;
-      box-shadow: 0 0 20px rgba(0, 255, 163, 0.5);
+    .wallet-btn {
+      padding: 10px 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
     }
-    .step.pending .step-number {
-      background: #333;
-      color: #666;
+    .wallet-btn.connected {
+      background: rgba(0, 255, 163, 0.1);
+      border-color: #00ffa3;
+      color: #00ffa3;
     }
     
+    /* Chain Selector */
+    .chain-select {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    .chain-box {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .chain-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .chain-name {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .chain-sub {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    .swap-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #00ffa3;
+      border: none;
+      color: #000;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .swap-btn:hover {
+      transform: rotate(180deg);
+    }
+    
+    /* Form */
     .form-group {
       margin-bottom: 20px;
     }
     label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       color: #888;
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
-    input, textarea {
+    .input-wrap {
+      position: relative;
+    }
+    input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 16px;
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 8px;
       color: #fff;
       font-size: 16px;
-      transition: border-color 0.3s;
     }
-    input:focus, textarea:focus {
+    input:focus {
       outline: none;
       border-color: #00ffa3;
     }
+    .token-badge {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #333;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
     
-    .btn {
+    /* Bridge Info */
+    .bridge-info {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-label {
+      color: #888;
+      font-size: 13px;
+    }
+    .info-value {
+      color: #00ffa3;
+      font-size: 13px;
+    }
+    
+    /* Bridge Button */
+    .bridge-btn {
       width: 100%;
       padding: 18px;
       background: linear-gradient(135deg, #00ffa3, #03e1ff);
@@ -115,199 +189,171 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 40px rgba(0, 255, 163, 0.3);
-    }
-    .btn:disabled {
+    .bridge-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
     
-    .preview {
+    /* Transactions */
+    .tx-section {
+      background: #111;
+      border-radius: 16px;
+      padding: 30px;
+    }
+    .tx-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .tx-title {
+      font-size: 18px;
+    }
+    .tx-count {
+      background: #00ffa3;
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tx-item {
       background: #1a1a1a;
       border-radius: 12px;
-      padding: 25px;
-      text-align: center;
-    }
-    .token-image {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00ffa3, #03e1ff);
-      display: flex;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 15px;
       align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      margin: 0 auto 15px;
     }
-    .bonding-curve {
-      margin-top: 20px;
-      padding: 20px;
-      background: #111;
-      border-radius: 8px;
+    .tx-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
     }
-    .curve-viz {
-      height: 100px;
-      background: linear-gradient(to top, rgba(0, 255, 163, 0.1), transparent);
-      border-radius: 4px;
-      position: relative;
-      margin-top: 10px;
+    .tx-status.success { background: #00ffa3; }
+    .tx-status.pending { background: #ffa500; animation: pulse 1s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
-    
-    .success {
-      background: rgba(0, 255, 163, 0.1);
-      border: 1px solid #00ffa3;
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
+    .tx-info {
+      overflow: hidden;
     }
-    .success h2 {
-      color: #00ffa3;
-      margin-bottom: 15px;
-    }
-    .mint-address {
+    .tx-hash {
       font-family: monospace;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: 8px;
-      margin: 15px 0;
-      word-break: break-all;
+      font-size: 13px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tx-meta {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .tx-amount {
+      text-align: right;
+    }
+    .tx-value {
+      font-size: 15px;
+      color: #fff;
+    }
+    .tx-time {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
     }
     
-    .hidden { display: none; }
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="logo.jpg?v=2" alt="Logo" class="logo">
-    <h1>Launch Token on <span>PumpChain</span></h1>
-  </div>
-
   <div class="container">
-    <!-- Step 1: Connect Wallet -->
-    <div class="card">
-      <div class="step" id="step1">
-        <div class="step-number">1</div>
-        <div>
-          <h3>Connect Wallet</h3>
-          <p style="color: #666; font-size: 14px; margin-top: 5px;">
-            Connect your Solana wallet to continue
-          </p>
-        </div>
-      </div>
-      
-      <div id="walletSection">
-        <button class="btn" id="connectBtn" onclick="connectWallet()">
-          Connect Phantom Wallet
+    <div class="header">
+      <img src="logo.jpg" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <h1><span>Bridge</span> Transactions</h1>
+    </div>
+    
+    <!-- Bridge Form -->
+    <div class="bridge-card">
+      <div class="bridge-header">
+        <div class="bridge-title">Cross-Chain Bridge</div>
+        <button class="wallet-btn" id="walletBtn" onclick="connectWallet()">
+          Connect Wallet
         </button>
-        <div id="walletInfo" class="hidden" style="text-align: center; padding: 20px;">
-          <span style="color: #00ffa3;">●</span> 
-          <span id="walletAddress" style="font-family: monospace;"></span>
-        </div>
       </div>
-    </div>
-
-    <!-- Step 2: Token Details -->
-    <div class="card hidden" id="tokenCard">
-      <div class="step active" id="step2">
-        <div class="step-number">2</div>
-        <div>
-          <h3>Token Details</h3>
-          <p style="color: #666; font-size: 14px; margin-top: 5px;">
-            Enter your token information
-          </p>
+      
+      <div class="chain-select">
+        <div class="chain-box">
+          <div class="chain-label">From</div>
+          <div class="chain-name">Solana</div>
+          <div class="chain-sub">Mainnet</div>
+        </div>
+        <button class="swap-btn" onclick="swapChains()">⇄</button>
+        <div class="chain-box">
+          <div class="chain-label">To</div>
+          <div class="chain-name" style="color: #00ffa3;">PumpChain</div>
+          <div class="chain-sub">Devnet</div>
         </div>
       </div>
       
-      <form id="tokenForm">
-        <div class="form-group">
-          <label>Token Name</label>
-          <input type="text" id="tokenName" placeholder="e.g., Moon Rocket" required>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-          <div class="form-group">
-            <label>Symbol</label>
-            <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="8" required>
-          </div>
-          <div class="form-group">
-            <label>Total Supply</label>
-            <input type="number" id="tokenSupply" placeholder="1000000000" value="1000000000" required>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="tokenDesc" rows="2" placeholder="What makes your token special?"></textarea>
-        </div>
-        
-        <button type="submit" class="btn">Continue</button>
-      </form>
-    </div>
-
-    <!-- Step 3: Preview & Launch -->
-    <div class="card hidden" id="previewCard">
-      <div class="step" id="step3">
-        <div class="step-number">3</div>
-        <div>
-          <h3>Review & Launch</h3>
-          <p style="color: #666; font-size: 14px; margin-top: 5px;">
-            Verify details and launch
-          </p>
+      <div class="form-group">
+        <label>Amount</label>
+        <div class="input-wrap">
+          <input type="number" id="amount" placeholder="0.00" step="0.001">
+          <span class="token-badge">SOL</span>
         </div>
       </div>
       
-      <div class="preview">
-        <div class="token-image" id="previewImage">🚀</div>
-        <h2 id="previewName"></h2>
-        <p id="previewSymbol" style="color: #888;"></p>
-        
-        <div class="bonding-curve">
-          <p style="font-size: 12px; color: #888; margin-bottom: 10px;">
-            Bonding Curve Mechanics
-          </p>
-          <p style="font-size: 14px;">
-            Starting price: <span style="color: #00ffa3;">0.0000000279 SOL</span><br>
-            Virtual liquidity: <span style="color: #00ffa3;">30 SOL</span>
-          </p>
-          <div class="curve-viz"></div>
+      <div class="bridge-info">
+        <div class="info-row">
+          <span class="info-label">Bridge Fee</span>
+          <span class="info-value">0.001 SOL</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Estimated Time</span>
+          <span class="info-value">&lt; 2 min</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">You will receive</span>
+          <span class="info-value" id="receiveAmount">0.00 PUMPC</span>
         </div>
       </div>
       
-      <button class="btn" id="launchBtn" onclick="launchToken()" style="margin-top: 20px;">
-        🚀 Launch Token
+      <button class="bridge-btn" id="bridgeBtn" onclick="bridgeAssets()" disabled>
+        Bridge Assets
       </button>
     </div>
-
-    <!-- Success -->
-    <div class="card hidden" id="successCard">
-      <div class="success">
-        <h2>🎉 Token Launched!</h2>
-        <p>Your token is now live on PumpChain</p>
-        
-        <div class="mint-address" id="successMint"></div>
-        
-        <button class="btn" onclick="copyMint()" style="margin-top: 15px;">
-          Copy Mint Address
-        </button>
-        
-        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
-          <a href="#" id="explorerLink" target="_blank" style="color: #00ffa3; text-decoration: none;">View Explorer →</a>
-          <span style="color: #333;">|</span>
-          <a href="#" id="tradeLink" style="color: #00ffa3; text-decoration: none;">Trade →</a>
-        </div>
+    
+    <!-- Transactions -->
+    <div class="tx-section">
+      <div class="tx-header">
+        <div class="tx-title">Recent Bridge Transactions</div>
+        <div class="tx-count" id="txCount">0</div>
+      </div>
+      <div class="tx-list" id="txList">
+        <div class="empty-state">No transactions yet. Bridge your first assets!</div>
       </div>
     </div>
   </div>
-
+  
   <script>
     let wallet = null;
-    let tokenData = {};
-
+    let transactions = [];
+    
     async function connectWallet() {
       try {
         if (window.phantom?.solana) {
@@ -317,79 +363,107 @@
           await window.solflare.connect();
           wallet = window.solflare;
         } else {
-          alert('Please install Phantom wallet');
           window.open('https://phantom.app', '_blank');
           return;
         }
         
-        document.getElementById('connectBtn').classList.add('hidden');
-        document.getElementById('walletInfo').classList.remove('hidden');
-        document.getElementById('walletAddress').textContent = 
-          wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
-        
-        document.getElementById('step1').classList.remove('active');
-        document.getElementById('step1').classList.add('completed');
-        document.getElementById('tokenCard').classList.remove('hidden');
+        const btn = document.getElementById('walletBtn');
+        btn.classList.add('connected');
+        btn.textContent = wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
+        document.getElementById('bridgeBtn').disabled = false;
         
       } catch (e) {
         console.error(e);
       }
     }
-
-    document.getElementById('tokenForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      tokenData = {
-        name: document.getElementById('tokenName').value,
-        symbol: document.getElementById('tokenSymbol').value.toUpperCase(),
-        supply: document.getElementById('tokenSupply').value,
-        description: document.getElementById('tokenDesc').value
-      };
-      
-      document.getElementById('previewName').textContent = tokenData.name;
-      document.getElementById('previewSymbol').textContent = tokenData.symbol;
-      document.getElementById('previewImage').textContent = tokenData.symbol.charAt(0);
-      
-      document.getElementById('step2').classList.remove('active');
-      document.getElementById('step2').classList.add('completed');
-      document.getElementById('previewCard').classList.remove('hidden');
+    
+    function swapChains() {
+      // Swap animation
+      const btn = document.querySelector('.swap-btn');
+      btn.style.transform = 'rotate(180deg)';
+      setTimeout(() => btn.style.transform = '', 300);
+    }
+    
+    document.getElementById('amount').addEventListener('input', (e) => {
+      const amount = parseFloat(e.target.value) || 0;
+      const fee = 0.001;
+      const receive = Math.max(0, amount - fee);
+      document.getElementById('receiveAmount').textContent = receive.toFixed(4) + ' PUMPC';
     });
-
-    async function launchToken() {
-      const btn = document.getElementById('launchBtn');
-      btn.disabled = true;
-      btn.textContent = 'Creating...';
+    
+    async function bridgeAssets() {
+      const amount = document.getElementById('amount').value;
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
       
-      // Simulate token creation (in real implementation, this would call the RPC)
+      const btn = document.getElementById('bridgeBtn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+      
+      // Simulate bridge transaction
       setTimeout(() => {
-        const mockMint = 'pump' + Math.random().toString(36).substring(2, 15);
+        const tx = {
+          hash: 'pump' + Math.random().toString(36).substring(2, 15),
+          from: 'Solana',
+          to: 'PumpChain',
+          amount: amount,
+          token: 'SOL',
+          status: 'pending',
+          time: new Date().toLocaleTimeString()
+        };
         
-        document.getElementById('successMint').textContent = mockMint;
-        document.getElementById('explorerLink').href = 'explorer.html?mint=' + mockMint;
+        transactions.unshift(tx);
+        renderTransactions();
         
-        document.getElementById('previewCard').classList.add('hidden');
-        document.getElementById('successCard').classList.remove('hidden');
+        // Mark as completed after 3 seconds
+        setTimeout(() => {
+          tx.status = 'success';
+          renderTransactions();
+        }, 3000);
         
-        // Save to backend
-        fetch('https://databases-chief-patent-del.trycloudflare.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'createToken',
-            params: [tokenData]
-          })
-        }).catch(() => {});
+        btn.disabled = false;
+        btn.textContent = 'Bridge Assets';
+        document.getElementById('amount').value = '';
+        document.getElementById('receiveAmount').textContent = '0.00 PUMPC';
         
       }, 2000);
     }
-
-    function copyMint() {
-      const mint = document.getElementById('successMint').textContent;
-      navigator.clipboard.writeText(mint);
-      alert('Copied!');
+    
+    function renderTransactions() {
+      const list = document.getElementById('txList');
+      const count = document.getElementById('txCount');
+      
+      count.textContent = transactions.length;
+      
+      if (transactions.length === 0) {
+        list.innerHTML = '<div class="empty-state">No transactions yet. Bridge your first assets!</div>';
+        return;
+      }
+      
+      list.innerHTML = transactions.map(tx => `
+        <div class="tx-item">
+          <div class="tx-status ${tx.status}"></div>
+          <div class="tx-info">
+            <div class="tx-hash">${tx.hash}</div>
+            <div class="tx-meta">${tx.from} → ${tx.to}</div>
+          </div>
+          <div class="tx-amount">
+            <div class="tx-value">${tx.amount} ${tx.token}</div>
+            <div class="tx-time">${tx.time}</div>
+          </div>
+        </div>
+      `).join('');
     }
+    
+    // Load some demo transactions
+    transactions = [
+      { hash: 'pump7xK9mL2nP4qR8sT', from: 'Solana', to: 'PumpChain', amount: '1.5', token: 'SOL', status: 'success', time: '2 min ago' },
+      { hash: 'pump3aB5cD7eF9gH1jK', from: 'Solana', to: 'PumpChain', amount: '0.5', token: 'SOL', status: 'success', time: '5 min ago' },
+      { hash: 'pump2mN4oP6qR8sT0uV', from: 'Solana', to: 'PumpChain', amount: '2.0', token: 'SOL', status: 'success', time: '12 min ago' }
+    ];
+    renderTransactions();
   </script>
 </body>
 </html>
