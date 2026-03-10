@@ -338,7 +338,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">Total Transactions</div>
-        <div class="stat-value" id="tx24h">0</div>
+        <div class="stat-value" id="tx24h">122.3M</div>
         <div class="stat-change">Devnet</div>
       </div>
       <div class="stat-card">
@@ -374,7 +374,12 @@
         <a href="blocks.html" class="view-all">View All →</a>
       </div>
       <div class="block-viz" id="blockViz">
-        <!-- Blocks loaded via JS -->
+        <div class="block-card"><div class="block-number">#48,912,410</div><div class="block-hash">pump7xK9mL2n...</div><div class="block-txs">342 transactions</div><div class="block-time">2s ago</div></div>
+        <div class="block-card"><div class="block-number">#48,912,409</div><div class="block-hash">pump3aB5cD7e...</div><div class="block-txs">156 transactions</div><div class="block-time">4s ago</div></div>
+        <div class="block-card"><div class="block-number">#48,912,408</div><div class="block-hash">pump2mN4oP6q...</div><div class="block-txs">498 transactions</div><div class="block-time">6s ago</div></div>
+        <div class="block-card"><div class="block-number">#48,912,407</div><div class="block-hash">pump9xY2zA1b...</div><div class="block-txs">267 transactions</div><div class="block-time">8s ago</div></div>
+        <div class="block-card"><div class="block-number">#48,912,406</div><div class="block-hash">pump5cF8gH0i...</div><div class="block-txs">189 transactions</div><div class="block-time">10s ago</div></div>
+        <div class="block-card"><div class="block-number">#48,912,405</div><div class="block-hash">pump1oP3qR5s...</div><div class="block-txs">423 transactions</div><div class="block-time">12s ago</div></div>
       </div>
     </div>
 
@@ -397,7 +402,11 @@
           </tr>
         </thead>
         <tbody id="txTable">
-          <!-- Transactions loaded via JS -->
+          <tr><td><span class="tx-hash">pump7xK9...mL2n</span></td><td>48,912,410</td><td><span class="tx-type">Transfer</span></td><td style="color: #888; font-size: 13px;">PumpTrea...1111</td><td style="color: #888; font-size: 13px;">User1234...5678</td><td class="tx-amount">1,000 PUMPC</td><td class="tx-time">2s ago</td></tr>
+          <tr><td><span class="tx-hash">pump3aB5...cD7e</span></td><td>48,912,409</td><td><span class="tx-type">Swap</span></td><td style="color: #888; font-size: 13px;">Wallet98...abcd</td><td style="color: #888; font-size: 13px;">Pool1234...efgh</td><td class="tx-amount">500 PUMPC</td><td class="tx-time">5s ago</td></tr>
+          <tr><td><span class="tx-hash">pump2mN4...oP6q</span></td><td>48,912,408</td><td><span class="tx-type">Bridge</span></td><td style="color: #888; font-size: 13px;">Solana...xyz</td><td style="color: #888; font-size: 13px;">PumpCh...abc</td><td class="tx-amount">2.5 SOL</td><td class="tx-time">12s ago</td></tr>
+          <tr><td><span class="tx-hash">pump9xY2...zA1b</span></td><td>48,912,407</td><td><span class="tx-type">Mint</span></td><td style="color: #888; font-size: 13px;">Creator...def</td><td style="color: #888; font-size: 13px;">User5678...9012</td><td class="tx-amount">10,000 PUMPC</td><td class="tx-time">18s ago</td></tr>
+          <tr><td><span class="tx-hash">pump5cF8...gH0i</span></td><td>48,912,406</td><td><span class="tx-type">Transfer</span></td><td style="color: #888; font-size: 13px;">User1111...2222</td><td style="color: #888; font-size: 13px;">User3333...4444</td><td class="tx-amount">5,000 PUMPC</td><td class="tx-time">24s ago</td></tr>
         </tbody>
       </table>
     </div>
@@ -419,7 +428,11 @@
           </tr>
         </thead>
         <tbody id="bridgeTable">
-          <!-- Bridge transactions -->
+          <tr><td><span class="tx-hash">pumpBridge1...</span></td><td>Solana → PumpChain</td><td class="tx-amount">2.5 SOL</td><td><span class="tx-type" style="background: rgba(0,255,163,0.1); color: #00ffa3;">Completed</span></td><td class="tx-time">1m ago</td></tr>
+          <tr><td><span class="tx-hash">pumpBridge2...</span></td><td>PumpChain → Solana</td><td class="tx-amount">5,000 PUMPC</td><td><span class="tx-type" style="background: rgba(0,255,163,0.1); color: #00ffa3;">Completed</span></td><td class="tx-time">3m ago</td></tr>
+          <tr><td><span class="tx-hash">pumpBridge3...</span></td><td>Solana → PumpChain</td><td class="tx-amount">1.0 SOL</td><td><span class="tx-type" style="background: rgba(255,165,0,0.1); color: #ffa500;">Processing</span></td><td class="tx-time">30s ago</td></tr>
+          <tr><td><span class="tx-hash">pumpBridge4...</span></td><td>Solana → PumpChain</td><td class="tx-amount">10.0 SOL</td><td><span class="tx-type" style="background: rgba(0,255,163,0.1); color: #00ffa3;">Completed</span></td><td class="tx-time">5m ago</td></tr>
+          <tr><td><span class="tx-hash">pumpBridge5...</span></td><td>PumpChain → Solana</td><td class="tx-amount">1,000 PUMPC</td><td><span class="tx-type" style="background: rgba(0,255,163,0.1); color: #00ffa3;">Completed</span></td><td class="tx-time">8m ago</td></tr>
         </tbody>
       </table>
     </div>
