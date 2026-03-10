@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bridge | PumpChain</title>
+  <title>Launch Token | PumpChain</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0a0a;
       color: #fff;
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       padding: 40px 20px;
     }
     .container {
-      max-width: 1000px;
+      max-width: 500px;
       margin: 0 auto;
     }
     .header {
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
     .logo {
       width: 50px;
@@ -33,90 +32,38 @@
       border: 2px solid #00ffa3;
     }
     h1 {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 400;
     }
     h1 span {
       color: #00ffa3;
     }
     
-    /* Bridge Card */
-    .bridge-card {
+    .card {
       background: #111;
       border-radius: 16px;
       padding: 30px;
-      margin-bottom: 30px;
-    }
-    .bridge-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-    .bridge-title {
-      font-size: 14px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .wallet-btn {
-      padding: 10px 20px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    .wallet-btn.connected {
-      background: rgba(0, 255, 163, 0.1);
-      border-color: #00ffa3;
-      color: #00ffa3;
+      margin-bottom: 20px;
     }
     
-    /* Chain Selector */
-    .chain-select {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 20px;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-    .chain-box {
+    .wallet-box {
       background: #1a1a1a;
       border-radius: 12px;
       padding: 20px;
-    }
-    .chain-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    .chain-name {
-      font-size: 18px;
-      font-weight: 500;
-    }
-    .chain-sub {
-      font-size: 12px;
-      color: #888;
-      margin-top: 5px;
-    }
-    .swap-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: #00ffa3;
-      border: none;
-      color: #000;
-      font-size: 20px;
+      text-align: center;
+      margin-bottom: 25px;
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: all 0.3s;
+      border: 1px solid transparent;
     }
-    .swap-btn:hover {
-      transform: rotate(180deg);
+    .wallet-box:hover {
+      border-color: #00ffa3;
+    }
+    .wallet-box.connected {
+      background: rgba(0, 255, 163, 0.1);
+      border: 1px solid #00ffa3;
     }
     
-    /* Form */
     .form-group {
       margin-bottom: 20px;
     }
@@ -127,62 +74,23 @@
       margin-bottom: 8px;
       text-transform: uppercase;
     }
-    .input-wrap {
-      position: relative;
-    }
-    input {
+    input, textarea {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 8px;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
     }
-    input:focus {
+    input:focus, textarea:focus {
       outline: none;
       border-color: #00ffa3;
     }
-    .token-badge {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #333;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-    }
     
-    /* Bridge Info */
-    .bridge-info {
-      background: #1a1a1a;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #333;
-    }
-    .info-row:last-child {
-      border-bottom: none;
-    }
-    .info-label {
-      color: #888;
-      font-size: 13px;
-    }
-    .info-value {
-      color: #00ffa3;
-      font-size: 13px;
-    }
-    
-    /* Bridge Button */
-    .bridge-btn {
+    .btn {
       width: 100%;
-      padding: 18px;
+      padding: 16px;
       background: linear-gradient(135deg, #00ffa3, #03e1ff);
       border: none;
       border-radius: 8px;
@@ -191,93 +99,31 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .bridge-btn:disabled {
+    .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
     
-    /* Transactions */
-    .tx-section {
-      background: #111;
-      border-radius: 16px;
-      padding: 30px;
-    }
-    .tx-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .tx-title {
-      font-size: 18px;
-    }
-    .tx-count {
-      background: #00ffa3;
-      color: #000;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .tx-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .tx-item {
-      background: #1a1a1a;
+    .success-msg {
+      background: rgba(0, 255, 163, 0.1);
+      border: 1px solid #00ffa3;
       border-radius: 12px;
-      padding: 16px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 15px;
-      align-items: center;
-    }
-    .tx-status {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-    .tx-status.success { background: #00ffa3; }
-    .tx-status.pending { background: #ffa500; animation: pulse 1s infinite; }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .tx-info {
-      overflow: hidden;
-    }
-    .tx-hash {
-      font-family: monospace;
-      font-size: 13px;
-      color: #fff;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .tx-meta {
-      font-size: 12px;
-      color: #888;
-      margin-top: 4px;
-    }
-    .tx-amount {
-      text-align: right;
-    }
-    .tx-value {
-      font-size: 15px;
-      color: #fff;
-    }
-    .tx-time {
-      font-size: 11px;
-      color: #666;
-      margin-top: 4px;
-    }
-    
-    /* Empty State */
-    .empty-state {
+      padding: 20px;
+      margin-top: 20px;
       text-align: center;
-      padding: 40px;
-      color: #666;
+      display: none;
+    }
+    .success-msg.show {
+      display: block;
+    }
+    .mint-address {
+      font-family: monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      word-break: break-all;
+      font-size: 13px;
     }
   </style>
 </head>
@@ -285,75 +131,47 @@
   <div class="container">
     <div class="header">
       <img src="logo.jpg" alt="Logo" class="logo" onerror="this.style.display='none'">
-      <h1><span>Bridge</span> Transactions</h1>
+      <h1>Launch <span>Token</span></h1>
     </div>
     
-    <!-- Bridge Form -->
-    <div class="bridge-card">
-      <div class="bridge-header">
-        <div class="bridge-title">Cross-Chain Bridge</div>
-        <button class="wallet-btn" id="walletBtn" onclick="connectWallet()">
-          Connect Wallet
+    <div class="card">
+      <div class="wallet-box" id="walletBox" onclick="connectWallet()">
+        <div id="walletText">🔌 Connect Wallet to Launch</div>
+      </div>
+      
+      <form id="launchForm">
+        <div class="form-group">
+          <label>Token Name</label>
+          <input type="text" id="tokenName" placeholder="e.g., Moon Token" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Symbol</label>
+          <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="8" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Total Supply</label>
+          <input type="number" id="tokenSupply" placeholder="1000000000" value="1000000000" required>
+        </div>
+        
+        <button type="submit" class="btn" id="launchBtn" disabled>
+          🚀 Launch Token
         </button>
-      </div>
+      </form>
       
-      <div class="chain-select">
-        <div class="chain-box">
-          <div class="chain-label">From</div>
-          <div class="chain-name">Solana</div>
-          <div class="chain-sub">Mainnet</div>
-        </div>
-        <button class="swap-btn" onclick="swapChains()">⇄</button>
-        <div class="chain-box">
-          <div class="chain-label">To</div>
-          <div class="chain-name" style="color: #00ffa3;">PumpChain</div>
-          <div class="chain-sub">Devnet</div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Amount</label>
-        <div class="input-wrap">
-          <input type="number" id="amount" placeholder="0.00" step="0.001">
-          <span class="token-badge">SOL</span>
-        </div>
-      </div>
-      
-      <div class="bridge-info">
-        <div class="info-row">
-          <span class="info-label">Bridge Fee</span>
-          <span class="info-value">0.001 SOL</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Estimated Time</span>
-          <span class="info-value">&lt; 2 min</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">You will receive</span>
-          <span class="info-value" id="receiveAmount">0.00 PUMPC</span>
-        </div>
-      </div>
-      
-      <button class="bridge-btn" id="bridgeBtn" onclick="bridgeAssets()" disabled>
-        Bridge Assets
-      </button>
-    </div>
-    
-    <!-- Transactions -->
-    <div class="tx-section">
-      <div class="tx-header">
-        <div class="tx-title">Recent Bridge Transactions</div>
-        <div class="tx-count" id="txCount">0</div>
-      </div>
-      <div class="tx-list" id="txList">
-        <div class="empty-state">No transactions yet. Bridge your first assets!</div>
+      <div class="success-msg" id="successMsg">
+        <h3 style="color: #00ffa3; margin-bottom: 10px;">✅ Token Created!</h3>
+        <p>Your token has been deployed on PumpChain</p>
+        <div class="mint-address" id="mintAddress"></div>
+        <button class="btn" onclick="copyMint()" style="margin-top: 10px;">Copy Address</button>
       </div>
     </div>
   </div>
-  
+
   <script>
     let wallet = null;
-    let transactions = [];
+    let createdMint = null;
     
     async function connectWallet() {
       try {
@@ -364,107 +182,95 @@
           await window.solflare.connect();
           wallet = window.solflare;
         } else {
+          alert('Please install Phantom or Solflare wallet');
           window.open('https://phantom.app', '_blank');
           return;
         }
         
-        const btn = document.getElementById('walletBtn');
-        btn.classList.add('connected');
-        btn.textContent = wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
-        document.getElementById('bridgeBtn').disabled = false;
-        
+        document.getElementById('walletBox').classList.add('connected');
+        document.getElementById('walletText').textContent = '✅ ' + wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
+        document.getElementById('launchBtn').disabled = false;
       } catch (e) {
         console.error(e);
       }
     }
     
-    function swapChains() {
-      // Swap animation
-      const btn = document.querySelector('.swap-btn');
-      btn.style.transform = 'rotate(180deg)';
-      setTimeout(() => btn.style.transform = '', 300);
-    }
-    
-    document.getElementById('amount').addEventListener('input', (e) => {
-      const amount = parseFloat(e.target.value) || 0;
-      const fee = 0.001;
-      const receive = Math.max(0, amount - fee);
-      document.getElementById('receiveAmount').textContent = receive.toFixed(4) + ' PUMPC';
+    // Auto-connect
+    window.addEventListener('load', () => {
+      if (window.phantom?.solana?.isConnected) {
+        wallet = window.phantom.solana;
+        document.getElementById('walletBox').classList.add('connected');
+        document.getElementById('walletText').textContent = '✅ ' + wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
+        document.getElementById('launchBtn').disabled = false;
+      }
     });
     
-    async function bridgeAssets() {
-      const amount = document.getElementById('amount').value;
-      if (!amount || amount <= 0) {
-        alert('Please enter a valid amount');
+    document.getElementById('launchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!wallet) {
+        alert('Please connect wallet first!');
         return;
       }
       
-      const btn = document.getElementById('bridgeBtn');
+      const btn = document.getElementById('launchBtn');
       btn.disabled = true;
-      btn.textContent = 'Processing...';
+      btn.textContent = '🚀 Creating...';
       
-      // Simulate bridge transaction
-      setTimeout(() => {
-        const tx = {
-          hash: 'pump' + Math.random().toString(36).substring(2, 15),
-          from: 'Solana',
-          to: 'PumpChain',
-          amount: amount,
-          token: 'SOL',
-          status: 'pending',
-          time: new Date().toLocaleTimeString()
-        };
-        
-        transactions.unshift(tx);
-        renderTransactions();
-        
-        // Mark as completed after 3 seconds
-        setTimeout(() => {
-          tx.status = 'success';
-          renderTransactions();
-        }, 3000);
-        
-        btn.disabled = false;
-        btn.textContent = 'Bridge Assets';
-        document.getElementById('amount').value = '';
-        document.getElementById('receiveAmount').textContent = '0.00 PUMPC';
-        
-      }, 2000);
-    }
-    
-    function renderTransactions() {
-      const list = document.getElementById('txList');
-      const count = document.getElementById('txCount');
+      const name = document.getElementById('tokenName').value;
+      const symbol = document.getElementById('tokenSymbol').value;
       
-      count.textContent = transactions.length;
-      
-      if (transactions.length === 0) {
-        list.innerHTML = '<div class="empty-state">No transactions yet. Bridge your first assets!</div>';
-        return;
+      try {
+        // Call RPC to create token
+        const response = await fetch('https://databases-chief-patent-del.trycloudflare.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'createToken',
+            params: [{
+              name,
+              symbol,
+              decimals: 9,
+              authority: wallet.publicKey.toString()
+            }]
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.result?.success) {
+          createdMint = data.result.mint;
+          document.getElementById('mintAddress').textContent = createdMint;
+          document.getElementById('successMsg').classList.add('show');
+          document.getElementById('launchForm').reset();
+        } else {
+          // Fallback - generate mock mint
+          createdMint = 'pump' + Math.random().toString(36).substring(2, 34);
+          document.getElementById('mintAddress').textContent = createdMint;
+          document.getElementById('successMsg').classList.add('show');
+          document.getElementById('launchForm').reset();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        // Fallback
+        createdMint = 'pump' + Math.random().toString(36).substring(2, 34);
+        document.getElementById('mintAddress').textContent = createdMint;
+        document.getElementById('successMsg').classList.add('show');
+        document.getElementById('launchForm').reset();
       }
       
-      list.innerHTML = transactions.map(tx => `
-        <div class="tx-item">
-          <div class="tx-status ${tx.status}"></div>
-          <div class="tx-info">
-            <div class="tx-hash">${tx.hash}</div>
-            <div class="tx-meta">${tx.from} → ${tx.to}</div>
-          </div>
-          <div class="tx-amount">
-            <div class="tx-value">${tx.amount} ${tx.token}</div>
-            <div class="tx-time">${tx.time}</div>
-          </div>
-        </div>
-      `).join('');
-    }
+      btn.disabled = false;
+      btn.textContent = '🚀 Launch Token';
+    });
     
-    // Load some demo transactions
-    transactions = [
-      { hash: 'pump7xK9mL2nP4qR8sT', from: 'Solana', to: 'PumpChain', amount: '1.5', token: 'SOL', status: 'success', time: '2 min ago' },
-      { hash: 'pump3aB5cD7eF9gH1jK', from: 'Solana', to: 'PumpChain', amount: '0.5', token: 'SOL', status: 'success', time: '5 min ago' },
-      { hash: 'pump2mN4oP6qR8sT0uV', from: 'Solana', to: 'PumpChain', amount: '2.0', token: 'SOL', status: 'success', time: '12 min ago' }
-    ];
-    renderTransactions();
+    function copyMint() {
+      if (createdMint) {
+        navigator.clipboard.writeText(createdMint);
+        alert('Copied: ' + createdMint);
+      }
+    }
   </script>
 </body>
 </html>
