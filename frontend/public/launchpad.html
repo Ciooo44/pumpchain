@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Launch Token | PumpChain</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -125,6 +124,27 @@
       word-break: break-all;
       font-size: 13px;
     }
+    
+    .wallet-options {
+      display: none;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .wallet-options.show {
+      display: flex;
+    }
+    .wallet-option {
+      flex: 1;
+      padding: 15px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .wallet-option:hover {
+      border-color: #00ffa3;
+    }
   </style>
 </head>
 <body>
@@ -135,8 +155,20 @@
     </div>
     
     <div class="card">
-      <div class="wallet-box" id="walletBox" onclick="connectWallet()">
+      <div class="wallet-box" id="walletBox" onclick="showWalletOptions()">
         <div id="walletText">🔌 Connect Wallet to Launch</div>
+      </div>
+      
+      <div class="wallet-options" id="walletOptions">
+        <div class="wallet-option" onclick="connectPhantom()">
+          <strong>Phantom</strong>
+        </div>
+        <div class="wallet-option" onclick="connectSolflare()">
+          <strong>Solflare</strong>
+        </div>
+        <div class="wallet-option" onclick="connectBackpack()">
+          <strong>Backpack</strong>
+        </div>
       </div>
       
       <form id="launchForm">
@@ -171,51 +203,108 @@
 
   <script>
     let wallet = null;
+    let walletName = '';
     let createdMint = null;
     
-    async function connectWallet() {
+    function showWalletOptions() {
+      if (wallet) return;
+      document.getElementById('walletOptions').classList.add('show');
+    }
+    
+    async function connectPhantom() {
       try {
-        if (window.phantom?.solana) {
-          const resp = await window.phantom.solana.connect();
-          wallet = window.phantom.solana;
-        } else if (window.solflare) {
-          await window.solflare.connect();
-          wallet = window.solflare;
-        } else {
-          alert('Please install Phantom or Solflare wallet');
+        if (!window.phantom?.solana) {
+          alert('Phantom wallet not found! Please install it first.');
           window.open('https://phantom.app', '_blank');
           return;
         }
         
-        document.getElementById('walletBox').classList.add('connected');
-        document.getElementById('walletText').textContent = '✅ ' + wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
-        document.getElementById('launchBtn').disabled = false;
+        const resp = await window.phantom.solana.connect();
+        wallet = window.phantom.solana;
+        walletName = 'Phantom';
+        updateWalletUI();
       } catch (e) {
-        console.error(e);
+        console.error('Phantom connection failed:', e);
+        alert('Connection failed: ' + e.message);
       }
     }
     
-    // Auto-connect
-    window.addEventListener('load', () => {
-      if (window.phantom?.solana?.isConnected) {
-        wallet = window.phantom.solana;
-        document.getElementById('walletBox').classList.add('connected');
-        document.getElementById('walletText').textContent = '✅ ' + wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
-        document.getElementById('launchBtn').disabled = false;
+    async function connectSolflare() {
+      try {
+        if (!window.solflare) {
+          alert('Solflare wallet not found! Please install it first.');
+          window.open('https://solflare.com', '_blank');
+          return;
+        }
+        
+        await window.solflare.connect();
+        wallet = window.solflare;
+        walletName = 'Solflare';
+        updateWalletUI();
+      } catch (e) {
+        console.error('Solflare connection failed:', e);
+        alert('Connection failed: ' + e.message);
       }
+    }
+    
+    async function connectBackpack() {
+      try {
+        if (!window.backpack?.solana) {
+          alert('Backpack wallet not found! Please install it first.');
+          window.open('https://backpack.app', '_blank');
+          return;
+        }
+        
+        await window.backpack.solana.connect();
+        wallet = window.backpack.solana;
+        walletName = 'Backpack';
+        updateWalletUI();
+      } catch (e) {
+        console.error('Backpack connection failed:', e);
+        alert('Connection failed: ' + e.message);
+      }
+    }
+    
+    function updateWalletUI() {
+      if (!wallet) return;
+      
+      const address = wallet.publicKey?.toString() || 'Unknown';
+      document.getElementById('walletBox').classList.add('connected');
+      document.getElementById('walletText').textContent = `✅ ${walletName}: ${address.slice(0, 6)}...${address.slice(-4)}`;
+      document.getElementById('walletOptions').classList.remove('show');
+      document.getElementById('launchBtn').disabled = false;
+    }
+    
+    // Auto-detect connected wallets
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (window.phantom?.solana?.isConnected) {
+          wallet = window.phantom.solana;
+          walletName = 'Phantom';
+          updateWalletUI();
+        } else if (window.solflare?.isConnected) {
+          wallet = window.solflare;
+          walletName = 'Solflare';
+          updateWalletUI();
+        } else if (window.backpack?.solana?.isConnected) {
+          wallet = window.backpack.solana;
+          walletName = 'Backpack';
+          updateWalletUI();
+        }
+      }, 500);
     });
     
     document.getElementById('launchForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      if (!wallet) {
+      if (!wallet || !wallet.publicKey) {
         alert('Please connect wallet first!');
         return;
       }
       
       const btn = document.getElementById('launchBtn');
       btn.disabled = true;
-      btn.textContent = '🚀 Creating...';
+      btn.textContent = '🚀 Creating Token...';
       
       const name = document.getElementById('tokenName').value;
       const symbol = document.getElementById('tokenSymbol').value;
@@ -242,16 +331,15 @@
         
         if (data.result?.success) {
           createdMint = data.result.mint;
-          document.getElementById('mintAddress').textContent = createdMint;
-          document.getElementById('successMsg').classList.add('show');
-          document.getElementById('launchForm').reset();
         } else {
           // Fallback - generate mock mint
           createdMint = 'pump' + Math.random().toString(36).substring(2, 34);
-          document.getElementById('mintAddress').textContent = createdMint;
-          document.getElementById('successMsg').classList.add('show');
-          document.getElementById('launchForm').reset();
         }
+        
+        document.getElementById('mintAddress').textContent = createdMint;
+        document.getElementById('successMsg').classList.add('show');
+        document.getElementById('launchForm').reset();
+        
       } catch (error) {
         console.error('Error:', error);
         // Fallback
@@ -268,7 +356,7 @@
     function copyMint() {
       if (createdMint) {
         navigator.clipboard.writeText(createdMint);
-        alert('Copied: ' + createdMint);
+        alert('Copied to clipboard: ' + createdMint);
       }
     }
   </script>
