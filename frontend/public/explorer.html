@@ -326,43 +326,42 @@
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">PUMPC Price</div>
-        <div class="stat-value" id="price">$0.0012</div>
-        <div class="stat-change">+5.23%</div>
+        <div class="stat-label">Current Slot</div>
+        <div class="stat-value" id="currentSlot">52.3M</div>
+        <div class="stat-change">Live</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Market Cap</div>
-        <div class="stat-value" id="mcap">$1.2M</div>
-        <div class="stat-change">+3.45%</div>
+        <div class="stat-label">Block Height</div>
+        <div class="stat-value" id="blockHeight">48.9M</div>
+        <div class="stat-change">+1 block/s</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Transactions (24h)</div>
-        <div class="stat-value" id="tx24h">12.4K</div>
-        <div class="stat-change">+18.2%</div>
+        <div class="stat-label">Total Transactions</div>
+        <div class="stat-value" id="tx24h">0</div>
+        <div class="stat-change">Devnet</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Active Addresses</div>
-        <div class="stat-value" id="active">2,847</div>
-        <div class="stat-change down">-2.1%</div>
+        <div class="stat-label">Active Validators</div>
+        <div class="stat-value" id="active">1</div>
+        <div class="stat-change">Online</div>
       </div>
     </div>
 
-    <!-- Price Chart -->
+    <!-- Network Activity -->
     <div class="chart-section">
       <div class="section-header">
-        <div class="section-title">PUMPC Price Chart</div>
+        <div class="section-title">Network Activity</div>
         <div class="chart-tabs">
-          <button class="chart-tab">1H</button>
-          <button class="chart-tab active">24H</button>
-          <button class="chart-tab">7D</button>
-          <button class="chart-tab">30D</button>
+          <button class="chart-tab">TPS</button>
+          <button class="chart-tab active">Blocks</button>
+          <button class="chart-tab">Txs</button>
         </div>
       </div>
       <div class="chart-container">
         <div class="chart-line"></div>
         <div class="chart-info">
-          <div class="chart-price">$0.0012</div>
-          <div class="chart-change">+5.23% ($0.00006)</div>
+          <div class="chart-price" id="liveSlot">52,345,681</div>
+          <div class="chart-change">Current Slot</div>
         </div>
       </div>
     </div>
