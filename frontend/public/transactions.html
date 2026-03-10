@@ -154,6 +154,92 @@
       margin-right: 8px;
     }
     
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: #111;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      border: 1px solid #333;
+      position: relative;
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #888;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .modal-close:hover {
+      background: #333;
+      color: #fff;
+    }
+    .modal-title {
+      font-size: 20px;
+      margin-bottom: 20px;
+      padding-right: 50px;
+    }
+    .modal-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #222;
+    }
+    .modal-row:last-child {
+      border-bottom: none;
+    }
+    .modal-label {
+      color: #888;
+      font-size: 13px;
+    }
+    .modal-value {
+      color: #fff;
+      font-size: 14px;
+      font-family: monospace;
+      text-align: right;
+      word-break: break-all;
+      max-width: 60%;
+    }
+    .modal-value.hash {
+      color: #00ffa3;
+    }
+    .modal-value.success {
+      color: #00ffa3;
+    }
+    
     /* Pagination */
     .pagination {
       display: flex;
@@ -227,6 +313,50 @@
     </div>
   </main>
 
+  <!-- Transaction Detail Modal -->
+  <div class="modal-overlay" id="txModal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h2 class="modal-title">Transaction Details</h2>
+      <div class="modal-row">
+        <span class="modal-label">Signature</span>
+        <span class="modal-value hash" id="modalSig"></span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Block</span>
+        <span class="modal-value" id="modalBlock"></span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Type</span>
+        <span class="modal-value" id="modalType"></span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">From</span>
+        <span class="modal-value" id="modalFrom"></span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">To</span>
+        <span class="modal-value" id="modalTo"></span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Amount</span>
+        <span class="modal-value" id="modalAmount"></span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Fee</span>
+        <span class="modal-value">0.000005 PUMPC</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Status</span>
+        <span class="modal-value success">Success</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Timestamp</span>
+        <span class="modal-value" id="modalTime"></span>
+      </div>
+    </div>
+  </div>
+
   <script>
     const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
     
@@ -245,9 +375,9 @@
         { sig: 'pump0cD2eF4gH6iJ8kL', block: '48,912,401', type: 'Transfer', from: 'User5555...6666', to: 'User7777...8888', amount: '750 PUMPC', time: '59s ago' }
       ];
       
-      tbody.innerHTML = txs.map(tx => `
+      tbody.innerHTML = txs.map((tx, index) => `
         <tr>
-          <td><a href="#" class="tx-link">${tx.sig}</a></td>
+          <td><a href="#" class="tx-link" onclick="showTxDetail(${index}); return false;">${tx.sig}</a></td>
           <td><a href="blocks.html" class="tx-link">${tx.block}</a></td>
           <td><span class="type">${tx.type}</span></td>
           <td class="address">${tx.from}</td>
@@ -256,10 +386,42 @@
           <td class="time"><span class="status"></span>${tx.time}</td>
         </tr>
       `).join('');
+      
+      // Store transactions globally for modal access
+      window.transactionsData = txs;
     }
     
     loadTransactions();
     setInterval(loadTransactions, 5000);
+    
+    // Modal functions
+    function showTxDetail(index) {
+      const tx = window.transactionsData[index];
+      if (!tx) return;
+      
+      document.getElementById('modalSig').textContent = tx.sig;
+      document.getElementById('modalBlock').textContent = tx.block;
+      document.getElementById('modalType').textContent = tx.type;
+      document.getElementById('modalFrom').textContent = tx.from;
+      document.getElementById('modalTo').textContent = tx.to;
+      document.getElementById('modalAmount').textContent = tx.amount;
+      document.getElementById('modalTime').textContent = tx.time;
+      
+      document.getElementById('txModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal(event) {
+      if (!event || event.target === document.getElementById('txModal') || event.target.classList.contains('modal-close')) {
+        document.getElementById('txModal').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
   </script>
 </body>
 </html>
