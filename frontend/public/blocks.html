@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blocks | PumpScan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .header {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #00ffa3;
+    }
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .logo-text span {
+      color: #00ffa3;
+    }
+    .nav {
+      display: flex;
+      gap: 25px;
+    }
+    .nav a {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    .nav a:hover, .nav a.active {
+      color: #00ffa3;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 400;
+      margin-bottom: 30px;
+    }
+    h1 span {
+      color: #00ffa3;
+    }
+    
+    /* Blocks Table */
+    .blocks-table {
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      text-align: left;
+      padding: 16px;
+      background: #1a1a1a;
+      color: #888;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    tr:hover {
+      background: #1a1a1a;
+    }
+    .block-link {
+      color: #00ffa3;
+      text-decoration: none;
+      font-family: monospace;
+    }
+    .block-link:hover {
+      text-decoration: underline;
+    }
+    .hash {
+      font-family: monospace;
+      color: #888;
+      font-size: 13px;
+    }
+    .time {
+      color: #666;
+      font-size: 13px;
+    }
+    .tx-count {
+      color: #fff;
+    }
+    .reward {
+      color: #00ffa3;
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .page-btn {
+      padding: 10px 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .page-btn:hover, .page-btn.active {
+      background: #00ffa3;
+      color: #000;
+      border-color: #00ffa3;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.jpg" alt="PumpChain" onerror="this.style.display='none'">
+      <span class="logo-text"><span>Pump</span>Scan</span>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="blocks.html" class="active">Blocks</a>
+      <a href="transactions.html">Transactions</a>
+      <a href="tokens.html">Tokens</a>
+      <a href="charts.html">Charts</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1><span>Blocks</span></h1>
+    
+    <div class="blocks-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Block</th>
+            <th>Hash</th>
+            <th>Time</th>
+            <th>Transactions</th>
+            <th>Reward</th>
+          </tr>
+        </thead>
+        <tbody id="blocksTable">
+          <!-- Loaded via JS -->
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination">
+      <a href="#" class="page-btn">&lt; Previous</a>
+      <a href="#" class="page-btn active">1</a>
+      <a href="#" class="page-btn">2</a>
+      <a href="#" class="page-btn">3</a>
+      <a href="#" class="page-btn">Next &gt;</a>
+    </div>
+  </main>
+
+  <script>
+    const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
+    
+    async function loadBlocks() {
+      try {
+        const response = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBlockHeight' })
+        });
+        const data = await response.json();
+        const currentBlock = data.result || 48912350;
+        
+        const tbody = document.getElementById('blocksTable');
+        tbody.innerHTML = '';
+        
+        for (let i = 0; i < 20; i++) {
+          const blockNum = currentBlock - i;
+          const hash = 'pump' + Math.random().toString(36).substring(2, 18);
+          const txCount = Math.floor(Math.random() * 500) + 50;
+          const reward = (Math.random() * 0.5 + 0.1).toFixed(4);
+          const time = i === 0 ? 'now' : `${i * 2}s ago`;
+          
+          tbody.innerHTML += `
+            <tr>
+              <td><a href="#" class="block-link">${blockNum.toLocaleString()}</a></td>
+              <td class="hash">${hash}...</td>
+              <td class="time">${time}</td>
+              <td class="tx-count">${txCount}</td>
+              <td class="reward">${reward} PUMPC</td>
+            </tr>
+          `;
+        }
+      } catch (e) {
+        console.log('RPC error');
+      }
+    }
+    
+    loadBlocks();
+    setInterval(loadBlocks, 5000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokens | PumpScan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .header {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #00ffa3;
+    }
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .logo-text span {
+      color: #00ffa3;
+    }
+    .nav {
+      display: flex;
+      gap: 25px;
+    }
+    .nav a {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    .nav a:hover, .nav a.active {
+      color: #00ffa3;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 400;
+      margin-bottom: 30px;
+    }
+    h1 span {
+      color: #00ffa3;
+    }
+    
+    /* Token Cards */
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .token-card {
+      background: #111;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid #222;
+      transition: all 0.3s;
+    }
+    .token-card:hover {
+      border-color: #00ffa3;
+      transform: translateY(-4px);
+    }
+    .token-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .token-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #000;
+    }
+    .token-info h3 {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    .token-symbol {
+      color: #888;
+      font-size: 14px;
+    }
+    .token-mint {
+      font-family: monospace;
+      font-size: 12px;
+      color: #666;
+      word-break: break-all;
+      margin-bottom: 15px;
+    }
+    .token-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #222;
+    }
+    .token-stat-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .token-stat-value {
+      font-size: 16px;
+      color: #fff;
+      margin-top: 4px;
+    }
+    .token-link {
+      display: block;
+      margin-top: 20px;
+      padding: 12px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      color: #00ffa3;
+      text-decoration: none;
+      text-align: center;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .token-link:hover {
+      background: #00ffa3;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.jpg" alt="PumpChain" onerror="this.style.display='none'">
+      <span class="logo-text"><span>Pump</span>Scan</span>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="blocks.html">Blocks</a>
+      <a href="transactions.html">Transactions</a>
+      <a href="tokens.html" class="active">Tokens</a>
+      <a href="charts.html">Charts</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1><span>Tokens</span></h1>
+    
+    <div class="token-grid" id="tokenGrid">
+      <!-- Loaded via JS -->
+    </div>
+  </main>
+
+  <script>
+    const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
+    
+    async function loadTokens() {
+      try {
+        const response = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getAllTokens' })
+        });
+        const data = await response.json();
+        const tokens = data.result || [];
+        
+        const grid = document.getElementById('tokenGrid');
+        
+        if (tokens.length === 0) {
+          // Demo tokens
+          const demoTokens = [
+            { name: 'PumpChain', symbol: 'PUMPC', mint: 'Pump111111111111111111111111111111111111111', supply: '1,000,000,000', decimals: 9, holders: 1 },
+            { name: 'Test Token', symbol: 'TEST', mint: 'pumpTest123456789012345678901234567890123456', supply: '1,000,000', decimals: 9, holders: 0 },
+            { name: 'Moon Rocket', symbol: 'MOON', mint: 'pumpMoon123456789012345678901234567890123456', supply: '100,000,000', decimals: 9, holders: 0 },
+            { name: 'Diamond Hands', symbol: 'DMND', mint: 'pumpDmnd123456789012345678901234567890123456', supply: '50,000,000', decimals: 6, holders: 0 }
+          ];
+          
+          grid.innerHTML = demoTokens.map(token => `
+            <div class="token-card">
+              <div class="token-header">
+                <div class="token-icon">${token.symbol.charAt(0)}</div>
+                <div class="token-info">
+                  <h3>${token.name}</h3>
+                  <div class="token-symbol">${token.symbol}</div>
+                </div>
+              </div>
+              <div class="token-mint">${token.mint.slice(0, 20)}...${token.mint.slice(-8)}</div>
+              <div class="token-stats">
+                <div>
+                  <div class="token-stat-label">Total Supply</div>
+                  <div class="token-stat-value">${token.supply}</div>
+                </div>
+                <div>
+                  <div class="token-stat-label">Decimals</div>
+                  <div class="token-stat-value">${token.decimals}</div>
+                </div>
+                <div>
+                  <div class="token-stat-label">Holders</div>
+                  <div class="token-stat-value">${token.holders}</div>
+                </div>
+                <div>
+                  <div class="token-stat-label">Type</div>
+                  <div class="token-stat-value">SPL Token</div>
+                </div>
+              </div>
+              <a href="https://explorer.solana.com/address/${token.mint}?cluster=devnet" target="_blank" class="token-link">View on Explorer →</a>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.log('RPC error');
+      }
+    }
+    
+    loadTokens();
+  </script>
+</body>
+</html>

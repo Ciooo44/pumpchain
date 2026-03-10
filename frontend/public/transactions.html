@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions | PumpScan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .header {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #00ffa3;
+    }
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .logo-text span {
+      color: #00ffa3;
+    }
+    .nav {
+      display: flex;
+      gap: 25px;
+    }
+    .nav a {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    .nav a:hover, .nav a.active {
+      color: #00ffa3;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 400;
+      margin-bottom: 30px;
+    }
+    h1 span {
+      color: #00ffa3;
+    }
+    
+    /* Search */
+    .search-box {
+      background: #111;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #00ffa3;
+    }
+    
+    /* Transactions Table */
+    .tx-table {
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      text-align: left;
+      padding: 16px;
+      background: #1a1a1a;
+      color: #888;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    tr:hover {
+      background: #1a1a1a;
+    }
+    .tx-link {
+      color: #00ffa3;
+      text-decoration: none;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .tx-link:hover {
+      text-decoration: underline;
+    }
+    .address {
+      font-family: monospace;
+      color: #888;
+      font-size: 13px;
+    }
+    .type {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: rgba(0, 255, 163, 0.1);
+      color: #00ffa3;
+    }
+    .amount {
+      color: #fff;
+      font-weight: 500;
+    }
+    .time {
+      color: #666;
+      font-size: 13px;
+    }
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00ffa3;
+      margin-right: 8px;
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .page-btn {
+      padding: 10px 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .page-btn:hover, .page-btn.active {
+      background: #00ffa3;
+      color: #000;
+      border-color: #00ffa3;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.jpg" alt="PumpChain" onerror="this.style.display='none'">
+      <span class="logo-text"><span>Pump</span>Scan</span>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="blocks.html">Blocks</a>
+      <a href="transactions.html" class="active">Transactions</a>
+      <a href="tokens.html">Tokens</a>
+      <a href="charts.html">Charts</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1><span>Transactions</span></h1>
+    
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Search by transaction signature, block, or address...">
+    </div>
+    
+    <div class="tx-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Signature</th>
+            <th>Block</th>
+            <th>Type</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Amount</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="txTable">
+          <!-- Loaded via JS -->
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination">
+      <a href="#" class="page-btn">&lt; Previous</a>
+      <a href="#" class="page-btn active">1</a>
+      <a href="#" class="page-btn">2</a>
+      <a href="#" class="page-btn">3</a>
+      <a href="#" class="page-btn">Next &gt;</a>
+    </div>
+  </main>
+
+  <script>
+    const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
+    
+    function loadTransactions() {
+      const tbody = document.getElementById('txTable');
+      const txs = [
+        { sig: 'pump7xK9mL2nP4qR8sT', block: '48,912,410', type: 'Transfer', from: 'PumpTrea...1111', to: 'User1234...5678', amount: '1,000 PUMPC', time: '2s ago' },
+        { sig: 'pump3aB5cD7eF9gH1jK', block: '48,912,409', type: 'Swap', from: 'Wallet98...abcd', to: 'Pool1234...efgh', amount: '500 PUMPC', time: '5s ago' },
+        { sig: 'pump2mN4oP6qR8sT0uV', block: '48,912,408', type: 'Bridge', from: 'Solana...xyz', to: 'PumpCh...abc', amount: '2.5 SOL', time: '12s ago' },
+        { sig: 'pump9xY2zA1bC3dE4fG', block: '48,912,407', type: 'Mint', from: 'Creator...def', to: 'User5678...9012', amount: '10,000 PUMPC', time: '18s ago' },
+        { sig: 'pump5cF8gH0iJ2kL4mN', block: '48,912,406', type: 'Transfer', from: 'User1111...2222', to: 'User3333...4444', amount: '5,000 PUMPC', time: '24s ago' },
+        { sig: 'pump1oP3qR5sT7uV9wX', block: '48,912,405', type: 'Stake', from: 'User7777...8888', to: 'Validator...9999', amount: '50,000 PUMPC', time: '31s ago' },
+        { sig: 'pump6yZ8aB0cD2eF4gH', block: '48,912,404', type: 'Transfer', from: 'PumpEcos...1111', to: 'Grants...2222', amount: '100,000 PUMPC', time: '38s ago' },
+        { sig: 'pump4iJ6kL8mN0oP2qR', block: '48,912,403', type: 'Swap', from: 'Trader...3333', to: 'Pool5678...4444', amount: '250 PUMPC', time: '45s ago' },
+        { sig: 'pump8sT0uV2wX4yZ6aB', block: '48,912,402', type: 'Bridge', from: 'PumpCh...aaa', to: 'Solana...bbb', amount: '1,000 PUMPC', time: '52s ago' },
+        { sig: 'pump0cD2eF4gH6iJ8kL', block: '48,912,401', type: 'Transfer', from: 'User5555...6666', to: 'User7777...8888', amount: '750 PUMPC', time: '59s ago' }
+      ];
+      
+      tbody.innerHTML = txs.map(tx => `
+        <tr>
+          <td><a href="#" class="tx-link">${tx.sig}</a></td>
+          <td><a href="blocks.html" class="tx-link">${tx.block}</a></td>
+          <td><span class="type">${tx.type}</span></td>
+          <td class="address">${tx.from}</td>
+          <td class="address">${tx.to}</td>
+          <td class="amount">${tx.amount}</td>
+          <td class="time"><span class="status"></span>${tx.time}</td>
+        </tr>
+      `).join('');
+    }
+    
+    loadTransactions();
+    setInterval(loadTransactions, 5000);
+  </script>
+</body>
+</html>
