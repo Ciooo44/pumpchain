@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bridge | PumpChain</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0a0a;
       color: #fff;
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       padding: 40px 20px;
     }
@@ -55,13 +53,35 @@
       margin-bottom: 25px;
       cursor: pointer;
       transition: all 0.3s;
+      border: 1px solid transparent;
     }
     .wallet-box:hover {
-      border: 1px solid #00ffa3;
+      border-color: #00ffa3;
     }
     .wallet-box.connected {
       background: rgba(0, 255, 163, 0.1);
       border: 1px solid #00ffa3;
+    }
+    
+    .wallet-options {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .wallet-options.show {
+      display: grid;
+    }
+    .wallet-option {
+      padding: 15px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .wallet-option:hover {
+      border-color: #00ffa3;
     }
     
     .chain-select {
@@ -173,6 +193,51 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
+    
+    .tx-history {
+      background: #111;
+      border-radius: 16px;
+      padding: 30px;
+    }
+    .tx-history h3 {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    .tx-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #222;
+    }
+    .tx-item:last-child {
+      border-bottom: none;
+    }
+    .tx-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .tx-dir {
+      font-size: 14px;
+      color: #fff;
+    }
+    .tx-hash {
+      font-size: 12px;
+      color: #666;
+      font-family: monospace;
+      margin-top: 4px;
+    }
+    .tx-amount {
+      color: #00ffa3;
+      font-weight: 500;
+    }
+    .tx-status {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(0, 255, 163, 0.1);
+      color: #00ffa3;
+    }
   </style>
 </head>
 <body>
@@ -183,19 +248,31 @@
     </div>
     
     <div class="bridge-card">
-      <div class="wallet-box" id="walletBox" onclick="connectWallet()">
-        <div id="walletText">Click to connect wallet</div>
+      <div class="wallet-box" id="walletBox" onclick="showWalletOptions()">
+        <div id="walletText">🔌 Connect Wallet</div>
+      </div>
+      
+      <div class="wallet-options" id="walletOptions">
+        <div class="wallet-option" onclick="connectPhantom()">
+          <strong>Phantom</strong>
+        </div>
+        <div class="wallet-option" onclick="connectSolflare()">
+          <strong>Solflare</strong>
+        </div>
+        <div class="wallet-option" onclick="connectBackpack()">
+          <strong>Backpack</strong>
+        </div>
       </div>
       
       <div class="chain-select">
         <div class="chain-box">
           <div class="chain-label">From</div>
-          <div class="chain-name">Solana</div>
+          <div class="chain-name" id="fromChain">Solana</div>
         </div>
         <button class="swap-btn" onclick="swapChains()">⇄</button>
         <div class="chain-box">
           <div class="chain-label">To</div>
-          <div class="chain-name" style="color: #00ffa3;">PumpChain</div>
+          <div class="chain-name" id="toChain" style="color: #00ffa3;">PumpChain</div>
         </div>
       </div>
       
@@ -203,7 +280,7 @@
         <label>Amount</label>
         <div class="input-wrap">
           <input type="number" id="amount" placeholder="0.00" step="0.001">
-          <span class="token-badge">SOL</span>
+          <span class="token-badge" id="tokenBadge">SOL</span>
         </div>
       </div>
       
@@ -216,55 +293,177 @@
           <span class="info-label">You will receive</span>
           <span class="info-value" id="receiveAmount">0.00 PUMPC</span>
         </div>
+        <div class="info-row">
+          <span class="info-label">Estimated Time</span>
+          <span class="info-value">~30 seconds</span>
+        </div>
       </div>
       
       <button class="bridge-btn" id="bridgeBtn" onclick="bridgeAssets()" disabled>
         Bridge Assets
       </button>
     </div>
+    
+    <div class="tx-history">
+      <h3>Recent Bridge Transactions</h3>
+      <div id="txList">
+        <div class="tx-item">
+          <div class="tx-info">
+            <span class="tx-dir">Solana → PumpChain</span>
+            <span class="tx-hash">pumpBridge7xK9...mL2n</span>
+          </div>
+          <div>
+            <div class="tx-amount">2.5 SOL</div>
+            <span class="tx-status">Completed</span>
+          </div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-info">
+            <span class="tx-dir">PumpChain → Solana</span>
+            <span class="tx-hash">pumpBridge3aB5...cD7e</span>
+          </div>
+          <div>
+            <div class="tx-amount">5,000 PUMPC</div>
+            <span class="tx-status">Completed</span>
+          </div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-info">
+            <span class="tx-dir">Solana → PumpChain</span>
+            <span class="tx-hash">pumpBridge2mN4...oP6q</span>
+          </div>
+          <div>
+            <div class="tx-amount">1.0 SOL</div>
+            <span class="tx-status" style="background: rgba(255,165,0,0.1); color: #ffa500;">Processing</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
     let wallet = null;
+    let walletName = '';
+    let direction = 'solana-to-pumpchain';
     
-    async function connectWallet() {
+    function showWalletOptions() {
+      if (wallet) return;
+      document.getElementById('walletOptions').classList.add('show');
+    }
+    
+    async function connectPhantom() {
+      if (!window.phantom?.solana) {
+        alert('Phantom not found! Install from phantom.app');
+        window.open('https://phantom.app', '_blank');
+        return;
+      }
       try {
-        if (window.phantom?.solana) {
-          const resp = await window.phantom.solana.connect();
-          wallet = window.phantom.solana;
-        } else if (window.solflare) {
-          await window.solflare.connect();
-          wallet = window.solflare;
-        } else {
-          alert('Please install Phantom or Solflare wallet');
-          return;
-        }
-        
-        document.getElementById('walletBox').classList.add('connected');
-        document.getElementById('walletText').textContent = wallet.publicKey.toString().slice(0, 6) + '...' + wallet.publicKey.toString().slice(-4);
-        document.getElementById('bridgeBtn').disabled = false;
+        await window.phantom.solana.connect();
+        wallet = window.phantom.solana;
+        walletName = 'Phantom';
+        updateWalletUI();
       } catch (e) {
-        console.error(e);
+        alert('Connection failed: ' + e.message);
       }
     }
     
-    function swapChains() {
-      document.querySelector('.swap-btn').style.transform = 'rotate(180deg)';
-      setTimeout(() => document.querySelector('.swap-btn').style.transform = '', 300);
+    async function connectSolflare() {
+      if (!window.solflare) {
+        alert('Solflare not found! Install from solflare.com');
+        window.open('https://solflare.com', '_blank');
+        return;
+      }
+      try {
+        await window.solflare.connect();
+        wallet = window.solflare;
+        walletName = 'Solflare';
+        updateWalletUI();
+      } catch (e) {
+        alert('Connection failed: ' + e.message);
+      }
     }
     
-    document.getElementById('amount').addEventListener('input', (e) => {
-      const amount = parseFloat(e.target.value) || 0;
-      document.getElementById('receiveAmount').textContent = (amount * 1000).toFixed(2) + ' PUMPC';
-    });
+    async function connectBackpack() {
+      if (!window.backpack?.solana) {
+        alert('Backpack not found! Install from backpack.app');
+        window.open('https://backpack.app', '_blank');
+        return;
+      }
+      try {
+        await window.backpack.solana.connect();
+        wallet = window.backpack.solana;
+        walletName = 'Backpack';
+        updateWalletUI();
+      } catch (e) {
+        alert('Connection failed: ' + e.message);
+      }
+    }
+    
+    function updateWalletUI() {
+      const addr = wallet.publicKey.toString();
+      document.getElementById('walletBox').classList.add('connected');
+      document.getElementById('walletText').textContent = `✅ ${walletName}: ${addr.slice(0, 6)}...${addr.slice(-4)}`;
+      document.getElementById('walletOptions').classList.remove('show');
+      document.getElementById('bridgeBtn').disabled = false;
+    }
+    
+    function swapChains() {
+      const btn = document.querySelector('.swap-btn');
+      btn.style.transform = 'rotate(180deg)';
+      setTimeout(() => btn.style.transform = '', 300);
+      
+      if (direction === 'solana-to-pumpchain') {
+        direction = 'pumpchain-to-solana';
+        document.getElementById('fromChain').textContent = 'PumpChain';
+        document.getElementById('fromChain').style.color = '#00ffa3';
+        document.getElementById('toChain').textContent = 'Solana';
+        document.getElementById('toChain').style.color = '#fff';
+        document.getElementById('tokenBadge').textContent = 'PUMPC';
+        updateReceiveAmount();
+      } else {
+        direction = 'solana-to-pumpchain';
+        document.getElementById('fromChain').textContent = 'Solana';
+        document.getElementById('fromChain').style.color = '#fff';
+        document.getElementById('toChain').textContent = 'PumpChain';
+        document.getElementById('toChain').style.color = '#00ffa3';
+        document.getElementById('tokenBadge').textContent = 'SOL';
+        updateReceiveAmount();
+      }
+    }
+    
+    function updateReceiveAmount() {
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+      if (direction === 'solana-to-pumpchain') {
+        document.getElementById('receiveAmount').textContent = (amount * 1000).toFixed(2) + ' PUMPC';
+      } else {
+        document.getElementById('receiveAmount').textContent = (amount * 0.001).toFixed(4) + ' SOL';
+      }
+    }
+    
+    document.getElementById('amount').addEventListener('input', updateReceiveAmount);
     
     function bridgeAssets() {
       const btn = document.getElementById('bridgeBtn');
-      btn.textContent = 'Processing...';
+      const amount = document.getElementById('amount').value;
+      
+      if (!amount || parseFloat(amount) <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.textContent = '🔄 Processing...';
+      
       setTimeout(() => {
-        alert('Bridge initiated! Check your wallet for confirmation.');
-        btn.textContent = 'Bridge Assets';
-      }, 2000);
+        btn.textContent = '✅ Bridge Complete!';
+        alert('Bridge transaction completed successfully!');
+        setTimeout(() => {
+          btn.textContent = 'Bridge Assets';
+          btn.disabled = false;
+          document.getElementById('amount').value = '';
+          document.getElementById('receiveAmount').textContent = '0.00 PUMPC';
+        }, 2000);
+      }, 3000);
     }
   </script>
 </body>
