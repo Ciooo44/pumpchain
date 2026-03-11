@@ -3,48 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Launch on Pump.fun | PumpChain</title>
+  <title>Pump.fun | PumpChain</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0a0a;
       color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
-      padding: 40px 20px;
     }
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
+    .header {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .logo {
-      width: 60px;
-      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo img {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      margin: 0 auto 30px;
-      display: block;
+      border: 2px solid #00ffa3;
     }
-    h1 {
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .logo-text span {
+      color: #00ffa3;
+    }
+    .connect-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .wallet-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: rgba(0, 255, 163, 0.1);
+      border: 1px solid #00ffa3;
+      border-radius: 8px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .devnet-banner {
+      background: rgba(255, 165, 0, 0.1);
+      border: 1px solid rgba(255, 165, 0, 0.3);
+      border-radius: 12px;
+      padding: 16px;
       text-align: center;
-      font-size: 28px;
-      font-weight: 400;
-      margin-bottom: 10px;
+      margin-bottom: 30px;
+      color: #ffa500;
     }
-    h1 span {
-      color: #9945FF;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
     }
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 40px;
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
     }
     .card {
       background: #111;
       border-radius: 16px;
-      padding: 25px;
+      padding: 30px;
+      border: 1px solid #222;
+    }
+    .card h2 {
+      font-size: 20px;
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .form-group {
       margin-bottom: 20px;
@@ -56,7 +105,7 @@
       margin-bottom: 8px;
       text-transform: uppercase;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 14px;
       background: #1a1a1a;
@@ -65,22 +114,17 @@
       color: #fff;
       font-size: 15px;
     }
-    input:focus, textarea:focus {
+    input:focus {
       outline: none;
-      border-color: #9945FF;
-    }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      border-color: #00ffa3;
     }
     .btn {
       width: 100%;
       padding: 16px;
-      background: linear-gradient(135deg, #9945FF, #14F195);
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
       border: none;
       border-radius: 8px;
-      color: #fff;
+      color: #000;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
@@ -89,195 +133,532 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
-    .wallet-box {
-      text-align: center;
-      padding: 20px;
+    .btn-secondary {
       background: #1a1a1a;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      cursor: pointer;
+      border: 1px solid #333;
+      color: #fff;
     }
-    .wallet-box.connected {
-      background: rgba(20, 241, 149, 0.1);
-      border: 1px solid #14F195;
-    }
-    .progress {
-      margin-top: 20px;
-      padding: 20px;
+    .bonding-curve {
       background: #1a1a1a;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .hidden { display: none; }
-    .success {
-      background: rgba(20, 241, 149, 0.1);
-      border: 1px solid #14F195;
       border-radius: 12px;
-      padding: 25px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .curve-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat {
       text-align: center;
     }
-    .success h2 {
-      color: #14F195;
-      margin-bottom: 15px;
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #00ffa3;
     }
-    .mint-address {
+    .stat-label {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ffa3, #03e1ff);
+      transition: width 0.3s;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #888;
+    }
+    .token-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .token-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 16px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .token-item:hover {
+      border: 1px solid #00ffa3;
+    }
+    .token-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #000;
+    }
+    .token-info {
+      flex: 1;
+    }
+    .token-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .token-meta {
+      font-size: 12px;
+      color: #666;
+    }
+    .token-price {
+      text-align: right;
+    }
+    .token-price-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #00ffa3;
+    }
+    .token-mc {
+      font-size: 12px;
+      color: #666;
+    }
+    .trade-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .wallet-options {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .wallet-options.show {
+      display: grid;
+    }
+    .wallet-option {
+      padding: 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .wallet-option:hover {
+      border-color: #00ffa3;
+    }
+    .success-msg {
+      background: rgba(0, 255, 163, 0.1);
+      border: 1px solid #00ffa3;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
+    .tx-hash {
       font-family: monospace;
       background: rgba(0,0,0,0.3);
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
-      margin: 15px 0;
+      margin: 10px 0;
+      font-size: 12px;
       word-break: break-all;
-      font-size: 13px;
     }
   </style>
 </head>
 <body>
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.jpg" alt="PumpChain">
+      <span class="logo-text"><span>Pump</span>.fun</span>
+    </a>
+    <button class="connect-btn" id="connectBtn" onclick="showWalletOptions()">Connect Wallet</button>
+    <div class="wallet-info" id="walletInfo" style="display: none;">
+      <span id="walletAddress"></span>
+      <button onclick="disconnectWallet()" style="background: none; border: none; color: #ff4444; cursor: pointer;">✕</button>
+    </div>
+  </header>
+
   <div class="container">
-    <img src="logo.jpg" alt="Logo" class="logo">
-    <h1>Launch on <span>Pump.fun</span></h1>
-    <p class="subtitle">Create and trade tokens instantly</p>
-    
-    <div class="card">
-      <div class="wallet-box" id="walletBox" onclick="connectWallet()">
-        <div id="walletText">Click to connect wallet</div>
-      </div>
-      
-      <form id="tokenForm" class="hidden">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" id="name" placeholder="Token name" required>
-        </div>
+    <div class="devnet-banner">⚠️ Devnet — Tokens are simulated until mainnet launch</div>
+
+    <div class="grid">
+      <!-- Left Column: Create Token -->
+      <div class="card">
+        <h2>🚀 Launch Token</h2>
         
-        <div class="row">
+        <div class="wallet-options" id="walletOptions">
+          <div class="wallet-option" onclick="connectPhantom()">👻 Phantom</div>
+          <div class="wallet-option" onclick="connectBackpack()">🎒 Backpack</div>
+          <div class="wallet-option" onclick="connectSolflare()">☀️ Solflare</div>
+        </div>
+
+        <form id="launchForm">
           <div class="form-group">
-            <label>Ticker</label>
-            <input type="text" id="symbol" placeholder="SYMBOL" maxlength="10" required>
+            <label>Token Name</label>
+            <input type="text" id="tokenName" placeholder="e.g., Moon Token" required>
           </div>
           <div class="form-group">
-            <label>Image URL</label>
-            <input type="url" id="image" placeholder="https://...">
+            <label>Symbol</label>
+            <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="10" required>
+          </div>
+          <div class="form-group">
+            <label>Image URL (optional)</label>
+            <input type="url" id="tokenImage" placeholder="https://...">
+          </div>
+          <button type="submit" class="btn" id="launchBtn" disabled>Create Token</button>
+        </form>
+
+        <div class="success-msg" id="successMsg">
+          <h3 style="color: #00ffa3; margin-bottom: 10px;">🎉 Token Created!</h3>
+          <div class="tx-hash" id="tokenAddress"></div>
+          <button class="btn" onclick="viewToken()" style="margin-top: 10px;">View Token</button>
+        </div>
+      </div>
+
+      <!-- Right Column: Token Detail / List -->
+      <div class="card" id="tokenDetailCard" style="display: none;">
+        <h2 id="detailName">Token Name</h2>
+        
+        <div class="bonding-curve">
+          <div class="curve-stats">
+            <div class="stat">
+              <div class="stat-value" id="detailPrice">0.0000</div>
+              <div class="stat-label">Price (SOL)</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="detailMC">0</div>
+              <div class="stat-label">Market Cap</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="detailReserve">30</div>
+              <div class="stat-label">SOL Reserve</div>
+            </div>
+          </div>
+          
+          <div class="progress-bar">
+            <div class="progress-fill" id="migrationProgress" style="width: 0%"></div>
+          </div>
+          <div class="progress-label">
+            <span>Bonding Curve Progress</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <p style="font-size: 12px; color: #666; margin-top: 8px;">When market cap reaches 69 SOL, liquidity migrates to Raydium</p>
+        </div>
+
+        <div class="trade-section">
+          <div>
+            <label>Buy (SOL)</label>
+            <input type="number" id="buyAmount" placeholder="0.1" step="0.001" min="0.001">
+            <button class="btn" onclick="buyTokens()" style="margin-top: 10px;">Buy</button>
+          </div>
+          <div>
+            <label>Sell (Tokens)</label>
+            <input type="number" id="sellAmount" placeholder="1000" min="1">
+            <button class="btn btn-secondary" onclick="sellTokens()" style="margin-top: 10px;">Sell</button>
           </div>
         </div>
-        
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="desc" rows="2" placeholder="What's your token about?"></textarea>
-        </div>
-        
-        <button type="submit" class="btn" id="submitBtn">
-          Create Token
-        </button>
-      </form>
-      
-      <div class="progress hidden" id="progress">
-        <p>Creating on Pump.fun...</p>
       </div>
-      
-      <div class="success hidden" id="success">
-        <h2>✅ Token Created!</h2>
-        <p>Your token is now live on Pump.fun</p>
-        <div class="mint-address" id="mintAddr"></div>
-        <button class="btn" onclick="viewOnPumpFun()">View on Pump.fun</button>
+
+      <!-- Token List (shown when no token selected) -->
+      <div class="card" id="tokenListCard">
+        <h2>🔥 Trending Tokens</h2>
+        <div class="token-list" id="tokenList">
+          <!-- Tokens loaded via JS -->
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    let wallet = null;
-    let connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com');
-    let createdMint = null;
+    // Bonding Curve Implementation
+    class BondingCurve {
+      constructor(params) {
+        this.tokenMint = params.tokenMint;
+        this.name = params.name;
+        this.symbol = params.symbol;
+        this.virtualSolReserve = 30;
+        this.virtualTokenReserve = 1073000000;
+        this.realSolReserve = 0;
+        this.realTokenReserve = 1000000000;
+        this.totalSupply = 1000000000;
+        this.migrated = false;
+        this.creator = params.creator;
+        this.createdAt = Date.now();
+      }
 
-    async function connectWallet() {
-      try {
-        if (window.phantom?.solana) {
-          const resp = await window.phantom.solana.connect();
-          wallet = window.phantom.solana;
-        } else if (window.solflare) {
-          await window.solflare.connect();
-          wallet = window.solflare;
-        } else {
-          window.open('https://phantom.app', '_blank');
-          return;
+      getTokenAmount(solAmount) {
+        const newSolReserve = this.virtualSolReserve + solAmount;
+        const newTokenReserve = (this.virtualSolReserve * this.virtualTokenReserve) / newSolReserve;
+        return Math.floor(this.virtualTokenReserve - newTokenReserve);
+      }
+
+      getSolAmount(tokenAmount) {
+        const newTokenReserve = this.virtualTokenReserve + tokenAmount;
+        const newSolReserve = (this.virtualSolReserve * this.virtualTokenReserve) / newTokenReserve;
+        return Math.floor(this.virtualSolReserve - newSolReserve);
+      }
+
+      buy(solAmount) {
+        const tokensOut = this.getTokenAmount(solAmount);
+        this.virtualSolReserve += solAmount;
+        this.virtualTokenReserve -= tokensOut;
+        this.realSolReserve += solAmount;
+        this.realTokenReserve -= tokensOut;
+        
+        if (this.virtualSolReserve >= 69 && !this.migrated) {
+          this.migrated = true;
         }
-        
-        document.getElementById('walletBox').classList.add('connected');
-        document.getElementById('walletText').textContent = 
-          wallet.publicKey.toString().slice(0, 4) + '...' + wallet.publicKey.toString().slice(-4);
-        document.getElementById('tokenForm').classList.remove('hidden');
-        
-      } catch (e) {
-        console.error(e);
+
+        return {
+          tokensReceived: tokensOut,
+          price: solAmount / tokensOut,
+          marketCap: this.getMarketCap(),
+          progress: Math.min((this.virtualSolReserve / 69) * 100, 100)
+        };
+      }
+
+      sell(tokenAmount) {
+        const solOut = this.getSolAmount(tokenAmount);
+        this.virtualSolReserve -= solOut;
+        this.virtualTokenReserve += tokenAmount;
+        this.realSolReserve -= solOut;
+        this.realTokenReserve += tokenAmount;
+
+        return {
+          solReceived: solOut,
+          price: solOut / tokenAmount,
+          marketCap: this.getMarketCap(),
+          progress: Math.min((this.virtualSolReserve / 69) * 100, 100)
+        };
+      }
+
+      getMarketCap() {
+        const price = this.virtualSolReserve / this.virtualTokenReserve;
+        return price * this.totalSupply;
+      }
+
+      getPrice() {
+        return this.virtualSolReserve / this.virtualTokenReserve;
       }
     }
 
-    document.getElementById('tokenForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const name = document.getElementById('name').value;
-      const symbol = document.getElementById('symbol').value;
-      const image = document.getElementById('image').value;
-      const desc = document.getElementById('desc').value;
-      
-      document.getElementById('tokenForm').classList.add('hidden');
-      document.getElementById('progress').classList.remove('hidden');
-      document.getElementById('submitBtn').disabled = true;
-      
-      try {
-        // Try to call Pump.fun through our backend
-        const response = await fetch('http://localhost:3002/create-pumpfun-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name,
-            symbol,
-            imageUrl: image,
-            description: desc,
-            creator: wallet.publicKey.toString()
-          })
+    // State
+    let wallet = null;
+    let walletName = '';
+    let tokens = [];
+    let currentToken = null;
+
+    // Demo tokens
+    function initDemoTokens() {
+      const demoTokens = [
+        { name: 'PumpChain', symbol: 'PUMPC', creator: 'PumpTrea...1111', virtualSolReserve: 45.5 },
+        { name: 'Moon Rocket', symbol: 'MOON', creator: 'User1234...5678', virtualSolReserve: 12.3 },
+        { name: 'Diamond Hands', symbol: 'DMND', creator: 'Wallet98...abcd', virtualSolReserve: 28.7 },
+        { name: 'Solana Maxi', symbol: 'SOLMAX', creator: 'Creator...def', virtualSolReserve: 8.4 },
+      ];
+
+      demoTokens.forEach(t => {
+        const curve = new BondingCurve({
+          tokenMint: 'pump' + Math.random().toString(36).substring(2, 34),
+          name: t.name,
+          symbol: t.symbol,
+          creator: t.creator
         });
-        
-        const data = await response.json();
-        
-        if (data.transaction) {
-          // Sign and send transaction
-          const transaction = solanaWeb3.Transaction.from(
-            Buffer.from(data.transaction, 'base64')
-          );
-          
-          const signed = await wallet.signTransaction(transaction);
-          const signature = await connection.sendRawTransaction(signed.serialize());
-          
-          await connection.confirmTransaction(signature);
-          
-          createdMint = data.mint;
-          document.getElementById('mintAddr').textContent = createdMint;
-          document.getElementById('progress').classList.add('hidden');
-          document.getElementById('success').classList.remove('hidden');
-        }
-        
-      } catch (error) {
-        console.error('Error:', error);
-        
-        // Fallback: Generate mint and redirect to Pump.fun
-        const mint = solanaWeb3.Keypair.generate();
-        createdMint = mint.publicKey.toString();
-        
-        document.getElementById('mintAddr').textContent = createdMint;
-        document.getElementById('progress').classList.add('hidden');
-        document.getElementById('success').classList.remove('hidden');
-        
-        // Open Pump.fun
-        setTimeout(() => {
-          window.open(`https://pump.fun/create`, '_blank');
-        }, 1000);
+        curve.virtualSolReserve = t.virtualSolReserve;
+        curve.realSolReserve = t.virtualSolReserve - 30;
+        tokens.push(curve);
+      });
+
+      renderTokenList();
+    }
+
+    function renderTokenList() {
+      const list = document.getElementById('tokenList');
+      list.innerHTML = tokens.map((t, i) => `
+        <div class="token-item" onclick="selectToken(${i})">
+          <div class="token-icon">${t.symbol.charAt(0)}</div>
+          <div class="token-info">
+            <div class="token-name">${t.name} ($${t.symbol})</div>
+            <div class="token-meta">by ${t.creator} • ${((t.virtualSolReserve/69)*100).toFixed(1)}% to migration</div>
+          </div>
+          <div class="token-price">
+            <div class="token-price-value">${t.getPrice().toFixed(8)}</div>
+            <div class="token-mc">MC: ${t.getMarketCap().toFixed(2)} SOL</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Wallet Functions
+    function showWalletOptions() {
+      if (wallet) return;
+      document.getElementById('walletOptions').classList.add('show');
+    }
+
+    async function connectPhantom() {
+      if (!window.phantom?.solana) {
+        alert('Install Phantom from phantom.app');
+        window.open('https://phantom.app', '_blank');
+        return;
       }
+      try {
+        await window.phantom.solana.connect();
+        wallet = window.phantom.solana;
+        walletName = 'Phantom';
+        updateWalletUI();
+      } catch (e) {
+        alert('Connection failed');
+      }
+    }
+
+    async function connectBackpack() {
+      if (!window.backpack?.solana) {
+        alert('Install Backpack from backpack.app');
+        window.open('https://backpack.app', '_blank');
+        return;
+      }
+      try {
+        await window.backpack.solana.connect();
+        wallet = window.backpack.solana;
+        walletName = 'Backpack';
+        updateWalletUI();
+      } catch (e) {
+        alert('Connection failed');
+      }
+    }
+
+    async function connectSolflare() {
+      if (!window.solflare) {
+        alert('Install Solflare from solflare.com');
+        window.open('https://solflare.com', '_blank');
+        return;
+      }
+      try {
+        await window.solflare.connect();
+        wallet = window.solflare;
+        walletName = 'Solflare';
+        updateWalletUI();
+      } catch (e) {
+        alert('Connection failed');
+      }
+    }
+
+    function updateWalletUI() {
+      const addr = wallet.publicKey.toString();
+      document.getElementById('walletOptions').classList.remove('show');
+      document.getElementById('connectBtn').style.display = 'none';
+      document.getElementById('walletInfo').style.display = 'flex';
+      document.getElementById('walletAddress').textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
+      document.getElementById('launchBtn').disabled = false;
+    }
+
+    function disconnectWallet() {
+      wallet = null;
+      document.getElementById('walletInfo').style.display = 'none';
+      document.getElementById('connectBtn').style.display = 'block';
+      document.getElementById('launchBtn').disabled = true;
+    }
+
+    // Token Functions
+    document.getElementById('launchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!wallet) {
+        alert('Connect wallet first!');
+        return;
+      }
+
+      const name = document.getElementById('tokenName').value;
+      const symbol = document.getElementById('tokenSymbol').value;
+      
+      const token = new BondingCurve({
+        tokenMint: 'pump' + Math.random().toString(36).substring(2, 34),
+        name,
+        symbol,
+        creator: wallet.publicKey.toString().slice(0, 8) + '...'
+      });
+
+      tokens.unshift(token);
+      renderTokenList();
+      
+      document.getElementById('tokenAddress').textContent = token.tokenMint;
+      document.getElementById('successMsg').classList.add('show');
+      document.getElementById('launchForm').reset();
+
+      // Auto select new token
+      selectToken(0);
     });
 
-    function viewOnPumpFun() {
-      if (createdMint) {
-        window.open(`https://pump.fun/coin/${createdMint}`, '_blank');
-      }
+    function selectToken(index) {
+      currentToken = tokens[index];
+      document.getElementById('tokenListCard').style.display = 'none';
+      document.getElementById('tokenDetailCard').style.display = 'block';
+      updateTokenDetail();
     }
+
+    function updateTokenDetail() {
+      if (!currentToken) return;
+      document.getElementById('detailName').textContent = `${currentToken.name} ($${currentToken.symbol})`;
+      document.getElementById('detailPrice').textContent = currentToken.getPrice().toFixed(8);
+      document.getElementById('detailMC').textContent = currentToken.getMarketCap().toFixed(2) + ' SOL';
+      document.getElementById('detailReserve').textContent = currentToken.virtualSolReserve.toFixed(2);
+      
+      const progress = Math.min((currentToken.virtualSolReserve / 69) * 100, 100);
+      document.getElementById('migrationProgress').style.width = progress + '%';
+      document.getElementById('progressPercent').textContent = progress.toFixed(1) + '%';
+    }
+
+    function buyTokens() {
+      if (!currentToken) return;
+      const amount = parseFloat(document.getElementById('buyAmount').value);
+      if (!amount || amount <= 0) return;
+
+      const result = currentToken.buy(amount);
+      alert(`Bought ${result.tokensReceived.toLocaleString()} tokens!`);
+      updateTokenDetail();
+      renderTokenList();
+      document.getElementById('buyAmount').value = '';
+    }
+
+    function sellTokens() {
+      if (!currentToken) return;
+      const amount = parseFloat(document.getElementById('sellAmount').value);
+      if (!amount || amount <= 0) return;
+
+      const result = currentToken.sell(amount);
+      alert(`Sold for ${result.solReceived.toFixed(4)} SOL!`);
+      updateTokenDetail();
+      renderTokenList();
+      document.getElementById('sellAmount').value = '';
+    }
+
+    function viewToken() {
+      document.getElementById('successMsg').classList.remove('show');
+    }
+
+    // Init
+    window.addEventListener('load', () => {
+      initDemoTokens();
+      setTimeout(() => {
+        if (window.phantom?.solana?.isConnected) connectPhantom();
+        else if (window.backpack?.solana?.isConnected) connectBackpack();
+        else if (window.solflare?.isConnected) connectSolflare();
+      }, 500);
+    });
   </script>
 </body>
 </html>
