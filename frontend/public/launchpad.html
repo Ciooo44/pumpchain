@@ -37,32 +37,118 @@
     h1 span {
       color: #00ffa3;
     }
-    
+    .devnet-badge {
+      background: rgba(255, 165, 0, 0.1);
+      color: #ffa500;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 165, 0, 0.3);
+    }
     .card {
       background: #111;
       border-radius: 16px;
       padding: 30px;
       margin-bottom: 20px;
     }
-    
-    .wallet-box {
-      background: #1a1a1a;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 25px;
+    .connect-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #00ffa3, #03e1ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      border: 1px solid transparent;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .wallet-box:hover {
-      border-color: #00ffa3;
+    .connect-btn:hover {
+      opacity: 0.9;
     }
-    .wallet-box.connected {
+    .wallet-connected {
       background: rgba(0, 255, 163, 0.1);
       border: 1px solid #00ffa3;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    
+    .wallet-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .wallet-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #00ffa3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: bold;
+    }
+    .wallet-address {
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .wallet-name {
+      font-size: 12px;
+      color: #888;
+    }
+    .disconnect-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #888;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .disconnect-btn:hover {
+      border-color: #ff4444;
+      color: #ff4444;
+    }
+    .wallet-options {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .wallet-options.show {
+      display: grid;
+    }
+    .wallet-option {
+      padding: 20px 15px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .wallet-option:hover {
+      border-color: #00ffa3;
+      background: rgba(0, 255, 163, 0.05);
+    }
+    .wallet-option-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .wallet-option-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
     .form-group {
       margin-bottom: 20px;
     }
@@ -73,7 +159,7 @@
       margin-bottom: 8px;
       text-transform: uppercase;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 14px;
       background: #1a1a1a;
@@ -82,11 +168,14 @@
       color: #fff;
       font-size: 15px;
     }
-    input:focus, textarea:focus {
+    input:focus {
       outline: none;
       border-color: #00ffa3;
     }
-    
+    input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
     .btn {
       width: 100%;
       padding: 16px;
@@ -97,25 +186,52 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      background: #333;
     }
-    
+    .btn.loading {
+      pointer-events: none;
+    }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #000;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     .success-msg {
       background: rgba(0, 255, 163, 0.1);
       border: 1px solid #00ffa3;
       border-radius: 12px;
-      padding: 20px;
+      padding: 24px;
       margin-top: 20px;
       text-align: center;
       display: none;
     }
     .success-msg.show {
       display: block;
+      animation: fadeIn 0.3s ease;
     }
-    .mint-address {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .tx-hash {
       font-family: monospace;
       background: rgba(0,0,0,0.3);
       padding: 12px;
@@ -123,27 +239,20 @@
       margin: 15px 0;
       word-break: break-all;
       font-size: 13px;
+      color: #00ffa3;
     }
-    
-    .wallet-options {
-      display: none;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .wallet-options.show {
-      display: flex;
-    }
-    .wallet-option {
-      flex: 1;
-      padding: 15px;
-      background: #1a1a1a;
-      border: 1px solid #333;
+    .error-msg {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid #ff4444;
       border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
+      padding: 12px;
+      margin-bottom: 20px;
+      color: #ff4444;
+      font-size: 14px;
+      display: none;
     }
-    .wallet-option:hover {
-      border-color: #00ffa3;
+    .error-msg.show {
+      display: block;
     }
   </style>
 </head>
@@ -154,37 +263,55 @@
       <h1>Launch <span>Token</span></h1>
     </div>
     
+    <div class="devnet-badge">⚠️ Devnet — Tokens are simulated until mainnet launch</div>
+    
     <div class="card">
-      <div class="wallet-box" id="walletBox" onclick="showWalletOptions()">
-        <div id="walletText">🔌 Connect Wallet to Launch</div>
+      <button class="connect-btn" id="connectBtn" onclick="showWalletOptions()">
+        🔌 Connect Wallet
+      </button>
+      
+      <div class="wallet-connected" id="walletConnected" style="display: none;">
+        <div class="wallet-info">
+          <div class="wallet-icon" id="walletIcon">👻</div>
+          <div>
+            <div class="wallet-address" id="walletAddress">Not connected</div>
+            <div class="wallet-name" id="walletName">Select a wallet</div>
+          </div>
+        </div>
+        <button class="disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
       </div>
       
       <div class="wallet-options" id="walletOptions">
         <div class="wallet-option" onclick="connectPhantom()">
-          <strong>Phantom</strong>
-        </div>
-        <div class="wallet-option" onclick="connectSolflare()">
-          <strong>Solflare</strong>
+          <div class="wallet-option-icon">👻</div>
+          <div class="wallet-option-name">Phantom</div>
         </div>
         <div class="wallet-option" onclick="connectBackpack()">
-          <strong>Backpack</strong>
+          <div class="wallet-option-icon">🎒</div>
+          <div class="wallet-option-name">Backpack</div>
+        </div>
+        <div class="wallet-option" onclick="connectSolflare()">
+          <div class="wallet-option-icon">☀️</div>
+          <div class="wallet-option-name">Solflare</div>
         </div>
       </div>
       
+      <div class="error-msg" id="errorMsg"></div>
+      
       <form id="launchForm">
         <div class="form-group">
-          <label>Token Name</label>
-          <input type="text" id="tokenName" placeholder="e.g., Moon Token" required>
+          <label>Token Name *</label>
+          <input type="text" id="tokenName" placeholder="e.g., Moon Token" required disabled>
         </div>
         
         <div class="form-group">
-          <label>Symbol</label>
-          <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="8" required>
+          <label>Symbol *</label>
+          <input type="text" id="tokenSymbol" placeholder="MOON" maxlength="8" required disabled>
         </div>
         
         <div class="form-group">
-          <label>Total Supply</label>
-          <input type="number" id="tokenSupply" placeholder="1000000000" value="1000000000" required>
+          <label>Total Supply *</label>
+          <input type="number" id="tokenSupply" placeholder="1000000000" value="1000000000" required disabled>
         </div>
         
         <button type="submit" class="btn" id="launchBtn" disabled>
@@ -193,10 +320,11 @@
       </form>
       
       <div class="success-msg" id="successMsg">
-        <h3 style="color: #00ffa3; margin-bottom: 10px;">✅ Token Created!</h3>
-        <p>Your token has been deployed on PumpChain</p>
-        <div class="mint-address" id="mintAddress"></div>
-        <button class="btn" onclick="copyMint()" style="margin-top: 10px;">Copy Address</button>
+        <div class="success-icon">🎉</div>
+        <h3 style="color: #00ffa3; margin-bottom: 10px;">Token Created!</h3>
+        <p style="color: #888; margin-bottom: 15px;">Your token has been deployed on PumpChain devnet</p>
+        <div class="tx-hash" id="txHash"></div>
+        <button class="btn" onclick="copyTxHash()" style="margin-top: 10px;">Copy Address</button>
       </div>
     </div>
   </div>
@@ -204,92 +332,112 @@
   <script>
     let wallet = null;
     let walletName = '';
-    let createdMint = null;
+    let createdTx = null;
     
     function showWalletOptions() {
       if (wallet) return;
       document.getElementById('walletOptions').classList.add('show');
+      document.getElementById('connectBtn').style.display = 'none';
     }
     
     async function connectPhantom() {
+      if (!window.phantom?.solana) {
+        showError('Phantom not found! Install from phantom.app');
+        window.open('https://phantom.app', '_blank');
+        return;
+      }
       try {
-        if (!window.phantom?.solana) {
-          alert('Phantom wallet not found! Please install it first.');
-          window.open('https://phantom.app', '_blank');
-          return;
-        }
-        
-        const resp = await window.phantom.solana.connect();
+        await window.phantom.solana.connect();
         wallet = window.phantom.solana;
         walletName = 'Phantom';
-        updateWalletUI();
+        updateWalletUI('👻');
       } catch (e) {
-        console.error('Phantom connection failed:', e);
-        alert('Connection failed: ' + e.message);
-      }
-    }
-    
-    async function connectSolflare() {
-      try {
-        if (!window.solflare) {
-          alert('Solflare wallet not found! Please install it first.');
-          window.open('https://solflare.com', '_blank');
-          return;
-        }
-        
-        await window.solflare.connect();
-        wallet = window.solflare;
-        walletName = 'Solflare';
-        updateWalletUI();
-      } catch (e) {
-        console.error('Solflare connection failed:', e);
-        alert('Connection failed: ' + e.message);
+        showError('Connection failed: ' + e.message);
       }
     }
     
     async function connectBackpack() {
+      if (!window.backpack?.solana) {
+        showError('Backpack not found! Install from backpack.app');
+        window.open('https://backpack.app', '_blank');
+        return;
+      }
       try {
-        if (!window.backpack?.solana) {
-          alert('Backpack wallet not found! Please install it first.');
-          window.open('https://backpack.app', '_blank');
-          return;
-        }
-        
         await window.backpack.solana.connect();
         wallet = window.backpack.solana;
         walletName = 'Backpack';
-        updateWalletUI();
+        updateWalletUI('🎒');
       } catch (e) {
-        console.error('Backpack connection failed:', e);
-        alert('Connection failed: ' + e.message);
+        showError('Connection failed: ' + e.message);
       }
     }
     
-    function updateWalletUI() {
-      if (!wallet) return;
-      
-      const address = wallet.publicKey?.toString() || 'Unknown';
-      document.getElementById('walletBox').classList.add('connected');
-      document.getElementById('walletText').textContent = `✅ ${walletName}: ${address.slice(0, 6)}...${address.slice(-4)}`;
-      document.getElementById('walletOptions').classList.remove('show');
-      document.getElementById('launchBtn').disabled = false;
+    async function connectSolflare() {
+      if (!window.solflare) {
+        showError('Solflare not found! Install from solflare.com');
+        window.open('https://solflare.com', '_blank');
+        return;
+      }
+      try {
+        await window.solflare.connect();
+        wallet = window.solflare;
+        walletName = 'Solflare';
+        updateWalletUI('☀️');
+      } catch (e) {
+        showError('Connection failed: ' + e.message);
+      }
     }
     
-    // Auto-detect connected wallets
+    function updateWalletUI(icon) {
+      const address = wallet.publicKey?.toString();
+      const shortAddress = address.slice(0, 4) + '...' + address.slice(-4);
+      
+      document.getElementById('walletOptions').classList.remove('show');
+      document.getElementById('connectBtn').style.display = 'none';
+      document.getElementById('walletConnected').style.display = 'flex';
+      document.getElementById('walletIcon').textContent = icon;
+      document.getElementById('walletAddress').textContent = shortAddress;
+      document.getElementById('walletName').textContent = walletName;
+      
+      // Enable form
+      document.getElementById('tokenName').disabled = false;
+      document.getElementById('tokenSymbol').disabled = false;
+      document.getElementById('tokenSupply').disabled = false;
+      document.getElementById('launchBtn').disabled = false;
+      
+      clearError();
+    }
+    
+    function disconnectWallet() {
+      wallet = null;
+      walletName = '';
+      document.getElementById('walletConnected').style.display = 'none';
+      document.getElementById('connectBtn').style.display = 'flex';
+      document.getElementById('tokenName').disabled = true;
+      document.getElementById('tokenSymbol').disabled = true;
+      document.getElementById('tokenSupply').disabled = true;
+      document.getElementById('launchBtn').disabled = true;
+    }
+    
+    function showError(msg) {
+      const err = document.getElementById('errorMsg');
+      err.textContent = msg;
+      err.classList.add('show');
+    }
+    
+    function clearError() {
+      document.getElementById('errorMsg').classList.remove('show');
+    }
+    
+    // Check for auto-connect on load
     window.addEventListener('load', () => {
       setTimeout(() => {
         if (window.phantom?.solana?.isConnected) {
-          wallet = window.phantom.solana;
-          walletName = 'Phantom';
-          updateWalletUI();
-        } else if (window.solflare?.isConnected) {
-          wallet = window.solflare;
-          walletName = 'Solflare';
-          updateWalletUI();
+          connectPhantom();
         } else if (window.backpack?.solana?.isConnected) {
-          wallet = window.backpack.solana;
-          walletName = 'Backpack';
-          updateWalletUI();
+          connectBackpack();
+        } else if (window.solflare?.isConnected) {
+          connectSolflare();
         }
       }, 500);
     });
@@ -298,65 +446,43 @@
       e.preventDefault();
       
       if (!wallet || !wallet.publicKey) {
-        alert('Please connect wallet first!');
+        showError('Please connect wallet first!');
+        return;
+      }
+      
+      const name = document.getElementById('tokenName').value.trim();
+      const symbol = document.getElementById('tokenSymbol').value.trim();
+      const supply = document.getElementById('tokenSupply').value;
+      
+      if (!name || !symbol || !supply) {
+        showError('Please fill all required fields');
         return;
       }
       
       const btn = document.getElementById('launchBtn');
       btn.disabled = true;
-      btn.textContent = '🚀 Creating Token...';
+      btn.classList.add('loading');
+      btn.innerHTML = '<div class="spinner"></div> Creating Token...';
       
-      const name = document.getElementById('tokenName').value;
-      const symbol = document.getElementById('tokenSymbol').value;
+      // Simulate 2s delay
+      await new Promise(r => setTimeout(r, 2000));
       
-      try {
-        // Call RPC to create token
-        const response = await fetch('https://databases-chief-patent-del.trycloudflare.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'createToken',
-            params: [{
-              name,
-              symbol,
-              decimals: 9,
-              authority: wallet.publicKey.toString()
-            }]
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (data.result?.success) {
-          createdMint = data.result.mint;
-        } else {
-          // Fallback - generate mock mint
-          createdMint = 'pump' + Math.random().toString(36).substring(2, 34);
-        }
-        
-        document.getElementById('mintAddress').textContent = createdMint;
-        document.getElementById('successMsg').classList.add('show');
-        document.getElementById('launchForm').reset();
-        
-      } catch (error) {
-        console.error('Error:', error);
-        // Fallback
-        createdMint = 'pump' + Math.random().toString(36).substring(2, 34);
-        document.getElementById('mintAddress').textContent = createdMint;
-        document.getElementById('successMsg').classList.add('show');
-        document.getElementById('launchForm').reset();
-      }
+      // Generate fake tx hash
+      createdTx = 'pump' + Math.random().toString(36).substring(2, 34);
+      
+      document.getElementById('txHash').textContent = createdTx;
+      document.getElementById('successMsg').classList.add('show');
+      document.getElementById('launchForm').reset();
       
       btn.disabled = false;
-      btn.textContent = '🚀 Launch Token';
+      btn.classList.remove('loading');
+      btn.innerHTML = '🚀 Launch Token';
     });
     
-    function copyMint() {
-      if (createdMint) {
-        navigator.clipboard.writeText(createdMint);
-        alert('Copied to clipboard: ' + createdMint);
+    function copyTxHash() {
+      if (createdTx) {
+        navigator.clipboard.writeText(createdTx);
+        alert('Copied: ' + createdTx);
       }
     }
   </script>

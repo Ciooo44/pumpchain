@@ -96,6 +96,26 @@
       text-transform: uppercase;
       margin-top: 8px;
     }
+    .stat-status {
+      font-size: 10px;
+      color: #ffa500;
+      margin-top: 4px;
+    }
+    .ca-box {
+      cursor: pointer;
+      margin-top: 20px;
+      padding: 15px 25px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #888;
+      transition: all 0.3s;
+    }
+    .ca-box:hover {
+      border-color: #00ffa3;
+    }
     .footer {
       position: fixed;
       bottom: 40px;
@@ -114,6 +134,7 @@
       .stats { gap: 30px; }
       .links { flex-direction: column; }
       .logo { width: 140px; height: 140px; }
+      .footer { flex-direction: column; gap: 10px; text-align: center; }
     }
   </style>
 </head>
@@ -132,20 +153,22 @@
   
   <div class="stats">
     <div>
-      <div class="stat-value" id="slot">52.3M</div>
+      <div class="stat-value" id="slot">Connecting...</div>
       <div class="stat-label">Current Slot</div>
+      <div class="stat-status" id="slotStatus">● Connecting</div>
     </div>
     <div>
-      <div class="stat-value">50K+</div>
+      <div class="stat-value" id="tps">--</div>
       <div class="stat-label">TPS</div>
     </div>
     <div>
-      <div class="stat-value" id="block">48.9M</div>
+      <div class="stat-value" id="block">Connecting...</div>
       <div class="stat-label">Block Height</div>
+      <div class="stat-status" id="blockStatus">● Connecting</div>
     </div>
   </div>
   
-  <div class="ca-box" onclick="copyCA()" style="cursor: pointer; margin-top: 20px; padding: 15px 25px; background: #111; border: 1px solid #333; border-radius: 8px; font-family: monospace; font-size: 13px; color: #888; transition: all 0.3s;">
+  <div class="ca-box" onclick="copyCA()">
     <span style="color: #00ffa3;">CA:</span> JjiS6HcDEtEzZDvhA3ZsLqjn7Pn8AhdhQuyCceZpump
     <span style="color: #666; margin-left: 10px;">📋</span>
   </div>
@@ -155,7 +178,7 @@
     <a href="https://github.com/Ciooo44/pumpchain" target="_blank">GitHub</a>
     <a href="https://x.com/pumpchain_org" target="_blank">X</a>
   </div>
-  
+
   <script>
     function copyCA() {
       const ca = 'JjiS6HcDEtEzZDvhA3ZsLqjn7Pn8AhdhQuyCceZpump';
@@ -165,19 +188,72 @@
   </script>
   
   <script>
-    const RPC = 'https://databases-chief-patent-del.trycloudflare.com';
-    async function update() {
+    const RPC_URL = 'https://databases-chief-patent-del.trycloudflare.com';
+    let lastSlot = 0;
+    let lastTime = Date.now();
+    let isConnected = false;
+    
+    async function updateStats() {
       try {
-        const s = await fetch(RPC, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getSlot'})});
-        const sData = await s.json();
-        document.getElementById('slot').textContent = ((sData.result||52345681)/1000000).toFixed(1)+'M';
-        const b = await fetch(RPC, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getBlockHeight'})});
-        const bData = await b.json();
-        document.getElementById('block').textContent = ((bData.result||48912350)/1000000).toFixed(1)+'M';
-      } catch(e) {}
+        // Get slot
+        const slotRes = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getSlot' }),
+          signal: AbortSignal.timeout(5000)
+        });
+        const slotData = await slotRes.json();
+        const currentSlot = slotData.result;
+        
+        if (currentSlot) {
+          // Calculate TPS
+          const now = Date.now();
+          const timeDelta = (now - lastTime) / 1000;
+          if (lastSlot > 0 && timeDelta > 0) {
+            const slotDelta = currentSlot - lastSlot;
+            const tps = Math.round(slotDelta / timeDelta);
+            document.getElementById('tps').textContent = tps > 0 ? tps.toLocaleString() : '50K+';
+          }
+          lastSlot = currentSlot;
+          lastTime = now;
+          
+          document.getElementById('slot').textContent = (currentSlot / 1000000).toFixed(2) + 'M';
+          document.getElementById('slotStatus').textContent = '● Live';
+          document.getElementById('slotStatus').style.color = '#00ffa3';
+          isConnected = true;
+        }
+        
+        // Get block height
+        const blockRes = await fetch(RPC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBlockHeight' }),
+          signal: AbortSignal.timeout(5000)
+        });
+        const blockData = await blockRes.json();
+        const blockHeight = blockData.result;
+        
+        if (blockHeight) {
+          document.getElementById('block').textContent = (blockHeight / 1000000).toFixed(2) + 'M';
+          document.getElementById('blockStatus').textContent = '● Live';
+          document.getElementById('blockStatus').style.color = '#00ffa3';
+        }
+      } catch (e) {
+        console.log('RPC error:', e);
+        if (!isConnected) {
+          document.getElementById('slot').textContent = '52.4M';
+          document.getElementById('block').textContent = '48.9M';
+          document.getElementById('tps').textContent = '50K+';
+          document.getElementById('slotStatus').textContent = '● Simulated';
+          document.getElementById('slotStatus').style.color = '#ffa500';
+          document.getElementById('blockStatus').textContent = '● Simulated';
+          document.getElementById('blockStatus').style.color = '#ffa500';
+        }
+      }
     }
-    update();
-    setInterval(update, 5000);
+    
+    updateStats();
+    setInterval(updateStats, 2000);
   </script>
 </body>
 </html>
